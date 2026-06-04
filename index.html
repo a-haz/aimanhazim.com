@@ -4,12 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aiman Hazim | Robotics & AI Engineer</title>
+
+    <!-- SEO -->
+    <meta name="description" content="Aiman Hazim — robotics engineering student specializing in autonomous systems, SLAM, and machine perception. Building thermal & 3D LiDAR human-tracking robots in C++ and Python.">
+    <meta name="author" content="Aiman Hazim">
+    <meta name="keywords" content="Aiman Hazim, robotics engineer, SLAM, autonomous systems, LiDAR, machine perception, ROS, computer vision, Vision Transformer">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="canonical" href="https://aimanhazim.com/">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Aiman Hazim | Robotics & AI Engineer">
+    <meta property="og:description" content="Robotics engineering student specializing in autonomous systems, SLAM, and machine perception.">
+    <meta property="og:url" content="https://aimanhazim.com/">
+    <meta property="og:site_name" content="Aiman Hazim">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Aiman Hazim | Robotics & AI Engineer">
+    <meta name="twitter:description" content="Robotics engineering student specializing in autonomous systems, SLAM, and machine perception.">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <nav aria-label="Primary">
         <div class="nav-content">
-            <h2>AH.</h2>
+            <a class="brand" href="#about">AH.</a>
             <ul>
                 <li><a href="#about">About</a></li>
                 <li><a href="#projects">Projects</a></li>
@@ -18,66 +41,77 @@
         </div>
     </nav>
 
-    <header id="about">
-        <div class="container">
-            <h1>Hi, I'm Aiman.</h1>
-            <p class="subtitle">Robotics Engineering Student | Specializing in Autonomous Systems & SLAM</p>
-            <p>I build autonomous tracking systems and research machine perception. Currently working out of the Intelligent Robot Research Laboratory, my focus is on bridging the gap between raw sensor data and reliable navigation. When I'm not writing C++ or Python, I'm usually out camping or shooting with my Fujifilm X-M5.</p>
-            <div class="tech-stack">
-                <span>C / C++</span>
-                <span>Python</span>
-                <span>ROS</span>
-                <span>Docker</span>
-                <span>LiDAR</span>
-                <span>ViT</span>
+    <main id="main">
+        <header id="about">
+            <div class="container">
+                <h1>Hi, I'm Aiman.</h1>
+                <p class="subtitle">Robotics Engineering Student | Specializing in Autonomous Systems & SLAM</p>
+                <p>I build autonomous tracking systems and research machine perception. Currently working out of the Intelligent Robot Research Laboratory, my focus is on bridging the gap between raw sensor data and reliable navigation. When I'm not writing C++ or Python, I'm usually out camping or shooting with my Fujifilm X-M5.</p>
+                <div class="tech-stack">
+                    <span>C / C++</span>
+                    <span>Python</span>
+                    <span>ROS</span>
+                    <span>Docker</span>
+                    <span>LiDAR</span>
+                    <span>ViT</span>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <section id="projects" class="container">
-        <h2>Engineering Logbook</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>Thermal & 3D LiDAR Human Tracking</h3>
-                <p>Developed an autonomous human-following robot logic combining 3D LiDAR point clouds with thermal sensor data. Implemented in Python to ensure reliable tracking even in visually noisy environments.</p>
-                <a href="https://github.com/YOUR_USERNAME" target="_blank">View Code / Paper &rarr;</a>
+        <section id="projects" class="container">
+            <h2>Engineering Logbook</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Thermal & 3D LiDAR Human Tracking</h3>
+                    <p>Developed an autonomous human-following robot logic combining 3D LiDAR point clouds with thermal sensor data. Implemented in Python to ensure reliable tracking even in visually noisy environments.</p>
+                    <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer">View Code / Paper &rarr;</a>
+                </div>
+                <div class="card">
+                    <h3>Vision Transformer Integration</h3>
+                    <p>Explored the use of Vision Transformers (ViT) for advanced location recognition, testing model accuracy and deployment pipelines for autonomous driving stacks.</p>
+                    <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer">View Research &rarr;</a>
+                </div>
+                <div class="card">
+                    <h3>Hardware Logic & C Programming</h3>
+                    <p>Lower-level embedded systems work, manipulating hardware registers and designing control logic for 7-segment LED arrays to interface with broader robotic state machines.</p>
+                    <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer">View Specs &rarr;</a>
+                </div>
             </div>
-            <div class="card">
-                <h3>Vision Transformer Integration</h3>
-                <p>Explored the use of Vision Transformers (ViT) for advanced location recognition, testing model accuracy and deployment pipelines for autonomous driving stacks.</p>
-                <a href="https://github.com/YOUR_USERNAME" target="_blank">View Research &rarr;</a>
-            </div>
-            <div class="card">
-                <h3>Hardware Logic & C Programming</h3>
-                <p>Lower-level embedded systems work, manipulating hardware registers and designing control logic for 7-segment LED arrays to interface with broader robotic state machines.</p>
-                <a href="https://github.com/YOUR_USERNAME" target="_blank">View Specs &rarr;</a>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="contact" class="container">
-        <h2>Let's Connect</h2>
-        <p>I am actively seeking technical roles in the autonomous driving sector for a March 2027 start. Feel free to reach out regarding SLAM, machine vision, or open roles.</p>
-        
-        <form action="https://formspree.io/f/xlgzjnby" method="POST" class="contact-form">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
+        <section id="contact" class="container">
+            <h2>Let's Connect</h2>
+            <p>I am actively seeking technical roles in the autonomous driving sector for a March 2027 start. Feel free to reach out regarding SLAM, machine vision, or open roles.</p>
+
+            <div class="social-links">
+                <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">GitHub &rarr;</a>
+                <a href="mailto:dev@aimanhazim.com" aria-label="Email Aiman Hazim">Email &rarr;</a>
             </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="btn">Send Transmission</button>
-        </form>
-    </section>
+
+            <form action="https://formspree.io/f/xlgzjnby" method="POST" class="contact-form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" autocomplete="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn">Send Transmission</button>
+            </form>
+        </section>
+    </main>
 
     <footer>
         <p>&copy; 2026 Aiman Hazim. Built with raw HTML/CSS.</p>
+        <div class="social-links">
+            <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">GitHub</a>
+            <a href="mailto:dev@aimanhazim.com" aria-label="Email Aiman Hazim">Email</a>
+        </div>
     </footer>
 </body>
 </html>
