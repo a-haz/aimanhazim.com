@@ -1,117 +1,234 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aiman Hazim | Robotics & AI Engineer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aiman Hazim · Robotics Engineering, Fukui University</title>
 
-    <!-- SEO -->
-    <meta name="description" content="Aiman Hazim — robotics engineering student specializing in autonomous systems, SLAM, and machine perception. Building thermal & 3D LiDAR human-tracking robots in C++ and Python.">
-    <meta name="author" content="Aiman Hazim">
-    <meta name="keywords" content="Aiman Hazim, robotics engineer, SLAM, autonomous systems, LiDAR, machine perception, ROS, computer vision, Vision Transformer">
-    <meta name="theme-color" content="#0f172a">
-    <link rel="canonical" href="https://aimanhazim.com/">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <!-- SEO -->
+  <meta name="description" content="Aiman Hazim — fourth-year robotics student at Fukui University's Intelligent Robot Research Lab. Building TIR-LiDAR active SLAM in NVIDIA Isaac Sim, on a simulation-first path toward real-hardware sim2real on a Mega Rover.">
+  <meta name="author" content="Aiman Hazim">
+  <meta name="keywords" content="Aiman Hazim, robotics, SLAM, Isaac Sim, LiDAR, thermal, TIR, sim2real, autonomous systems, Fukui University, Mega Rover">
+  <meta name="theme-color" content="#0b1120">
+  <link rel="canonical" href="https://aimanhazim.com/">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Aiman Hazim | Robotics & AI Engineer">
-    <meta property="og:description" content="Robotics engineering student specializing in autonomous systems, SLAM, and machine perception.">
-    <meta property="og:url" content="https://aimanhazim.com/">
-    <meta property="og:site_name" content="Aiman Hazim">
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Aiman Hazim · Robotics Engineering">
+  <meta property="og:description" content="Building TIR-LiDAR active SLAM in simulation, on a path to real hardware. Robotics student @ Fukui University.">
+  <meta property="og:url" content="https://aimanhazim.com/">
+  <meta property="og:site_name" content="Aiman Hazim">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Aiman Hazim · Robotics Engineering">
+  <meta name="twitter:description" content="Building TIR-LiDAR active SLAM in simulation, on a path to real hardware.">
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Aiman Hazim | Robotics & AI Engineer">
-    <meta name="twitter:description" content="Robotics engineering student specializing in autonomous systems, SLAM, and machine perception.">
+  <!-- Set theme before paint to avoid a flash -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ah-theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+    })();
+  </script>
 
-    <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-    <nav aria-label="Primary">
-        <div class="nav-content">
-            <a class="brand" href="#about">AH.</a>
-            <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
+  <!-- ============================ NAV ============================ -->
+  <nav class="site-nav" aria-label="Primary">
+    <div class="nav-content">
+      <a class="brand" href="#top">AH<b>.</b></a>
+      <div class="nav-spacer"></div>
+      <div id="primary-nav">
+        <ul id="nav-links"></ul>
+      </div>
+      <div class="nav-controls">
+        <div class="lang-switch" id="lang-switch"></div>
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="true">
+          <span class="theme-icon" aria-hidden="true">☀</span>
+        </button>
+        <button class="icon-btn" id="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"
+                aria-label="Menu" data-i18n-attr="aria-label:ui.menu">
+          <span aria-hidden="true">≡</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <!-- ============================ HERO ============================ -->
+    <header class="hero" id="top">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-text">
+            <span class="eyebrow hero-eyebrow" data-i18n="hero.eyebrow"></span>
+            <h1 id="hero-name" data-i18n="hero.name"></h1>
+            <span class="hero-roles" id="hero-roles" aria-hidden="true"></span>
+            <p class="hero-intro" data-i18n="hero.intro"></p>
+            <div class="hero-cta">
+              <a class="btn" href="#research" data-i18n="hero.ctaPrimary"></a>
+              <a class="btn btn-ghost" href="/progress.html" data-i18n="hero.ctaSecondary"></a>
+            </div>
+            <div class="hero-meta">
+              <span><span class="dot"></span><span data-i18n="hero.location"></span></span>
+              <span class="badge"><span class="pulse"></span><span data-i18n="hero.available"></span></span>
+            </div>
+          </div>
+
+          <aside class="hud" aria-label="Currently learning">
+            <div class="hud-bar">
+              <span class="tl-dot"></span><span class="tl-dot"></span><span class="tl-dot"></span>
+              <span class="hud-title" data-i18n="learning.heading"></span>
+            </div>
+            <div class="hud-body">
+              <p class="hud-caption" data-i18n="learning.caption"></p>
+              <div id="learning-items"></div>
+            </div>
+          </aside>
         </div>
-    </nav>
+      </div>
+    </header>
 
-    <main id="main">
-        <header id="about">
-            <div class="container">
-                <h1>Hi, I'm Aiman.</h1>
-                <p class="subtitle">Robotics Engineering Student | Specializing in Autonomous Systems & SLAM</p>
-                <p>I build autonomous tracking systems and research machine perception. Currently working out of the Intelligent Robot Research Laboratory, my focus is on bridging the gap between raw sensor data and reliable navigation. When I'm not writing C++ or Python, I'm usually out camping or shooting with my Fujifilm X-M5.</p>
-                <div class="tech-stack">
-                    <span>C / C++</span>
-                    <span>Python</span>
-                    <span>ROS</span>
-                    <span>Docker</span>
-                    <span>LiDAR</span>
-                    <span>ViT</span>
-                </div>
-            </div>
-        </header>
-
-        <section id="projects" class="container">
-            <h2>Engineering Logbook</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>Thermal & 3D LiDAR Human Tracking</h3>
-                    <p>Developed an autonomous human-following robot logic combining 3D LiDAR point clouds with thermal sensor data. Implemented in Python to ensure reliable tracking even in visually noisy environments.</p>
-                    <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer">View Code / Paper &rarr;</a>
-                </div>
-                <div class="card">
-                    <h3>Vision Transformer Integration</h3>
-                    <p>Explored the use of Vision Transformers (ViT) for advanced location recognition, testing model accuracy and deployment pipelines for autonomous driving stacks.</p>
-                    <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer">View Research &rarr;</a>
-                </div>
-                <div class="card">
-                    <h3>Hardware Logic & C Programming</h3>
-                    <p>Lower-level embedded systems work, manipulating hardware registers and designing control logic for 7-segment LED arrays to interface with broader robotic state machines.</p>
-                    <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer">View Specs &rarr;</a>
-                </div>
-            </div>
-        </section>
-
-        <section id="contact" class="container">
-            <h2>Let's Connect</h2>
-            <p>I am actively seeking technical roles in the autonomous driving sector for a March 2027 start. Feel free to reach out regarding SLAM, machine vision, or open roles.</p>
-
-            <div class="social-links">
-                <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">GitHub &rarr;</a>
-                <a href="mailto:dev@aimanhazim.com" aria-label="Email Aiman Hazim">Email &rarr;</a>
-            </div>
-
-            <form action="https://formspree.io/f/xlgzjnby" method="POST" class="contact-form">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" autocomplete="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" autocomplete="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="5" required></textarea>
-                </div>
-                <button type="submit" class="btn">Send Transmission</button>
-            </form>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2026 Aiman Hazim. Built with raw HTML/CSS.</p>
-        <div class="social-links">
-            <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">GitHub</a>
-            <a href="mailto:dev@aimanhazim.com" aria-label="Email Aiman Hazim">Email</a>
+    <!-- ============================ ABOUT ============================ -->
+    <section id="about">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="about.heading"></span>
+          <h2 data-i18n="about.lead"></h2>
         </div>
-    </footer>
+        <div class="about-grid">
+          <div class="about-prose" id="about-paragraphs"></div>
+          <dl class="facts reveal" id="about-facts"></dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ RESEARCH ============================ -->
+    <section id="research">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="research.kicker"></span>
+          <h2 data-i18n="research.heading"></h2>
+        </div>
+        <p class="research-summary" data-i18n="research.summary"></p>
+
+        <div class="callout">
+          <span class="callout-label" data-i18n="research.baseLabel"></span>
+          <p data-i18n="research.base"></p>
+        </div>
+
+        <p class="chip-label" data-i18n="research.sensorsLabel"></p>
+        <ul class="chips" id="research-sensors"></ul>
+
+        <p class="phases-head" data-i18n="research.phasesHeading"></p>
+        <div class="phases" id="research-phases"></div>
+
+        <div class="sim2real">
+          <span class="callout-label" data-i18n="research.sim2realLabel"></span>
+          <p data-i18n="research.sim2real"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ NOW ============================ -->
+    <section id="now">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="nav.now"></span>
+          <h2 data-i18n="now.heading"></h2>
+          <p class="lead" data-i18n="now.lead"></p>
+        </div>
+        <ul class="timeline" id="now-roadmap"></ul>
+      </div>
+    </section>
+
+    <!-- ============================ SKILLS ============================ -->
+    <section id="skills">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="skills.heading"></span>
+          <h2 data-i18n="skills.lead"></h2>
+        </div>
+        <div class="skill-groups" id="skills-groups"></div>
+      </div>
+    </section>
+
+    <!-- ============================ PROJECTS ============================ -->
+    <section id="projects">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="projects.heading"></span>
+          <h2 data-i18n="projects.lead"></h2>
+        </div>
+        <div class="cards" id="projects-grid"></div>
+      </div>
+    </section>
+
+    <!-- ============================ CONTACT ============================ -->
+    <section id="contact">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="nav.contact"></span>
+          <h2 data-i18n="contact.heading"></h2>
+          <p class="lead" data-i18n="contact.lead"></p>
+        </div>
+        <div class="contact-grid">
+          <div class="social-links" id="contact-links"></div>
+          <form class="contact-form" action="https://formspree.io/f/xlgzjnby" method="POST">
+            <h3 data-i18n="contact.formHeading"></h3>
+            <div class="form-group">
+              <label for="name" data-i18n="contact.form.name"></label>
+              <input type="text" id="name" name="name" autocomplete="name" required>
+            </div>
+            <div class="form-group">
+              <label for="email" data-i18n="contact.form.email"></label>
+              <input type="email" id="email" name="email" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+              <label for="message" data-i18n="contact.form.message"></label>
+              <textarea id="message" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn" data-i18n="contact.form.send"></button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>&copy; <span id="year">2026</span> Aiman Hazim · <span data-i18n="footer.tagline"></span></p>
+      <div class="footer-links">
+        <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="mailto:dev@aimanhazim.com">Email</a>
+        <a href="#top" data-i18n="footer.backToTop"></a>
+      </div>
+    </div>
+  </footer>
+
+  <noscript>
+    <div style="max-width:680px;margin:120px auto;padding:0 24px;text-align:center">
+      <h1>Aiman Hazim</h1>
+      <p>Fourth-year robotics student at Fukui University's Intelligent Robot Research Lab, building
+         TIR-LiDAR active SLAM in NVIDIA Isaac Sim toward real-hardware sim2real.</p>
+      <p><a href="https://github.com/a-haz">github.com/a-haz</a> · <a href="mailto:dev@aimanhazim.com">dev@aimanhazim.com</a></p>
+      <p><em>This site is interactive — please enable JavaScript for the full experience.</em></p>
+    </div>
+  </noscript>
+
+  <script src="/assets/js/content.js"></script>
+  <script src="/assets/js/progress.js"></script>
+  <script src="/assets/js/app.js"></script>
 </body>
 </html>
