@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build Log · Aiman Hazim</title>
+
+  <meta name="description" content="Aiman Hazim's build log — day-to-day and week-to-week progress on TIR-LiDAR active SLAM in Isaac Sim and the sim2real journey.">
+  <meta name="author" content="Aiman Hazim">
+  <meta name="theme-color" content="#0b1120">
+  <link rel="canonical" href="https://aimanhazim.com/progress.html">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Build Log · Aiman Hazim">
+  <meta property="og:description" content="Day-to-day progress on TIR-LiDAR active SLAM in simulation.">
+  <meta property="og:url" content="https://aimanhazim.com/progress.html">
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ah-theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="site-nav" aria-label="Primary">
+    <div class="nav-content">
+      <a class="brand" href="/">AH<b>.</b></a>
+      <div class="nav-spacer"></div>
+      <div id="primary-nav">
+        <ul id="nav-links"></ul>
+      </div>
+      <div class="nav-controls">
+        <div class="lang-switch" id="lang-switch"></div>
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="true">
+          <span class="theme-icon" aria-hidden="true">☀</span>
+        </button>
+        <button class="icon-btn" id="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"
+                aria-label="Menu" data-i18n-attr="aria-label:ui.menu">
+          <span aria-hidden="true">≡</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <header class="log-header">
+      <div class="container">
+        <a class="log-back" href="/" data-i18n="progressPage.home"></a>
+        <span class="eyebrow" data-i18n="progressPage.eyebrow" style="display:block;margin-top:18px"></span>
+        <h1 data-i18n="progressPage.title"></h1>
+        <p class="lead" data-i18n="progressPage.lead"></p>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="log-filters" id="log-filters" role="group" aria-label="Filter log entries"></div>
+      <div class="log-feed" id="log-feed"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>&copy; <span id="year">2026</span> Aiman Hazim · <span data-i18n="footer.tagline"></span></p>
+      <div class="footer-links">
+        <a href="https://github.com/a-haz" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="mailto:dev@aimanhazim.com">Email</a>
+        <a href="/" data-i18n="progressPage.home"></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/content.js"></script>
+  <script src="/assets/js/progress.js"></script>
+  <script src="/assets/js/app.js"></script>
+</body>
+</html>
