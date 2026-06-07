@@ -276,8 +276,7 @@ h1, h2, h3 { font-weight: 700; }
 .hud-label { font-weight: 600; font-size: 0.95rem; }
 .hud-detail { font-size: 0.82rem; color: var(--text-mute); }
 
-/* loading spinner — the "in progress" mark (replaces the traffic-light dots
-   and the percentage bars). Colour follows --accent, so it recolours too. */
+/* loading spinner — the "in progress" mark. Colour follows --accent, so it recolours too. */
 .spinner {
   flex: none; width: 14px; height: 14px; border-radius: 50%;
   border: 2px solid color-mix(in srgb, var(--accent) 22%, transparent);
