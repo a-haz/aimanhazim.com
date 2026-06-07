@@ -183,7 +183,7 @@
     if (!wrap) return;
     clear(wrap);
     (c.learning.items || []).forEach(function (it) {
-      // A spinner marks each item as actively "in progress" — no fake percentages.
+      // A spinner marks each item as actively "in progress".
       wrap.appendChild(el("div", { class: "hud-row" }, [
         el("span", { class: "spinner", "aria-hidden": "true" }),
         el("div", { class: "hud-line" }, [
