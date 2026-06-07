@@ -185,7 +185,7 @@ window.SITE_CONTENT = {
     },
 
     footer: {
-      tagline: "Built by hand with HTML, CSS & a little JavaScript.",
+      tagline: "",
       backToTop: "Back to top ↑",
     },
 
