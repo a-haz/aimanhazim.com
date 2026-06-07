@@ -149,10 +149,14 @@ h1, h2, h3 { font-weight: 700; }
   display: flex; align-items: center; gap: 18px;
 }
 .brand {
-  font-family: var(--mono); font-weight: 700; font-size: 1.25rem;
-  color: var(--text); letter-spacing: -0.02em;
+  display: inline-flex; align-items: center;
+  color: var(--text); transition: transform 0.25s ease;
 }
-.brand b { color: var(--accent); }
+.brand:hover { transform: translateY(-1px); }
+.brand-mark { height: 30px; width: auto; display: block; }
+.brand-mark .rm-accent { fill: var(--accent); }
+.brand-mark .rm-glow   { fill: var(--accent); opacity: 0.22; }
+.brand-mark .rm-mouth  { fill: var(--accent); opacity: 0.55; }
 .nav-spacer { flex: 1; }
 
 #primary-nav ul { list-style: none; display: flex; gap: 26px; }
