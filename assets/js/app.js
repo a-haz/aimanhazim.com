@@ -126,6 +126,12 @@
       items.forEach(function (it) {
         ul.appendChild(el("li", null, [el("a", { href: it[0], class: "nav-link" }, [it[1]])]));
       });
+      // On sub-pages (no in-page sections) scroll-spy has nothing to track,
+      // so highlight the Log link directly to keep the active state consistent.
+      if (base === "/") {
+        var logLink = qs('#nav-links a[href="/progress.html"]');
+        if (logLink) logLink.classList.add("is-current");
+      }
     }
     // language segmented control
     var ls = qs("#lang-switch");
@@ -177,48 +183,15 @@
     if (!wrap) return;
     clear(wrap);
     (c.learning.items || []).forEach(function (it) {
-      var pct = Math.max(0, Math.min(100, it.percent || 0));
-      var fill = el("span", { class: "bar-fill" });
-      var row = el("div", { class: "hud-row" }, [
+      // A spinner marks each item as actively "in progress" — no fake percentages.
+      wrap.appendChild(el("div", { class: "hud-row" }, [
+        el("span", { class: "spinner", "aria-hidden": "true" }),
         el("div", { class: "hud-line" }, [
           el("span", { class: "hud-label" }, [it.label]),
-          el("span", { class: "hud-pct", "data-target": pct }, ["0%"]),
+          it.detail ? el("span", { class: "hud-detail" }, [it.detail]) : null,
         ]),
-        el("div", { class: "bar", role: "progressbar", "aria-valuenow": pct,
-                    "aria-valuemin": 0, "aria-valuemax": 100,
-                    "aria-label": it.label }, [fill]),
-        el("div", { class: "hud-detail" }, [it.detail || ""]),
-      ]);
-      row._fill = fill; row._pct = pct; row._num = qs(".hud-pct", row);
-      wrap.appendChild(row);
+      ]));
     });
-    animateHud(wrap);
-  }
-  function animateHud(wrap) {
-    var rows = qsa(".hud-row", wrap);
-    function run(row) {
-      if (reduceMotion()) {
-        row._fill.style.width = row._pct + "%";
-        row._num.textContent = row._pct + "%";
-        return;
-      }
-      requestAnimationFrame(function () { row._fill.style.width = row._pct + "%"; });
-      var start = null, dur = 900;
-      function step(ts) {
-        if (start == null) start = ts;
-        var p = Math.min(1, (ts - start) / dur);
-        row._num.textContent = Math.round(p * row._pct) + "%";
-        if (p < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }
-    if (!("IntersectionObserver" in window)) { rows.forEach(run); return; }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { run(e.target); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.4 });
-    rows.forEach(function (r) { io.observe(r); });
   }
 
   /* ---- about ----------------------------------------------------------- */
@@ -323,6 +296,45 @@
         el("span", { class: "social-label" }, [lnk.label]),
         el("span", { class: "social-value" }, [lnk.value]),
       ]));
+    });
+  }
+
+  /* ---- social icons + footer ------------------------------------------- */
+  // Icon glyphs are matched to a link by its URL, so adding a social later is
+  // just one more entry in contact.links — the right icon is picked up here.
+  var ICONS = {
+    github: '<path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.56 0-.27-.01-1.16-.02-2.1-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.25 1.84 1.25 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.31-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.12-.31-.54-1.54.12-3.2 0 0 1.01-.33 3.3 1.23a11.4 11.4 0 0 1 6 0c2.29-1.56 3.3-1.23 3.3-1.23.66 1.66.24 2.89.12 3.2.77.84 1.24 1.91 1.24 3.23 0 4.63-2.81 5.65-5.49 5.95.43.38.81 1.12.81 2.26 0 1.63-.01 2.95-.01 3.35 0 .31.21.68.83.56C20.56 21.88 24 17.49 24 12.29 24 5.78 18.63.5 12 .5z"/>',
+    email: '<path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2.7.5L12 11.2 19.3 6H4.7ZM20 7.4l-7.4 5.27a1 1 0 0 1-1.16 0L4 7.4V18h16V7.4Z"/>',
+    linkedin: '<path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm6 0h3.8v1.64h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.4c0-1.29-.03-2.95-1.8-2.95-1.8 0-2.07 1.4-2.07 2.85V21H9V9Z"/>',
+    x: '<path d="M17.53 3H20.5l-6.49 7.41L21.75 21h-6.02l-4.71-6.16L5.62 21H2.65l6.94-7.93L2.25 3h6.17l4.26 5.63L17.53 3Zm-1.06 16.2h1.65L7.6 4.71H5.83L16.47 19.2Z"/>',
+    instagram: '<path d="M12 2c2.72 0 3.06.01 4.12.06 1.07.05 1.8.22 2.43.47.66.25 1.22.6 1.77 1.15.55.55.9 1.11 1.15 1.77.25.63.42 1.36.47 2.43.05 1.06.06 1.4.06 4.12s-.01 3.06-.06 4.12c-.05 1.07-.22 1.8-.47 2.43a4.9 4.9 0 0 1-2.92 2.92c-.63.25-1.36.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.07-.05-1.8-.22-2.43-.47a4.9 4.9 0 0 1-2.92-2.92c-.25-.63-.42-1.36-.47-2.43C2.01 15.06 2 14.72 2 12s.01-3.06.06-4.12c.05-1.07.22-1.8.47-2.43A4.9 4.9 0 0 1 5.45 2.53c.63-.25 1.36-.42 2.43-.47C8.94 2.01 9.28 2 12 2Zm0 1.8c-2.67 0-2.99.01-4.04.06-.98.04-1.5.21-1.86.35-.47.18-.8.4-1.15.75-.35.35-.57.68-.75 1.15-.14.36-.31.88-.35 1.86-.05 1.05-.06 1.37-.06 4.04s.01 2.99.06 4.04c.04.98.21 1.5.35 1.86.18.47.4.8.75 1.15.35.35.68.57 1.15.75.36.14.88.31 1.86.35 1.05.05 1.37.06 4.04.06s2.99-.01 4.04-.06c.98-.04 1.5-.21 1.86-.35.47-.18.8-.4 1.15-.75.35-.35.57-.68.75-1.15.14-.36.31-.88.35-1.86.05-1.05.06-1.37.06-4.04s-.01-2.99-.06-4.04c-.04-.98-.21-1.5-.35-1.86a3.1 3.1 0 0 0-.75-1.15 3.1 3.1 0 0 0-1.15-.75c-.36-.14-.88-.31-1.86-.35-1.05-.05-1.37-.06-4.04-.06Zm0 3.06a5.14 5.14 0 1 1 0 10.28 5.14 5.14 0 0 1 0-10.28Zm0 1.8a3.34 3.34 0 1 0 0 6.68 3.34 3.34 0 0 0 0-6.68Zm5.34-3.23a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/>',
+    link: '<path d="M10.6 13.4a1 1 0 0 0 1.42 0l3.54-3.54a3 3 0 1 0-4.24-4.24l-1.3 1.3a1 1 0 0 0 1.42 1.42l1.3-1.3a1 1 0 1 1 1.4 1.4L10.6 12a1 1 0 0 0 0 1.4Zm2.8-2.8a1 1 0 0 0-1.42 0L8.44 14.14a3 3 0 1 0 4.24 4.24l1.3-1.3a1 1 0 0 0-1.42-1.42l-1.3 1.3a1 1 0 1 1-1.4-1.4L13.4 12a1 1 0 0 0 0-1.4Z"/>',
+  };
+  function iconSVG(name) {
+    return '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">'
+      + (ICONS[name] || ICONS.link) + "</svg>";
+  }
+  function iconForHref(href) {
+    var h = (href || "").toLowerCase();
+    if (h.indexOf("mailto:") === 0) return "email";
+    if (h.indexOf("github.com") >= 0) return "github";
+    if (h.indexOf("linkedin.com") >= 0) return "linkedin";
+    if (h.indexOf("twitter.com") >= 0 || h.indexOf("//x.com") >= 0 || h.indexOf(".x.com") >= 0) return "x";
+    if (h.indexOf("instagram.com") >= 0) return "instagram";
+    return "link";
+  }
+  function renderFooter(c) {
+    var fs = qs("#footer-socials");
+    if (!fs) return;
+    clear(fs);
+    (c.contact.links || []).forEach(function (lnk) {
+      var ext = lnk.href.indexOf("http") === 0;
+      fs.appendChild(el("a", {
+        class: "foot-social", href: lnk.href,
+        "aria-label": lnk.label, title: lnk.label,
+        target: ext ? "_blank" : null, rel: ext ? "noopener noreferrer" : null,
+        html: iconSVG(iconForHref(lnk.href)),
+      }));
     });
   }
 
@@ -453,6 +465,7 @@
     renderSkills(c);
     renderProjects(c);
     renderContact(c);
+    renderFooter(c);
     renderProgress(c);
     applyTheme(document.documentElement.getAttribute("data-theme") || initialTheme());
     observeReveals();

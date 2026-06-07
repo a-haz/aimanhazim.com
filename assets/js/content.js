@@ -51,10 +51,10 @@ window.SITE_CONTENT = {
       heading: "now_learning",
       caption: "what I'm leveling up this season",
       items: [
-        { label: "NVIDIA Isaac Sim", detail: "large-scale dynamic worlds", percent: 62 },
-        { label: "C++",              detail: "from Python to real-time perception", percent: 45 },
-        { label: "Active SLAM",      detail: "TIR + LiDAR, frontier exploration", percent: 55 },
-        { label: "Human-behavior AI", detail: "crowd agents that walk like people", percent: 40 },
+        { label: "NVIDIA Isaac Sim", detail: "large-scale dynamic worlds" },
+        { label: "C++",              detail: "from Python to real-time perception" },
+        { label: "Active SLAM",      detail: "TIR + LiDAR, frontier exploration" },
+        { label: "Human-behavior AI", detail: "crowd agents that walk like people" },
       ],
     },
 
@@ -170,7 +170,10 @@ window.SITE_CONTENT = {
       lead: "I'm aiming for autonomous-driving and mobile-robotics roles from 2027. Reach out about SLAM, simulation, machine perception — or just to talk robots.",
       links: [
         { label: "GitHub", value: "github.com/a-haz", href: "https://github.com/a-haz" },
-        { label: "Email",  value: "dev@aimanhazim.com", href: "mailto:dev@aimanhazim.com" },
+        { label: "LinkedIn",  value: "linkedin.com/in/a-haz", href: "https://www.linkedin.com/in/a-haz" },
+        { label: "X",         value: "@manjym_", href: "https://x.com/manjym_" },
+        { label: "Instagram", value: "@manjym_", href: "https://instagram.com/manjym_" },
+        { label: "Email",     value: "contact@aimanhazim.com", href: "mailto:contact@aimanhazim.com" },
       ],
       formHeading: "Send a message",
       form: {
@@ -209,7 +212,7 @@ window.SITE_CONTENT = {
    *  日本語  (JAPANESE)
    * ===================================================================*/
   ja: {
-    langName: "日本語",
+    langName: "JA",
     dir: "ltr",
 
     nav: {
@@ -240,10 +243,10 @@ window.SITE_CONTENT = {
       heading: "now_learning",
       caption: "いま重点的に学んでいること",
       items: [
-        { label: "NVIDIA Isaac Sim", detail: "大規模・動的環境の構築", percent: 62 },
-        { label: "C++",              detail: "Pythonからリアルタイム認識へ", percent: 45 },
-        { label: "アクティブSLAM",    detail: "TIR + LiDAR・フロンティア探索", percent: 55 },
-        { label: "人間行動AI",        detail: "人らしく歩く群衆エージェント", percent: 40 },
+        { label: "NVIDIA Isaac Sim", detail: "大規模・動的環境の構築" },
+        { label: "C++",              detail: "Pythonからリアルタイム認識へ" },
+        { label: "アクティブSLAM",    detail: "TIR + LiDAR・フロンティア探索" },
+        { label: "人間行動AI",        detail: "人らしく歩く群衆エージェント" },
       ],
     },
 
@@ -359,7 +362,10 @@ window.SITE_CONTENT = {
       lead: "2027年からの自動運転・移動ロボット分野での就業を目指しています。SLAM・シミュレーション・機械認識、あるいはロボットの話、お気軽にどうぞ。",
       links: [
         { label: "GitHub", value: "github.com/a-haz", href: "https://github.com/a-haz" },
-        { label: "メール", value: "dev@aimanhazim.com", href: "mailto:dev@aimanhazim.com" },
+        { label: "LinkedIn",  value: "linkedin.com/in/a-haz", href: "https://www.linkedin.com/in/a-haz" },
+        { label: "X",         value: "@manjym_", href: "https://x.com/manjym_" },
+        { label: "Instagram", value: "@manjym_", href: "https://instagram.com/manjym_" },
+        { label: "メール",    value: "contact@aimanhazim.com", href: "mailto:contact@aimanhazim.com" },
       ],
       formHeading: "メッセージを送る",
       form: {
@@ -397,7 +403,7 @@ window.SITE_CONTENT = {
    *  MELAYU  (MALAY)
    * ===================================================================*/
   ms: {
-    langName: "Melayu",
+    langName: "MS",
     dir: "ltr",
 
     nav: {
@@ -428,10 +434,10 @@ window.SITE_CONTENT = {
       heading: "now_learning",
       caption: "yang sedang saya tingkatkan musim ini",
       items: [
-        { label: "NVIDIA Isaac Sim", detail: "dunia dinamik berskala besar", percent: 62 },
-        { label: "C++",              detail: "dari Python ke persepsi masa nyata", percent: 45 },
-        { label: "SLAM Aktif",       detail: "TIR + LiDAR, penerokaan frontier", percent: 55 },
-        { label: "AI tingkah laku manusia", detail: "ejen orang ramai yang berjalan realistik", percent: 40 },
+        { label: "NVIDIA Isaac Sim", detail: "dunia dinamik berskala besar" },
+        { label: "C++",              detail: "dari Python ke persepsi masa nyata" },
+        { label: "SLAM Aktif",       detail: "TIR + LiDAR, penerokaan frontier" },
+        { label: "AI tingkah laku manusia", detail: "ejen orang ramai yang berjalan realistik" },
       ],
     },
 
@@ -547,7 +553,10 @@ window.SITE_CONTENT = {
       lead: "Saya menyasarkan peranan pandu autonomi dan robot mudah alih mulai 2027. Hubungi saya tentang SLAM, simulasi, persepsi mesin — atau sekadar berbual tentang robot.",
       links: [
         { label: "GitHub", value: "github.com/a-haz", href: "https://github.com/a-haz" },
-        { label: "E-mel",  value: "dev@aimanhazim.com", href: "mailto:dev@aimanhazim.com" },
+        { label: "LinkedIn",  value: "linkedin.com/in/a-haz", href: "https://www.linkedin.com/in/a-haz" },
+        { label: "X",         value: "@manjym_", href: "https://x.com/manjym_" },
+        { label: "Instagram", value: "@manjym_", href: "https://instagram.com/manjym_" },
+        { label: "E-mel",     value: "contact@aimanhazim.com", href: "mailto:contact@aimanhazim.com" },
       ],
       formHeading: "Hantar mesej",
       form: {
