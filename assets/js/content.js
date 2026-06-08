@@ -60,11 +60,11 @@ window.SITE_CONTENT = {
 
     about: {
       heading: "About",
-      lead: "Malaysian government-sponsored student, building a career in autonomous robotics — one fundamental at a time.",
+      lead: "Building autonomous robots that sense and find their own way through the world — one fundamental at a time.",
       paragraphs: [
-        "I came to Japan from Malaysia on a government scholarship and built my studies and my life here from zero. That taught me to step into unfamiliar places without fear and make connections of my own.",
-        "I'm in my fourth year (B4) at Fukui University, in the Intelligent Robot Research Laboratory. My work lives where robotics meets AI — control theory, machine perception, and the math beneath it: linear algebra, probability, statistics.",
-        "I learned the hard way, through self-taught piano, that the higher the goal the more the boring fundamentals matter. I bring that same patience to research: solidify the theory first, then build.",
+        "What pulls me into robotics is simple: I want to build machines that can sense the world, make sense of it, and move through it on their own. Autonomous navigation — giving a robot the perception and judgment to find its own path — is the problem I find most worth chasing.",
+        "I'm in my fourth year (B4) at Fukui University, in the Intelligent Robot Research Laboratory, working where robotics meets AI — control theory, machine perception, and the math beneath it: linear algebra, probability, and statistics. Right now that means fusing thermal vision with 3D LiDAR, entirely in simulation, on a deliberate path toward real hardware.",
+        "I came to Japan and built my studies and my life here from zero, which taught me to step into unfamiliar places without fear. I bring that same patience to research: the higher the goal, the more the unglamorous fundamentals matter — so I solidify the theory first, then build.",
       ],
       facts: [
         { label: "University", value: "Fukui University — Robotics Course" },
@@ -252,11 +252,11 @@ window.SITE_CONTENT = {
 
     about: {
       heading: "自己紹介",
-      lead: "マレーシア国費留学生として、自律ロボティクスのキャリアを基礎から一歩ずつ築いています。",
+      lead: "自ら世界を感知し、進む道を見つける自律ロボットをつくる — 基礎を一歩ずつ。",
       paragraphs: [
-        "マレーシアから国費留学生として来日し、学業も生活もゼロから築いてきました。その経験から、未知の環境にも恐れず飛び込み、自ら人とのつながりを作る力を身につけました。",
-        "現在は福井大学の学部4年（B4）として、知能ロボット研究室に所属しています。研究はロボティクスとAIの融合領域 — 制御理論、機械認識、そしてその土台となる線形代数・確率・統計です。",
-        "独学のピアノで、高い目標ほど地道な基礎が大切だと痛感しました。研究でも同じ姿勢で、まず理論を固めてから作ります。",
+        "ロボティクスに惹かれる理由はシンプルです。世界を感じ取り、理解し、自ら動ける機械をつくりたい。ロボットに知覚と判断を与え、自分で進む道を見つけさせる「自律ナビゲーション」こそ、私が最も追い求める価値のある問題だと思っています。",
+        "現在は福井大学の学部4年（B4）として知能ロボット研究室に所属し、ロボティクスとAIの融合領域 — 制御理論、機械認識、そしてその土台となる線形代数・確率・統計 — に取り組んでいます。いまは熱画像と3次元LiDARを融合させ、すべてシミュレーション上で、実機への道を見据えて進めています。",
+        "来日し、学業も生活もゼロから築いてきました。その経験が、未知の環境にも恐れず飛び込む姿勢を育ててくれました。研究でも同じ忍耐を大切にしています。目標が高いほど地道な基礎が効いてくる — だからまず理論を固めてから作ります。",
       ],
       facts: [
         { label: "大学",   value: "福井大学 — ロボティクスコース" },
@@ -443,11 +443,11 @@ window.SITE_CONTENT = {
 
     about: {
       heading: "Tentang",
-      lead: "Pelajar tajaan kerajaan Malaysia, membina kerjaya dalam robotik autonomi — satu asas pada satu masa.",
+      lead: "Membina robot autonomi yang mengesan dan mencari jalannya sendiri di dunia — satu asas pada satu masa.",
       paragraphs: [
-        "Saya datang ke Jepun dari Malaysia dengan biasiswa kerajaan dan membina pengajian serta kehidupan saya di sini dari sifar. Ia mengajar saya melangkah ke tempat asing tanpa rasa takut dan membina hubungan sendiri.",
-        "Saya kini di tahun empat (B4) di Universiti Fukui, dalam Makmal Penyelidikan Robot Pintar. Kerja saya di pertemuan robotik dan AI — teori kawalan, persepsi mesin, dan matematik di sebaliknya: algebra linear, kebarangkalian, statistik.",
-        "Melalui belajar piano sendiri, saya faham bahawa semakin tinggi matlamat, semakin penting asas yang membosankan itu. Saya bawa kesabaran yang sama ke penyelidikan: kukuhkan teori dahulu, kemudian bina.",
+        "Apa yang menarik saya kepada robotik mudah sahaja: saya mahu membina mesin yang boleh mengesan dunia, memahaminya, dan bergerak sendiri. Navigasi autonomi — memberi robot persepsi dan pertimbangan untuk mencari jalannya sendiri — ialah masalah yang paling berbaloi saya kejar.",
+        "Saya kini di tahun empat (B4) di Universiti Fukui, dalam Makmal Penyelidikan Robot Pintar, bekerja di pertemuan robotik dan AI — teori kawalan, persepsi mesin, dan matematik di sebaliknya: algebra linear, kebarangkalian, dan statistik. Buat masa ini saya menggabungkan penglihatan terma dengan LiDAR 3D, sepenuhnya dalam simulasi, menuju perkakasan sebenar.",
+        "Saya datang ke Jepun dan membina pengajian serta kehidupan saya di sini dari sifar, yang mengajar saya melangkah ke tempat asing tanpa rasa takut. Saya bawa kesabaran yang sama ke penyelidikan: semakin tinggi matlamat, semakin penting asas yang membosankan itu — jadi saya kukuhkan teori dahulu, kemudian bina.",
       ],
       facts: [
         { label: "Universiti", value: "Universiti Fukui — Kursus Robotik" },
