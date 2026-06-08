@@ -1,5 +1,5 @@
 /* ============================================================================
- *  app.js  —  the engine. You normally don't need to edit this file.
+ *  app.js  —  the engine.
  *  It reads content.js + progress.js and renders the page, and handles the
  *  language switch, dark/light theme, animations, and the log feed.
  * ==========================================================================*/
