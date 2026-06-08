@@ -1,0 +1,54 @@
+name: Update sitemap
+
+# Regenerates sitemap.xml from all committed .html pages, setting each
+# <lastmod> to the date of the last commit that touched that file.
+# Add new pages and they appear here automatically — no edits needed.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.html"
+
+permissions:
+  contents: write
+
+jobs:
+  sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so per-file commit dates are available
+
+      - name: Regenerate sitemap.xml
+        env:
+          BASE: https://aimanhazim.com
+        run: |
+          {
+            echo '<?xml version="1.0" encoding="UTF-8"?>'
+            echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+            # All tracked .html files except error pages (e.g. 404.html).
+            git ls-files '*.html' | grep -vE '(^|/)404\.html$' | sort | while read -r f; do
+              lastmod=$(git log -1 --format=%cs -- "$f")
+              case "$f" in
+                index.html)   loc="$BASE/" ;;            # site root
+                */index.html) loc="$BASE/${f%index.html}" ;; # dir/index.html -> /dir/
+                *)            loc="$BASE/$f" ;;
+              esac
+              if [ "$loc" = "$BASE/" ]; then prio="1.0"; else prio="0.8"; fi
+              printf '  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n    <priority>%s</priority>\n  </url>\n' "$loc" "$lastmod" "$prio"
+            done
+            echo '</urlset>'
+          } > sitemap.xml
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet sitemap.xml; then
+            echo "sitemap.xml already up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sitemap.xml
+          git commit -m "Update sitemap [skip ci]"
+          git push
