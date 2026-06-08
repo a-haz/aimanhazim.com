@@ -1,20 +1,16 @@
 # aimanhazim.com
 
-Personal portfolio for **Aiman Hazim** — robotics engineering student at Fukui
-University, building TIR-LiDAR active SLAM in simulation toward real-hardware sim2real.
+My personal website.
 
 🔗 Live: <https://aimanhazim.com>
 
-Trilingual (English / 日本語 / Melayu), dark + light mode, and a **Build Log** for
-day-to-day progress. Plain HTML/CSS/JS — no build step, no frameworks.
-
 ---
 
-## ✍️ Editing the site (the important part)
+## Editing the site
 
-You almost never touch the HTML. **All the words live in two files:**
+ **All the words live in two files:**
 
-| I want to… | Edit this file |
+| Action | Edit this file |
 | --- | --- |
 | Change any text on the main page (in any language) | `assets/js/content.js` |
 | Add / edit a Build Log entry | `assets/js/progress.js` |
@@ -23,7 +19,7 @@ You almost never touch the HTML. **All the words live in two files:**
 ### Change wording
 
 Open `assets/js/content.js`. It's organised as three blocks — `en`, `ja`, `ms`.
-Find the line, change the text **inside the quotes**, save. That's it.
+Find the line, change the text **inside the quotes**, save.
 
 ```js
 hero: {
@@ -32,7 +28,7 @@ hero: {
 }
 ```
 
-> ⚠️ Keep the commas, quotes and brackets exactly as they are — only change the
+> Keep the commas, quotes and brackets exactly as they are — only change the
 > text inside the `"quotes"`. If the page ever goes blank, you probably removed a
 > comma by accident; undo and it's back.
 
@@ -62,11 +58,11 @@ one language — the others fall back to it automatically.
 
 ---
 
-## 🗂 Structure
+## Structure
 
 | File / folder | Purpose |
 | --- | --- |
-| `index.html` | Main page structure (you rarely edit this) |
+| `index.html` | Main page structure |
 | `progress.html` | Build Log page structure |
 | `assets/js/content.js` | **★ all site text, 3 languages** |
 | `assets/js/progress.js` | **★ Build Log entries** |
@@ -77,7 +73,7 @@ one language — the others fall back to it automatically.
 
 ---
 
-## 🔍 Local preview
+## Local preview
 
 ```bash
 python3 -m http.server 8000
@@ -87,7 +83,7 @@ python3 -m http.server 8000
 (Use the server rather than opening the file directly — the pages load their content
 through `/assets/...` paths.)
 
-## 🚀 Deployment
+## Deployment
 
 Served by **GitHub Pages**. Every push to `main` publishes automatically to
 <https://aimanhazim.com>.
