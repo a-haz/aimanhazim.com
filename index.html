@@ -13,6 +13,34 @@
   <link rel="canonical" href="https://aimanhazim.com/">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
+  <!-- Structured data: tells Google the site name to show above the result -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://aimanhazim.com/#website",
+        "url": "https://aimanhazim.com/",
+        "name": "Aiman Hazim",
+        "publisher": { "@id": "https://aimanhazim.com/#person" }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://aimanhazim.com/#person",
+        "name": "Aiman Hazim",
+        "url": "https://aimanhazim.com/",
+        "jobTitle": "Robotics engineering student",
+        "affiliation": {
+          "@type": "CollegeOrUniversity",
+          "name": "Fukui University"
+        },
+        "sameAs": ["https://github.com/a-haz"]
+      }
+    ]
+  }
+  </script>
+
   <!-- Open Graph / Twitter -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Aiman Hazim · Robotics Engineering">
