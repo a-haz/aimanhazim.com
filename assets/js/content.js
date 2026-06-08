@@ -81,7 +81,7 @@ window.SITE_CONTENT = {
         "I'm building a large-scale simulation environment populated with human-behavior AI, and using it to develop active multimodal SLAM: navigation that fuses a thermal (TIR) camera with 3D LiDAR and stays robust in the dark, in crowds, and behind occlusions.",
       baseLabel: "Building on",
       base:
-        "ho3-slam / Walk2Map++ — extending it from passive RGB vision to active perception, where the robot chooses where to look.",
+        "HO3-SLAM / Walk2Map++ — extending it from passive RGB vision to active perception, where the robot chooses where to look.",
       sensorsLabel: "Stack",
       sensors: [
         "Thermal / far-infrared (TIR) camera",
@@ -273,7 +273,7 @@ window.SITE_CONTENT = {
         "人間行動AIを含む大規模シミュレーション環境を構築し、それを用いてアクティブなマルチモーダルSLAMを開発しています。熱画像（TIR）カメラと3D LiDARを融合し、暗所・混雑・遮蔽下でも破綻しない自律走行を目指します。",
       baseLabel: "ベース研究",
       base:
-        "ho3-slam / Walk2Map++ — 受動的なRGB視覚から、ロボット自身が観測地点を選ぶ「能動的知覚」へ発展させます。",
+        "HO3-SLAM / Walk2Map++ — 受動的なRGB視覚から、ロボット自身が観測地点を選ぶ「能動的知覚」へ発展させます。",
       sensorsLabel: "構成",
       sensors: [
         "熱画像・遠赤外線（TIR）カメラ",
@@ -464,7 +464,7 @@ window.SITE_CONTENT = {
         "Saya membina persekitaran simulasi berskala besar yang dihuni AI tingkah laku manusia, dan menggunakannya untuk membangunkan SLAM multimodal aktif: navigasi yang menggabungkan kamera terma (TIR) dengan LiDAR 3D dan kekal teguh dalam gelap, dalam orang ramai, dan di sebalik halangan.",
       baseLabel: "Berasaskan",
       base:
-        "ho3-slam / Walk2Map++ — memanjangkannya daripada penglihatan RGB pasif kepada persepsi aktif, di mana robot memilih ke mana hendak melihat.",
+        "HO3-SLAM / Walk2Map++ — memanjangkannya daripada penglihatan RGB pasif kepada persepsi aktif, di mana robot memilih ke mana hendak melihat.",
       sensorsLabel: "Susunan",
       sensors: [
         "Kamera terma / inframerah jauh (TIR)",
