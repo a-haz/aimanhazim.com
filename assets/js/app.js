@@ -273,11 +273,14 @@
       var tags = el("ul", { class: "card-tags" });
       (p.tags || []).forEach(function (t) { tags.appendChild(el("li", null, [t])); });
       var kids = [el("h3", null, [p.title]), el("p", null, [p.desc]), tags];
-      if (p.link) {
-        kids.push(el("a", { class: "card-link", href: p.link,
+      // Support either a single link (p.link/p.linkLabel) or a list (p.links).
+      var links = p.links || (p.link ? [{ href: p.link, label: p.linkLabel }] : []);
+      links.forEach(function (lnk) {
+        if (!lnk || !lnk.href) return;
+        kids.push(el("a", { class: "card-link", href: lnk.href,
           target: "_blank", rel: "noopener noreferrer" },
-          [(p.linkLabel || "View") + " →"]));
-      }
+          [(lnk.label || "View") + " →"]));
+      });
       grid.appendChild(el("article", { class: "card reveal" }, kids));
     });
   }
