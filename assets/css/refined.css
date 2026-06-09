@@ -155,8 +155,18 @@ body::before {                         /* keep the corner glows, a touch warmer 
     linear-gradient(var(--accent-2), var(--accent-2)) 100% 100% / 1.5px 11px no-repeat;
 }
 
-/* ---- footer dropped on this theme --------------------------------------- */
-.site-footer { display: none; }
+/* ---- robot-rover blueprint, faint in the bottom-left background --------- */
+.robot-blueprint {
+  position: fixed; left: -16px; bottom: -8px; z-index: -1; pointer-events: none;
+  width: min(40vw, 440px); aspect-ratio: 420 / 340; opacity: .2;
+  background: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
+  animation: blueprint-plot 1.5s ease-out .35s 1 both;
+}
+@keyframes blueprint-plot {
+  from { clip-path: inset(0 100% 0 0); opacity: 0; }
+  to   { clip-path: inset(0 0 0 0);   opacity: .2; }
+}
+@media (max-width: 760px) { .robot-blueprint { width: 60vw; opacity: .12; } }
 
 /* ---- bring the small loops onto the shared ~2s beat --------------------- */
 /* radar 8s · route-blip 8s · antenna 4s · hud-scan 4s · blink 6s ·          */
@@ -195,6 +205,7 @@ body::before {                         /* keep the corner glows, a touch warmer 
 /* ---- reduced motion ------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   .boot-scan { display: none; }
+  .robot-blueprint,
   .lidar-bg::before, .hud::before, .timeline::after,
   .milestone.active .milestone-dot::after,
   .brand-mark .rm-glow,
