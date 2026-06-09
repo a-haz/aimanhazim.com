@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 340" fill="none"
+     stroke="#00eaff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- ground line -->
+  <line x1="12" y1="270" x2="408" y2="270" stroke-dasharray="6 7" opacity="0.55"/>
+
+  <!-- wheel clearance circles (construction) -->
+  <circle cx="132" cy="224" r="52" stroke-dasharray="4 8" opacity="0.4"/>
+  <circle cx="300" cy="224" r="52" stroke-dasharray="4 8" opacity="0.4"/>
+
+  <!-- wheels + hubs + cross spokes -->
+  <circle cx="132" cy="224" r="44"/>
+  <circle cx="300" cy="224" r="44"/>
+  <circle cx="132" cy="224" r="13"/>
+  <circle cx="300" cy="224" r="13"/>
+  <line x1="88"  y1="224" x2="176" y2="224"/>
+  <line x1="132" y1="180" x2="132" y2="268"/>
+  <line x1="256" y1="224" x2="344" y2="224"/>
+  <line x1="300" y1="180" x2="300" y2="268"/>
+
+  <!-- chassis -->
+  <rect x="90" y="150" width="252" height="58" rx="12"/>
+  <!-- suspension struts + dashed axle -->
+  <line x1="132" y1="208" x2="132" y2="224"/>
+  <line x1="300" y1="208" x2="300" y2="224"/>
+  <line x1="132" y1="224" x2="300" y2="224" stroke-dasharray="5 6" opacity="0.5"/>
+
+  <!-- sensor mast + LiDAR dome -->
+  <line x1="216" y1="150" x2="216" y2="96"/>
+  <rect x="200" y="88" width="32" height="10" rx="2"/>
+  <circle cx="216" cy="74" r="16"/>
+  <circle cx="216" cy="74" r="6"/>
+
+  <!-- LiDAR scan rays + arc -->
+  <line x1="216" y1="74" x2="278" y2="50" stroke-dasharray="3 7" opacity="0.55"/>
+  <line x1="216" y1="74" x2="286" y2="74" stroke-dasharray="3 7" opacity="0.55"/>
+  <line x1="216" y1="74" x2="278" y2="98" stroke-dasharray="3 7" opacity="0.45"/>
+  <path d="M 276 46 A 66 66 0 0 1 276 102" stroke-dasharray="3 7" opacity="0.4"/>
+
+  <!-- forward camera -->
+  <rect x="342" y="158" width="24" height="16" rx="2"/>
+  <circle cx="362" cy="166" r="4"/>
+
+  <!-- wheelbase dimension line -->
+  <line x1="132" y1="300" x2="300" y2="300" opacity="0.6"/>
+  <line x1="132" y1="292" x2="132" y2="308" opacity="0.6"/>
+  <line x1="300" y1="292" x2="300" y2="308" opacity="0.6"/>
+  <path d="M 141 296 L 132 300 L 141 304" opacity="0.6"/>
+  <path d="M 291 296 L 300 300 L 291 304" opacity="0.6"/>
+
+  <!-- vertical centerline -->
+  <line x1="216" y1="42" x2="216" y2="320" stroke-dasharray="5 7" opacity="0.32"/>
+
+  <!-- corner registration crosshairs -->
+  <line x1="14" y1="24" x2="34" y2="24" opacity="0.5"/>
+  <line x1="24" y1="14" x2="24" y2="34" opacity="0.5"/>
+  <line x1="386" y1="316" x2="406" y2="316" opacity="0.5"/>
+  <line x1="396" y1="306" x2="396" y2="326" opacity="0.5"/>
+</svg>
