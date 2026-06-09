@@ -169,7 +169,7 @@
       j = deleting ? j - 1 : j + 1;
       rolesEl.textContent = word.slice(0, j);
       var delay = deleting ? 35 : 65;
-      if (!deleting && j === word.length) { delay = 1500; deleting = true; }
+      if (!deleting && j === word.length) { delay = 2000; deleting = true; }
       else if (deleting && j === 0) { deleting = false; i++; delay = 350; }
       roleTimer = setTimeout(tick, delay);
     }

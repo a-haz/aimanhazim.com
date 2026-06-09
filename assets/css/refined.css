@@ -49,7 +49,7 @@ section { padding-block: clamp(50px, 7vw, 92px); }
     transparent 36deg 360deg);
   -webkit-mask-image: radial-gradient(circle at center, #000 0, transparent 58%);
           mask-image: radial-gradient(circle at center, #000 0, transparent 58%);
-  animation: lidar-sweep 9s linear infinite;
+  animation: lidar-sweep 8s linear infinite;
 }
 @keyframes lidar-sweep { to { transform: rotate(360deg); } }
 
@@ -75,7 +75,7 @@ body::before {                         /* keep the corner glows, a touch warmer 
 }
 
 /* ---- the robot mascot's antenna gets a "powered-on" pulse ---------------- */
-.brand-mark .rm-glow { animation: antenna-pulse 3.2s ease-in-out infinite; }
+.brand-mark .rm-glow { animation: antenna-pulse 4s ease-in-out infinite; }
 @keyframes antenna-pulse { 0%, 100% { opacity: .16; } 50% { opacity: .5; } }
 
 /* ---- a little more definition on hover (clean, not heavy) ---------------- */
@@ -94,7 +94,7 @@ body::before {                         /* keep the corner glows, a touch warmer 
   pointer-events: none;
   background: linear-gradient(to bottom, transparent,
     color-mix(in srgb, var(--accent) 13%, transparent), transparent);
-  animation: hud-scan 5s ease-in-out infinite;
+  animation: hud-scan 4s ease-in-out infinite;
 }
 @keyframes hud-scan {
   0%   { transform: translateY(-56px); opacity: 0; }
@@ -124,7 +124,7 @@ body::before {                         /* keep the corner glows, a touch warmer 
 /* ---- the robot mascot blinks now and then (eyes = 3rd/4th <circle>) ------ */
 .brand-mark circle:nth-of-type(3), .brand-mark circle:nth-of-type(4) {
   transform-box: fill-box; transform-origin: center;
-  animation: robot-blink 5.5s ease-in-out infinite;
+  animation: robot-blink 6s ease-in-out infinite;
 }
 @keyframes robot-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.12); } }
 
@@ -135,13 +135,13 @@ body::before {                         /* keep the corner glows, a touch warmer 
 .timeline::after {                      /* a blip travels along the route */
   content: ""; position: absolute; left: 6px; top: 0; width: 4px; height: 16px;
   border-radius: 4px; background: var(--accent); box-shadow: 0 0 10px var(--accent);
-  pointer-events: none; animation: route-blip 5s ease-in-out infinite;
+  pointer-events: none; animation: route-blip 8s ease-in-out infinite;
 }
 @keyframes route-blip { 0% { top: 0; opacity: 0; } 8% { opacity: 1; } 88% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
 .milestone.active .milestone-dot::after {   /* the current step pings */
   content: ""; position: absolute; inset: -4px; border-radius: 50%;
   border: 1px solid var(--accent); pointer-events: none;
-  animation: route-ping 2.6s ease-out infinite;
+  animation: route-ping 2s ease-out infinite;
 }
 @keyframes route-ping { 0% { transform: scale(.55); opacity: .8; } 100% { transform: scale(2.4); opacity: 0; } }
 
@@ -155,16 +155,46 @@ body::before {                         /* keep the corner glows, a touch warmer 
     linear-gradient(var(--accent-2), var(--accent-2)) 100% 100% / 1.5px 11px no-repeat;
 }
 
-/* ---- a quiet telemetry strip across the top of the footer ---------------- */
-.site-footer .footer-content::before {
-  content: "// FIELD STATION · FUKUI, JP · 36.0652\00b0N 136.2216\00b0E · SYS NOMINAL";
-  flex-basis: 100%; order: -1;
-  font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; color: var(--text-mute);
-  padding-bottom: 14px; border-bottom: 1px dashed var(--border);
+/* ---- footer dropped on this theme --------------------------------------- */
+.site-footer { display: none; }
+
+/* ---- bring the small loops onto the shared ~2s beat --------------------- */
+/* radar 8s · route-blip 8s · antenna 4s · hud-scan 4s · blink 6s ·          */
+/* route-ping 2s · badge-pulse 2s (heartbeat) · spinner 1s · caret 1s        */
+.spinner { animation-duration: 1s; }            /* the HUD "spinning circle" */
+.hero-roles::after { animation-duration: 1s; }  /* the typing caret          */
+
+/* ---- buttons get a quick "scan shine" on hover -------------------------- */
+.btn { position: relative; overflow: hidden; }
+.btn::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 45%; pointer-events: none;
+  background: linear-gradient(100deg, transparent, color-mix(in srgb, #fff 38%, transparent), transparent);
+  transform: skewX(-18deg);
+}
+.btn:hover::after { animation: btn-shine .7s ease; }
+@keyframes btn-shine { from { left: -60%; } to { left: 130%; } }
+
+/* ---- a one-time "system online" boot scan on load ----------------------- */
+.boot-scan {
+  position: fixed; inset: 0; z-index: 9995; pointer-events: none;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 32%, transparent) 38%,
+    color-mix(in srgb, #d4fbff 88%, transparent) 50%,
+    color-mix(in srgb, var(--accent) 32%, transparent) 62%,
+    transparent 100%);
+  background-size: 100% 26px; background-repeat: no-repeat; background-position: 0 -26px;
+  animation: boot-scan 1.05s ease-out .05s 1 both;
+}
+@keyframes boot-scan {
+  0%  { background-position: 0 -26px; opacity: 1; }
+  85% { opacity: 1; }
+  100%{ background-position: 0 100vh; opacity: 0; }
 }
 
 /* ---- reduced motion ------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
+  .boot-scan { display: none; }
   .lidar-bg::before, .hud::before, .timeline::after,
   .milestone.active .milestone-dot::after,
   .brand-mark .rm-glow,
