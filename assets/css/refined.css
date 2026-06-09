@@ -87,8 +87,50 @@ body::before {                         /* keep the corner glows, a touch warmer 
 /* tighten the section kicker / mono labels a hair for a sharper read */
 .kicker, .chip-label, .phases-head { letter-spacing: 0.12em; }
 
+/* ---- the "currently learning" HUD becomes a little sensor module --------- */
+.hud { position: relative; }
+.hud::before {                          /* a scan line sweeps down the panel */
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 56px; z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent,
+    color-mix(in srgb, var(--accent) 13%, transparent), transparent);
+  animation: hud-scan 5s ease-in-out infinite;
+}
+@keyframes hud-scan {
+  0%   { transform: translateY(-56px); opacity: 0; }
+  12%  { opacity: 1; }
+  78%  { opacity: 1; }
+  90%, 100% { transform: translateY(360px); opacity: 0; }
+}
+.hud-bar { position: relative; }
+.hud-bar::after {                       /* device status LEDs, far right */
+  content: ""; margin-left: auto; flex: none; width: 32px; height: 8px;
+  background:
+    radial-gradient(circle 3px at 4px 4px,  var(--accent) 62%, transparent 64%),
+    radial-gradient(circle 3px at 16px 4px, #f4b740 62%, transparent 64%),
+    radial-gradient(circle 3px at 28px 4px, color-mix(in srgb, var(--accent-2) 88%, #fff) 62%, transparent 64%);
+  background-repeat: no-repeat; opacity: .85;
+}
+
+/* ---- cards/phases get a faint "target-lock" tick (brightens on hover) ---- */
+.card, .phase { position: relative; }
+.card::after, .phase::after {
+  content: ""; position: absolute; top: 12px; right: 12px; width: 9px; height: 9px;
+  border-top: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent);
+  opacity: .3; transition: opacity .25s;
+}
+.card:hover::after, .phase:hover::after { opacity: .9; }
+
+/* ---- the robot mascot blinks now and then (eyes = 3rd/4th <circle>) ------ */
+.brand-mark circle:nth-of-type(3), .brand-mark circle:nth-of-type(4) {
+  transform-box: fill-box; transform-origin: center;
+  animation: robot-blink 5.5s ease-in-out infinite;
+}
+@keyframes robot-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.12); } }
+
 /* ---- reduced motion ------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
-  .lidar-bg::before { animation: none; }
-  .brand-mark .rm-glow { animation: none; }
+  .lidar-bg::before, .hud::before,
+  .brand-mark .rm-glow,
+  .brand-mark circle:nth-of-type(3), .brand-mark circle:nth-of-type(4) { animation: none; }
 }
