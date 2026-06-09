@@ -128,9 +128,45 @@ body::before {                         /* keep the corner glows, a touch warmer 
 }
 @keyframes robot-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.12); } }
 
+/* ---- the "Now" roadmap reads as the robot's planned route ---------------- */
+.timeline::before {                     /* energise the route line */
+  background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 12%, transparent));
+}
+.timeline::after {                      /* a blip travels along the route */
+  content: ""; position: absolute; left: 6px; top: 0; width: 4px; height: 16px;
+  border-radius: 4px; background: var(--accent); box-shadow: 0 0 10px var(--accent);
+  pointer-events: none; animation: route-blip 5s ease-in-out infinite;
+}
+@keyframes route-blip { 0% { top: 0; opacity: 0; } 8% { opacity: 1; } 88% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+.milestone.active .milestone-dot::after {   /* the current step pings */
+  content: ""; position: absolute; inset: -4px; border-radius: 50%;
+  border: 1px solid var(--accent); pointer-events: none;
+  animation: route-ping 2.6s ease-out infinite;
+}
+@keyframes route-ping { 0% { transform: scale(.55); opacity: .8; } 100% { transform: scale(2.4); opacity: 0; } }
+
+/* ---- the HUD gets a sensor "targeting frame" (corner ticks) -------------- */
+.hud::after {
+  content: ""; position: absolute; inset: 6px; z-index: 2; pointer-events: none; opacity: .55;
+  background:
+    linear-gradient(var(--accent), var(--accent))     0    0    / 11px 1.5px no-repeat,
+    linear-gradient(var(--accent), var(--accent))     0    0    / 1.5px 11px no-repeat,
+    linear-gradient(var(--accent-2), var(--accent-2)) 100% 100% / 11px 1.5px no-repeat,
+    linear-gradient(var(--accent-2), var(--accent-2)) 100% 100% / 1.5px 11px no-repeat;
+}
+
+/* ---- a quiet telemetry strip across the top of the footer ---------------- */
+.site-footer .footer-content::before {
+  content: "// FIELD STATION · FUKUI, JP · 36.0652\00b0N 136.2216\00b0E · SYS NOMINAL";
+  flex-basis: 100%; order: -1;
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; color: var(--text-mute);
+  padding-bottom: 14px; border-bottom: 1px dashed var(--border);
+}
+
 /* ---- reduced motion ------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
-  .lidar-bg::before, .hud::before,
+  .lidar-bg::before, .hud::before, .timeline::after,
+  .milestone.active .milestone-dot::after,
   .brand-mark .rm-glow,
   .brand-mark circle:nth-of-type(3), .brand-mark circle:nth-of-type(4) { animation: none; }
 }
