@@ -156,17 +156,33 @@ body::before {                         /* keep the corner glows, a touch warmer 
 }
 
 /* ---- robot-rover blueprint, faint in the bottom-left background --------- */
+/* sized large to balance the LiDAR radar in the opposite (top-right) corner */
 .robot-blueprint {
-  position: fixed; left: -16px; bottom: -8px; z-index: -1; pointer-events: none;
-  width: min(40vw, 440px); aspect-ratio: 420 / 340; opacity: .2;
+  position: fixed; left: -2vw; bottom: -2vh; z-index: -1; pointer-events: none;
+  width: min(58vw, 720px); aspect-ratio: 420 / 340; opacity: .2;
   background: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
-  animation: blueprint-plot 1.5s ease-out .35s 1 both;
+  animation: blueprint-plot 1.6s ease-out .35s 1 both;
 }
 @keyframes blueprint-plot {
   from { clip-path: inset(0 100% 0 0); opacity: 0; }
   to   { clip-path: inset(0 0 0 0);   opacity: .2; }
 }
-@media (max-width: 760px) { .robot-blueprint { width: 60vw; opacity: .12; } }
+/* a slow sensor scan passes over the schematic, lit only on its lines       */
+/* (masked by the same SVG) — 8s to share the radar's tempo                  */
+.robot-blueprint::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to bottom, transparent 41%, rgba(160,246,255,.95) 50%, transparent 59%);
+  background-size: 100% 240%; background-repeat: no-repeat;
+  -webkit-mask: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
+          mask: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
+  animation: blueprint-scan 8s ease-in-out infinite;
+}
+@keyframes blueprint-scan {
+  0%   { background-position: 0 -150%; }
+  55%  { background-position: 0 150%; }
+  100% { background-position: 0 150%; }
+}
+@media (max-width: 760px) { .robot-blueprint { width: 80vw; opacity: .13; } }
 
 /* ---- bring the small loops onto the shared ~2s beat --------------------- */
 /* radar 8s · route-blip 8s · antenna 4s · hud-scan 4s · blink 6s ·          */
@@ -205,7 +221,7 @@ body::before {                         /* keep the corner glows, a touch warmer 
 /* ---- reduced motion ------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   .boot-scan { display: none; }
-  .robot-blueprint,
+  .robot-blueprint, .robot-blueprint::after,
   .lidar-bg::before, .hud::before, .timeline::after,
   .milestone.active .milestone-dot::after,
   .brand-mark .rm-glow,
