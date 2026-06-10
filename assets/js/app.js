@@ -1,7 +1,8 @@
 /* ============================================================================
  *  app.js  —  the engine.
- *  It reads content.js + progress.js and renders the page, and handles the
- *  language switch, dark/light theme, animations, and the log feed.
+ *  It reads content.js + progress.js + writing.js and renders the pages, and
+ *  handles language, dark/light theme, the Professional|Personal toggle, and
+ *  the log / writing feeds.
  * ==========================================================================*/
 (function () {
   "use strict";
@@ -11,6 +12,7 @@
   var DEFAULT_LANG = "en";
   var LS_LANG = "ah-lang";
   var LS_THEME = "ah-theme";
+  var LS_MODE = "ah-mode";
   var LOCALE = { en: "en-GB", ja: "ja-JP", ms: "ms-MY" };
 
   /* ---- tiny helpers ---------------------------------------------------- */
@@ -89,10 +91,47 @@
     setTheme(cur === "dark" ? "light" : "dark");
   }
 
+  /* ---- Professional | Personal mode ------------------------------------ */
+  function initialMode() {
+    if (location.hash === "#personal") return "personal";
+    var saved = localStorage.getItem(LS_MODE);
+    return saved === "personal" ? "personal" : "pro";
+  }
+  var mode = initialMode();
+
+  function applyMode() {
+    var pro = qs("#mode-pro"), personal = qs("#mode-personal");
+    if (!pro || !personal) return;
+    pro.hidden = mode !== "pro";
+    personal.hidden = mode !== "personal";
+    observeReveals();
+  }
+  function setMode(next) {
+    mode = next;
+    try { localStorage.setItem(LS_MODE, next); } catch (e) {}
+    renderModeSwitch(C[lang] || C[DEFAULT_LANG]);
+    applyMode();
+  }
+  function renderModeSwitch(c) {
+    var ms = qs("#mode-switch");
+    if (!ms) return;
+    clear(ms);
+    ms.setAttribute("aria-label", c.ui.modeLabel);
+    ["pro", "personal"].forEach(function (m) {
+      var b = el("button", {
+        type: "button", class: "mode-btn" + (m === mode ? " is-active" : ""),
+        "aria-pressed": String(m === mode),
+      }, [c.mode[m]]);
+      b.addEventListener("click", function () { setMode(m); });
+      ms.appendChild(b);
+    });
+  }
+
   /* ---- text bindings: [data-i18n], [data-i18n-html], [data-i18n-attr] -- */
   function applyBindings(c) {
     qsa("[data-i18n]").forEach(function (n) {
       var v = get(c, n.getAttribute("data-i18n"));
+      if (v == null) v = get(C[DEFAULT_LANG], n.getAttribute("data-i18n"));
       if (v != null) n.textContent = v;
     });
     qsa("[data-i18n-html]").forEach(function (n) {
@@ -111,181 +150,45 @@
     });
   }
 
-  /* ---- nav + controls -------------------------------------------------- */
-  function renderNav(c) {
-    var ul = qs("#nav-links");
-    if (ul) {
-      clear(ul);
-      // On sub-pages (no #top hero), point section links back to the home page.
-      var base = document.getElementById("top") ? "" : "/";
-      var items = [
-        [base + "#about", c.nav.about], [base + "#research", c.nav.research],
-        [base + "#now", c.nav.now], ["/progress.html", c.nav.log],
-        [base + "#contact", c.nav.contact],
-      ];
-      items.forEach(function (it) {
-        ul.appendChild(el("li", null, [el("a", { href: it[0], class: "nav-link" }, [it[1]])]));
-      });
-      // On sub-pages (no in-page sections) scroll-spy has nothing to track,
-      // so highlight the Log link directly to keep the active state consistent.
-      if (base === "/") {
-        var logLink = qs('#nav-links a[href="/progress.html"]');
-        if (logLink) logLink.classList.add("is-current");
-      }
-    }
-    // language segmented control
+  /* ---- language segmented control --------------------------------------- */
+  function renderLangSwitch(c) {
     var ls = qs("#lang-switch");
-    if (ls) {
-      clear(ls);
-      ls.setAttribute("role", "group");
-      ls.setAttribute("aria-label", c.ui.langLabel);
-      LANGS.forEach(function (code) {
-        var b = el("button", {
-          type: "button", class: "lang-btn" + (code === lang ? " is-active" : ""),
-          "data-lang": code, "aria-pressed": String(code === lang),
-        }, [C[code].langName]);
-        b.addEventListener("click", function () { setLang(code); });
-        ls.appendChild(b);
-      });
-    }
-  }
-
-  /* ---- hero ------------------------------------------------------------ */
-  var roleTimer = null;
-  function renderHero(c) {
-    var rolesEl = qs("#hero-roles");
-    if (!rolesEl) return;
-    var roles = c.hero.roles || [];
-    if (roleTimer) { clearTimeout(roleTimer); roleTimer = null; }
-
-    if (reduceMotion() || roles.length <= 1) {
-      rolesEl.textContent = roles[0] || "";
-      return;
-    }
-    // typewriter cycle
-    var i = 0, j = 0, deleting = false;
-    function tick() {
-      var word = roles[i % roles.length];
-      j = deleting ? j - 1 : j + 1;
-      rolesEl.textContent = word.slice(0, j);
-      var delay = deleting ? 35 : 65;
-      if (!deleting && j === word.length) { delay = 2000; deleting = true; }
-      else if (deleting && j === 0) { deleting = false; i++; delay = 350; }
-      roleTimer = setTimeout(tick, delay);
-    }
-    rolesEl.textContent = "";
-    tick();
-  }
-
-  /* ---- learning HUD ---------------------------------------------------- */
-  function renderLearning(c) {
-    var wrap = qs("#learning-items");
-    if (!wrap) return;
-    clear(wrap);
-    (c.learning.items || []).forEach(function (it) {
-      // A spinner marks each item as actively "in progress".
-      wrap.appendChild(el("div", { class: "hud-row" }, [
-        el("span", { class: "spinner", "aria-hidden": "true" }),
-        el("div", { class: "hud-line" }, [
-          el("span", { class: "hud-label" }, [it.label]),
-          it.detail ? el("span", { class: "hud-detail" }, [it.detail]) : null,
-        ]),
-      ]));
+    if (!ls) return;
+    clear(ls);
+    ls.setAttribute("role", "group");
+    ls.setAttribute("aria-label", c.ui.langLabel);
+    LANGS.forEach(function (code) {
+      var b = el("button", {
+        type: "button", class: "lang-btn" + (code === lang ? " is-active" : ""),
+        "data-lang": code, "aria-pressed": String(code === lang),
+      }, [C[code].langName]);
+      b.addEventListener("click", function () { setLang(code); });
+      ls.appendChild(b);
     });
   }
 
-  /* ---- about ----------------------------------------------------------- */
-  function renderAbout(c) {
-    var p = qs("#about-paragraphs");
-    if (p) { clear(p); (c.about.paragraphs || []).forEach(function (t) { p.appendChild(el("p", null, [t])); }); }
-    var f = qs("#about-facts");
-    if (f) {
-      clear(f);
-      (c.about.facts || []).forEach(function (fact) {
-        f.appendChild(el("div", { class: "fact" }, [
-          el("dt", null, [fact.label]),
-          el("dd", null, [fact.value]),
-        ]));
-      });
-    }
-  }
-
-  /* ---- research -------------------------------------------------------- */
-  function renderResearch(c) {
-    var s = qs("#research-sensors");
-    if (s) { clear(s); (c.research.sensors || []).forEach(function (t) { s.appendChild(el("li", { class: "chip" }, [t])); }); }
-    var ph = qs("#research-phases");
-    if (ph) {
-      clear(ph);
-      (c.research.phases || []).forEach(function (p) {
-        ph.appendChild(el("article", { class: "phase reveal" }, [
-          el("span", { class: "phase-tag" }, [p.tag]),
-          el("h3", null, [p.title]),
-          el("p", null, [p.desc]),
-        ]));
-      });
-    }
-  }
-
-  /* ---- now / roadmap --------------------------------------------------- */
-  function renderNow(c) {
-    var r = qs("#now-roadmap");
-    if (!r) return;
-    clear(r);
-    (c.now.roadmap || []).forEach(function (m) {
-      r.appendChild(el("li", { class: "milestone reveal " + (m.state || "future") }, [
-        el("span", { class: "milestone-dot", "aria-hidden": "true" }),
-        el("div", { class: "milestone-body" }, [
-          el("span", { class: "milestone-date" }, [m.date]),
-          el("h3", null, [m.title]),
-          el("p", null, [m.desc]),
-        ]),
-      ]));
-    });
-  }
-
-  /* ---- skills ---------------------------------------------------------- */
-  function renderSkills(c) {
-    var g = qs("#skills-groups");
-    if (!g) return;
-    clear(g);
-    (c.skills.groups || []).forEach(function (grp) {
-      var chips = el("ul", { class: "chip-row" });
-      (grp.items || []).forEach(function (it) {
-        chips.appendChild(el("li", { class: "chip" }, [
-          it.name,
-          it.note ? el("span", { class: "chip-note" }, [it.note]) : null,
-        ]));
-      });
-      g.appendChild(el("div", { class: "skill-group reveal" }, [
-        el("h3", { class: "skill-group-name" }, [grp.name]),
-        chips,
-      ]));
-    });
-  }
-
-  /* ---- projects -------------------------------------------------------- */
+  /* ---- projects: a plain list ------------------------------------------- */
   function renderProjects(c) {
     var grid = qs("#projects-grid");
     if (!grid) return;
     clear(grid);
     (c.projects.items || []).forEach(function (p) {
-      var tags = el("ul", { class: "card-tags" });
-      (p.tags || []).forEach(function (t) { tags.appendChild(el("li", null, [t])); });
-      var kids = [el("h3", null, [p.title]), el("p", null, [p.desc]), tags];
-      // Support either a single link (p.link/p.linkLabel) or a list (p.links).
-      var links = p.links || (p.link ? [{ href: p.link, label: p.linkLabel }] : []);
-      links.forEach(function (lnk) {
-        if (!lnk || !lnk.href) return;
-        kids.push(el("a", { class: "card-link", href: lnk.href,
-          target: "_blank", rel: "noopener noreferrer" },
-          [(lnk.label || "View") + " →"]));
-      });
+      var kids = [el("h3", null, [p.title]), el("p", null, [p.desc])];
+      var links = (p.links || []).filter(function (l) { return l && l.href; });
+      if (links.length) {
+        var row = el("div", { class: "links-row" });
+        links.forEach(function (lnk) {
+          row.appendChild(el("a", { class: "card-link", href: lnk.href,
+            target: "_blank", rel: "noopener noreferrer" },
+            [(lnk.label || "View") + " →"]));
+        });
+        kids.push(row);
+      }
       grid.appendChild(el("article", { class: "card reveal" }, kids));
     });
   }
 
-  /* ---- contact --------------------------------------------------------- */
+  /* ---- contact links ----------------------------------------------------- */
   function renderContact(c) {
     var l = qs("#contact-links");
     if (!l) return;
@@ -302,7 +205,7 @@
     });
   }
 
-  /* ---- social icons + footer ------------------------------------------- */
+  /* ---- social icons + footer --------------------------------------------- */
   // Icon glyphs are matched to a link by its URL, so adding a social later is
   // just one more entry in contact.links — the right icon is picked up here.
   var ICONS = {
@@ -341,8 +244,12 @@
     });
   }
 
-  /* ---- progress page --------------------------------------------------- */
-  var activeFilter = "__all__";
+  /* ---- entry feeds (build log + writing) -------------------------------- */
+  function sortedEntries(list) {
+    return (list || []).slice().sort(function (a, b) {
+      return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
+    });
+  }
   function entryText(entry) {
     return entry[lang] || entry.en || entry.ja || entry.ms || {};
   }
@@ -355,14 +262,41 @@
       }).format(d);
     } catch (e) { return iso; }
   }
+  function entryArticle(e) {
+    var tx = entryText(e);
+    var head = el("header", { class: "log-head" }, [
+      el("time", { class: "log-date", datetime: e.date }, [fmtDate(e.date)]),
+      el("h2", null, [tx.title || ""]),
+    ]);
+    var kids = [head];
+    if (e.tags && e.tags.length) {
+      var tagRow = el("ul", { class: "card-tags" });
+      e.tags.forEach(function (t) { tagRow.appendChild(el("li", null, [t])); });
+      kids.push(tagRow);
+    }
+    var bodyWrap = el("div", { class: "log-body" });
+    var paras = Array.isArray(tx.body) ? tx.body : (tx.body ? [tx.body] : []);
+    paras.forEach(function (p) { bodyWrap.appendChild(el("p", null, [p])); });
+    kids.push(bodyWrap);
+    if (e.images && e.images.length) {
+      var gal = el("div", { class: "log-gallery" });
+      e.images.forEach(function (src) {
+        gal.appendChild(el("a", { href: src, target: "_blank", rel: "noopener noreferrer" }, [
+          el("img", { src: src, alt: entryText(e).title || "", loading: "lazy" }),
+        ]));
+      });
+      kids.push(gal);
+    }
+    return el("article", { class: "log-entry reveal" }, kids);
+  }
+
+  /* the Build Log page: filterable feed */
+  var activeFilter = "__all__";
   function renderProgress(c) {
     var feed = qs("#log-feed");
     if (!feed) return;
-    var entries = (window.PROGRESS_ENTRIES || []).slice().sort(function (a, b) {
-      return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
-    });
+    var entries = sortedEntries(window.PROGRESS_ENTRIES);
 
-    // filter chips
     var filters = qs("#log-filters");
     if (filters) {
       clear(filters);
@@ -390,32 +324,44 @@
       feed.appendChild(el("p", { class: "log-empty" }, [c.progressPage.empty]));
       return;
     }
-    shown.forEach(function (e) {
-      var tx = entryText(e);
-      var head = el("header", { class: "log-head" }, [
-        el("time", { class: "log-date", datetime: e.date }, [fmtDate(e.date)]),
-        el("h2", null, [tx.title || ""]),
-      ]);
-      var tagRow = el("ul", { class: "card-tags" });
-      (e.tags || []).forEach(function (t) { tagRow.appendChild(el("li", null, [t])); });
-
-      var bodyWrap = el("div", { class: "log-body" });
-      var paras = Array.isArray(tx.body) ? tx.body : (tx.body ? [tx.body] : []);
-      paras.forEach(function (p) { bodyWrap.appendChild(el("p", null, [p])); });
-
-      var kids = [head, tagRow, bodyWrap];
-      if (e.images && e.images.length) {
-        var gal = el("div", { class: "log-gallery" });
-        e.images.forEach(function (src) {
-          gal.appendChild(el("a", { href: src, target: "_blank", rel: "noopener noreferrer" }, [
-            el("img", { src: src, alt: tx.title || "", loading: "lazy" }),
-          ]));
-        });
-        kids.push(gal);
-      }
-      feed.appendChild(el("article", { class: "log-entry reveal" }, kids));
-    });
+    shown.forEach(function (e) { feed.appendChild(entryArticle(e)); });
     observeReveals();
+  }
+
+  /* the Writing page: plain feed, no filters */
+  function renderWriting(c) {
+    var feed = qs("#writing-feed");
+    if (!feed) return;
+    clear(feed);
+    var entries = sortedEntries(window.WRITING_ENTRIES);
+    if (!entries.length) {
+      feed.appendChild(el("p", { class: "log-empty" }, [c.writingPage.empty]));
+      return;
+    }
+    entries.forEach(function (e) { feed.appendChild(entryArticle(e)); });
+    observeReveals();
+  }
+
+  /* the Personal side: recent titles from writing + log */
+  function renderMiniList(sel, entries, href, emptyText) {
+    var wrap = qs(sel);
+    if (!wrap) return;
+    clear(wrap);
+    var top = sortedEntries(entries).slice(0, 3);
+    if (!top.length) {
+      wrap.appendChild(el("p", { class: "log-empty" }, [emptyText]));
+      return;
+    }
+    top.forEach(function (e) {
+      wrap.appendChild(el("a", { class: "mini-entry", href: href }, [
+        el("time", { class: "mini-date", datetime: e.date }, [fmtDate(e.date)]),
+        el("span", { class: "mini-title" }, [entryText(e).title || ""]),
+      ]));
+    });
+  }
+  function renderPersonal(c) {
+    renderMiniList("#personal-writing", window.WRITING_ENTRIES, "/writing.html", c.personal.nothingYet);
+    renderMiniList("#personal-log", window.PROGRESS_ENTRIES, "/progress.html", c.personal.nothingYet);
   }
 
   /* ---- scroll reveals -------------------------------------------------- */
@@ -428,13 +374,13 @@
     }
     if (!revealIO) {
       revealIO = new IntersectionObserver(function (entries) {
-        // Elements entering together (a row of cards) cascade in with a small
-        // stagger; the inline delay is cleared afterwards so hovers stay snappy.
+        // Elements entering together cascade in with a small stagger; the
+        // inline delay is cleared afterwards so hovers stay snappy.
         var batch = 0;
         entries.forEach(function (e) {
           if (!e.isIntersecting) return;
           var node = e.target;
-          node.style.transitionDelay = Math.min(batch++ * 70, 350) + "ms";
+          node.style.transitionDelay = Math.min(batch++ * 60, 300) + "ms";
           node.classList.add("is-visible");
           node.addEventListener("transitionend", function clearDelay() {
             node.style.transitionDelay = "";
@@ -447,40 +393,24 @@
     els.forEach(function (n) { revealIO.observe(n); });
   }
 
-  /* ---- active nav link on scroll -------------------------------------- */
-  function initScrollSpy() {
-    var sections = qsa("section[id], header[id]");
-    if (!sections.length || !("IntersectionObserver" in window)) return;
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        qsa("#nav-links .nav-link").forEach(function (a) {
-          a.classList.toggle("is-current", a.getAttribute("href") === "#" + e.target.id);
-        });
-      });
-    }, { threshold: 0.5 });
-    sections.forEach(function (s) { io.observe(s); });
-  }
-
   /* ---- master render --------------------------------------------------- */
   function render() {
     var c = C[lang] || C[DEFAULT_LANG];
     document.documentElement.setAttribute("lang", lang);
     document.documentElement.setAttribute("dir", c.dir || "ltr");
-    document.title = c.hero.name + " · " + c.hero.eyebrow;
+    // Sub-pages set their own <title>; only the home page is renamed per language.
+    if (qs("#mode-switch")) document.title = c.hero.name;
 
     applyBindings(c);
-    renderNav(c);
-    renderHero(c);
-    renderLearning(c);
-    renderAbout(c);
-    renderResearch(c);
-    renderNow(c);
-    renderSkills(c);
+    renderLangSwitch(c);
+    renderModeSwitch(c);
     renderProjects(c);
     renderContact(c);
     renderFooter(c);
+    renderPersonal(c);
     renderProgress(c);
+    renderWriting(c);
+    applyMode();
     applyTheme(document.documentElement.getAttribute("data-theme") || initialTheme());
     observeReveals();
   }
@@ -492,26 +422,10 @@
     var tt = qs("#theme-toggle");
     if (tt) tt.addEventListener("click", toggleTheme);
 
-    var mt = qs("#menu-toggle");
-    var nav = qs("#primary-nav");
-    if (mt && nav) {
-      mt.addEventListener("click", function () {
-        var open = nav.classList.toggle("is-open");
-        mt.setAttribute("aria-expanded", String(open));
-      });
-      qsa("a", nav).forEach(function (a) {
-        a.addEventListener("click", function () {
-          nav.classList.remove("is-open");
-          mt.setAttribute("aria-expanded", "false");
-        });
-      });
-    }
-
     var y = qs("#year");
     if (y) y.textContent = new Date().getFullYear();
 
     render();
-    initScrollSpy();
   }
 
   if (document.readyState === "loading") {
