@@ -34,21 +34,21 @@ section { padding-block: clamp(50px, 7vw, 92px); }
 /* ---- robot-inspired background: LiDAR range rings + radar sweep ---------- */
 .lidar-bg {
   position: fixed; z-index: -1; pointer-events: none;
-  top: -28vh; right: -16vw; width: 94vmax; height: 94vmax;
+  top: -95vw; right: -104vw; width: 190vw; height: 190vw;
   background: repeating-radial-gradient(circle at center,
     transparent 0 73px,
-    color-mix(in srgb, var(--accent) 13%, transparent) 73px 74px);
-  -webkit-mask-image: radial-gradient(circle at center, #000 0, transparent 58%);
-          mask-image: radial-gradient(circle at center, #000 0, transparent 58%);
-  opacity: .6;
+    color-mix(in srgb, var(--accent) 17%, transparent) 73px 74px);
+  -webkit-mask-image: radial-gradient(circle at center, #000 0, #000 22%, transparent 80%);
+          mask-image: radial-gradient(circle at center, #000 0, #000 22%, transparent 80%);
+  opacity: .72;
 }
 .lidar-bg::before {                    /* the sweeping wedge */
   content: ""; position: absolute; inset: 0; border-radius: 50%;
   background: conic-gradient(from 0deg,
     color-mix(in srgb, var(--accent) 24%, transparent) 0deg,
     transparent 36deg 360deg);
-  -webkit-mask-image: radial-gradient(circle at center, #000 0, transparent 58%);
-          mask-image: radial-gradient(circle at center, #000 0, transparent 58%);
+  -webkit-mask-image: radial-gradient(circle at center, #000 0, #000 22%, transparent 80%);
+          mask-image: radial-gradient(circle at center, #000 0, #000 22%, transparent 80%);
   animation: lidar-sweep 8s linear infinite;
 }
 @keyframes lidar-sweep { to { transform: rotate(360deg); } }
@@ -158,8 +158,8 @@ body::before {                         /* keep the corner glows, a touch warmer 
 /* ---- robot-rover blueprint, faint in the bottom-left background --------- */
 /* sized large to balance the LiDAR radar in the opposite (top-right) corner */
 .robot-blueprint {
-  position: fixed; left: -2vw; bottom: -2vh; z-index: -1; pointer-events: none;
-  width: min(58vw, 720px); aspect-ratio: 420 / 340; opacity: .2;
+  position: fixed; left: -3vw; bottom: -10vw; z-index: -1; pointer-events: none;
+  width: min(60vw, 820px); aspect-ratio: 420 / 340; opacity: .2;
   background: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
   animation: blueprint-plot 1.6s ease-out .35s 1 both;
 }
