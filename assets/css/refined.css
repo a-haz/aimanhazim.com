@@ -34,7 +34,7 @@ section { padding-block: clamp(50px, 7vw, 92px); }
 /* ---- robot-inspired background: LiDAR range rings + radar sweep ---------- */
 .lidar-bg {
   position: fixed; z-index: -1; pointer-events: none;
-  top: -30vh; right: -10vw; width: 90vh; height: 90vh;
+  top: -26vh; right: 6vw; width: 76vh; height: 76vh;
   background: repeating-radial-gradient(circle at center,
     transparent 0 52px,
     color-mix(in srgb, var(--accent) 26%, transparent) 52px 53px);
@@ -158,9 +158,9 @@ body::before {                         /* keep the corner glows, a touch warmer 
 /* ---- robot-rover blueprint, faint in the bottom-left background --------- */
 /* sized large to balance the LiDAR radar in the opposite (top-right) corner */
 .robot-blueprint {
-  position: fixed; left: 1vw; bottom: 1vh;
+  position: fixed; left: 13vw; bottom: 1vh;
   z-index: -1; pointer-events: none;
-  height: 41vh; aspect-ratio: 420 / 340; opacity: .2;
+  height: 35vh; aspect-ratio: 420 / 340; opacity: .2;
   background: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
   animation: blueprint-plot 1.6s ease-out .35s 1 both;
 }
