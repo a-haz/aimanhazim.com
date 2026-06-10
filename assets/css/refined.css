@@ -34,7 +34,7 @@ section { padding-block: clamp(50px, 7vw, 92px); }
 /* ---- robot-inspired background: LiDAR range rings + radar sweep ---------- */
 .lidar-bg {
   position: fixed; z-index: -1; pointer-events: none;
-  left: 50%; transform: translateX(-50%); top: -76vh; width: 140vh; height: 140vh;
+  top: -30vh; right: -10vw; width: 90vh; height: 90vh;
   background: repeating-radial-gradient(circle at center,
     transparent 0 52px,
     color-mix(in srgb, var(--accent) 26%, transparent) 52px 53px);
@@ -158,10 +158,10 @@ body::before {                         /* keep the corner glows, a touch warmer 
 /* ---- robot-rover blueprint, faint in the bottom-left background --------- */
 /* sized large to balance the LiDAR radar in the opposite (top-right) corner */
 .robot-blueprint {
-  position: fixed; left: 50%; bottom: 1vh; transform: translateX(-50%);
+  position: fixed; left: 1vw; bottom: 1vh;
   z-index: -1; pointer-events: none;
-  height: 48vh; aspect-ratio: 420 / 340; opacity: .2;
-  background: url("/assets/img/robot-blueprint.svg") center bottom / contain no-repeat;
+  height: 41vh; aspect-ratio: 420 / 340; opacity: .2;
+  background: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
   animation: blueprint-plot 1.6s ease-out .35s 1 both;
 }
 @keyframes blueprint-plot {
@@ -174,8 +174,8 @@ body::before {                         /* keep the corner glows, a touch warmer 
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(to bottom, transparent 41%, rgba(160,246,255,.95) 50%, transparent 59%);
   background-size: 100% 240%; background-repeat: no-repeat;
-  -webkit-mask: url("/assets/img/robot-blueprint.svg") center bottom / contain no-repeat;
-          mask: url("/assets/img/robot-blueprint.svg") center bottom / contain no-repeat;
+  -webkit-mask: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
+          mask: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
   animation: blueprint-scan 8s ease-in-out infinite;
 }
 @keyframes blueprint-scan {
