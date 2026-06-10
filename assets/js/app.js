@@ -69,7 +69,7 @@
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
     var meta = qs('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme === "light" ? "#f5f7fb" : "#0b1120");
+    if (meta) meta.setAttribute("content", theme === "light" ? "#f4f7fc" : "#0b1120");
     var btn = qs("#theme-toggle");
     if (btn) {
       var c = C[lang] || C[DEFAULT_LANG];
@@ -428,8 +428,19 @@
     }
     if (!revealIO) {
       revealIO = new IntersectionObserver(function (entries) {
+        // Elements entering together (a row of cards) cascade in with a small
+        // stagger; the inline delay is cleared afterwards so hovers stay snappy.
+        var batch = 0;
         entries.forEach(function (e) {
-          if (e.isIntersecting) { e.target.classList.add("is-visible"); revealIO.unobserve(e.target); }
+          if (!e.isIntersecting) return;
+          var node = e.target;
+          node.style.transitionDelay = Math.min(batch++ * 70, 350) + "ms";
+          node.classList.add("is-visible");
+          node.addEventListener("transitionend", function clearDelay() {
+            node.style.transitionDelay = "";
+            node.removeEventListener("transitionend", clearDelay);
+          });
+          revealIO.unobserve(node);
         });
       }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
     }
