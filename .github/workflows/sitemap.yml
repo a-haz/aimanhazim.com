@@ -28,7 +28,7 @@ jobs:
             echo '<?xml version="1.0" encoding="UTF-8"?>'
             echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
             # All tracked .html files except error pages (e.g. 404.html).
-            git ls-files '*.html' | grep -vE '(^|/)404\.html$' | sort | while read -r f; do
+            git ls-files '*.html' | grep -vE '(^|/)404\.html$|^compare/' | sort | while read -r f; do
               lastmod=$(git log -1 --format=%cs -- "$f")
               case "$f" in
                 index.html)   loc="$BASE/" ;;            # site root
