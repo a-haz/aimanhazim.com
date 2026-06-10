@@ -219,9 +219,70 @@ body::before {                         /* keep the corner glows, a touch warmer 
   100%{ background-position: 0 100vh; opacity: 0; }
 }
 
+/* ===========================================================================
+ *  POLISH PASS — typography, reveal staggering, theme-aware motifs,
+ *  scroll progress, and small interaction details. Same overlay contract:
+ *  everything below only refines what style.css already draws.
+ * ==========================================================================*/
+
+/* ---- typography: calmer rag, hero name picks up the accent --------------- */
+h1, h2, h3 { text-wrap: balance; }
+p, .lead { text-wrap: pretty; }
+.hero h1 {
+  background: linear-gradient(97deg, var(--text) 58%, var(--accent) 125%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: var(--text);
+}
+
+/* ---- text selection + scrollbar follow the accent ------------------------ */
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+html { scrollbar-color: color-mix(in srgb, var(--accent) 30%, var(--surface-2)) transparent; }
+
+/* ---- mission-progress line under the nav (scroll-driven, Chrome only) ---- */
+.site-nav::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transform: scaleX(0); transform-origin: left; pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .site-nav::after { animation: scroll-progress linear both; animation-timeline: scroll(root); }
+}
+@keyframes scroll-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ---- reveal: cards/phases also fade (style.css's .card transition list
+ *      overrides .reveal's, which made opacity snap). JS adds a small
+ *      per-element stagger via inline transition-delay. ------------------- */
+.card.reveal, .phase.reveal, .skill-group.reveal, .log-entry.reveal {
+  transition: opacity .6s ease, transform .45s ease, border-color .25s, box-shadow .25s;
+}
+
+/* ---- chips + log entries pick up the same target-lock hover language ----- */
+.chip { transition: border-color .25s, color .25s; }
+.chip:hover { border-color: var(--accent); color: var(--text); }
+.log-entry { transition: border-color .25s, box-shadow .25s; }
+.log-entry:hover {
+  border-color: var(--accent);
+  box-shadow: 0 14px 30px -22px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.card-link { text-underline-offset: 3px; }
+.fact { transition: background-color .25s; }
+.fact:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+
+/* ---- light theme: the motifs need a lighter touch on a bright canvas ----- */
+[data-theme="light"] .lidar-bg { opacity: .5; }
+[data-theme="light"] .robot-blueprint { opacity: .13; }
+[data-theme="light"] body::after { opacity: .38; }
+[data-theme="light"] .boot-scan { opacity: .55; }
+
+/* ---- small screens: tuck the radar into the corner, calm the noise ------- */
+@media (max-width: 760px) {
+  .lidar-bg { top: -30vh; right: -22vw; width: 58vh; height: 58vh; opacity: .55; }
+}
+
 /* ---- reduced motion ------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   .boot-scan { display: none; }
+  .site-nav::after { animation: none; }
   .robot-blueprint, .robot-blueprint::after,
   .lidar-bg::before, .hud::before, .timeline::after,
   .milestone.active .milestone-dot::after,
