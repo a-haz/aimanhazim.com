@@ -79,16 +79,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css">
-  <link rel="stylesheet" href="/assets/css/minimal.css">
+  <link rel="stylesheet" href="/assets/css/refined.css">
 </head>
 <body>
   <div class="lidar-bg" aria-hidden="true"></div>
+  <div class="boot-scan" aria-hidden="true"></div>
+  <div class="robot-blueprint" aria-hidden="true"></div>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- ============================ HEADER ============================ -->
+  <!-- ============================ NAV ============================ -->
   <nav class="site-nav" aria-label="Primary">
     <div class="nav-content">
-      <a class="brand" href="/" aria-label="Aiman Hazim — home">
+      <a class="brand" href="#top" aria-label="Aiman Hazim — home">
         <svg class="brand-mark" viewBox="6 -2 88 78" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
           <line x1="50" y1="20" x2="50" y2="7" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
           <circle class="rm-glow" cx="50" cy="5" r="6.5"/>
@@ -102,87 +104,160 @@
         </svg>
       </a>
       <div class="nav-spacer"></div>
+      <div id="primary-nav">
+        <ul id="nav-links"></ul>
+      </div>
       <div class="nav-controls">
         <div class="lang-switch" id="lang-switch"></div>
         <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="true">
           <span class="theme-icon" aria-hidden="true">☀</span>
+        </button>
+        <button class="icon-btn" id="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"
+                aria-label="Menu" data-i18n-attr="aria-label:ui.menu">
+          <span aria-hidden="true">≡</span>
         </button>
       </div>
     </div>
   </nav>
 
   <main id="main">
-    <!-- ============================ INTRO ============================ -->
-    <header class="hero container" id="top">
-      <h1 data-i18n="hero.name"></h1>
-      <p class="tagline" data-i18n="hero.tagline"></p>
-      <div class="mode-switch" id="mode-switch" role="group"></div>
+    <!-- ============================ HERO ============================ -->
+    <header class="hero" id="top">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-text">
+            <span class="eyebrow hero-eyebrow" data-i18n="hero.eyebrow"></span>
+            <h1 id="hero-name" data-i18n="hero.name"></h1>
+            <span class="hero-roles" id="hero-roles" aria-hidden="true"></span>
+            <p class="hero-intro" data-i18n="hero.intro"></p>
+            <div class="hero-cta">
+              <a class="btn" href="#research" data-i18n="hero.ctaPrimary"></a>
+              <a class="btn btn-ghost" href="/progress.html" data-i18n="hero.ctaSecondary"></a>
+            </div>
+            <div class="hero-meta">
+              <span><span class="dot"></span><span data-i18n="hero.location"></span></span>
+              <span class="badge"><span class="pulse"></span><span data-i18n="hero.available"></span></span>
+            </div>
+          </div>
+
+          <aside class="hud" aria-label="Currently learning">
+            <div class="hud-bar">
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="hud-title" data-i18n="learning.heading"></span>
+            </div>
+            <div class="hud-body">
+              <p class="hud-caption" data-i18n="learning.caption"></p>
+              <div id="learning-items"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
     </header>
 
-    <!-- ============================ PROFESSIONAL ============================ -->
-    <div id="mode-pro">
-      <section>
-        <div class="container">
-          <p data-i18n="intro"></p>
+    <!-- ============================ ABOUT ============================ -->
+    <section id="about">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="about.heading"></span>
+          <h2 data-i18n="about.lead"></h2>
         </div>
-      </section>
+        <div class="about-grid">
+          <div class="about-prose" id="about-paragraphs"></div>
+          <dl class="facts reveal" id="about-facts"></dl>
+        </div>
+      </div>
+    </section>
 
-      <section id="research">
-        <div class="container">
+    <!-- ============================ RESEARCH ============================ -->
+    <section id="research">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="research.kicker"></span>
           <h2 data-i18n="research.heading"></h2>
-          <p data-i18n="research.summary"></p>
         </div>
-      </section>
+        <p class="research-summary" data-i18n="research.summary"></p>
 
-      <section id="now">
-        <div class="container">
+        <div class="callout">
+          <span class="callout-label" data-i18n="research.baseLabel"></span>
+          <p data-i18n="research.base"></p>
+        </div>
+
+        <p class="chip-label" data-i18n="research.sensorsLabel"></p>
+        <ul class="chips" id="research-sensors"></ul>
+
+        <p class="phases-head" data-i18n="research.phasesHeading"></p>
+        <div class="phases" id="research-phases"></div>
+
+        <div class="sim2real">
+          <span class="callout-label" data-i18n="research.sim2realLabel"></span>
+          <p data-i18n="research.sim2real"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ NOW ============================ -->
+    <section id="now">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="nav.now"></span>
           <h2 data-i18n="now.heading"></h2>
-          <p data-i18n="now.body"></p>
+          <p class="lead" data-i18n="now.lead"></p>
         </div>
-      </section>
+        <ul class="timeline" id="now-roadmap"></ul>
+      </div>
+    </section>
 
-      <section id="projects">
-        <div class="container">
-          <h2 data-i18n="projects.heading"></h2>
-          <div class="cards" id="projects-grid"></div>
+    <!-- ============================ SKILLS ============================ -->
+    <section id="skills">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="skills.heading"></span>
+          <h2 data-i18n="skills.lead"></h2>
         </div>
-      </section>
+        <div class="skill-groups" id="skills-groups"></div>
+      </div>
+    </section>
 
-      <section id="contact">
-        <div class="container">
+    <!-- ============================ PROJECTS ============================ -->
+    <section id="projects">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="projects.heading"></span>
+          <h2 data-i18n="projects.lead"></h2>
+        </div>
+        <div class="cards" id="projects-grid"></div>
+      </div>
+    </section>
+
+    <!-- ============================ CONTACT ============================ -->
+    <section id="contact">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="nav.contact"></span>
           <h2 data-i18n="contact.heading"></h2>
-          <p data-i18n="contact.lead"></p>
+          <p class="lead" data-i18n="contact.lead"></p>
+        </div>
+        <div class="contact-grid">
           <div class="social-links" id="contact-links"></div>
+          <form class="contact-form" action="https://formspree.io/f/xlgzjnby" method="POST">
+            <h3 data-i18n="contact.formHeading"></h3>
+            <div class="form-group">
+              <label for="name" data-i18n="contact.form.name"></label>
+              <input type="text" id="name" name="name" autocomplete="name" required>
+            </div>
+            <div class="form-group">
+              <label for="email" data-i18n="contact.form.email"></label>
+              <input type="email" id="email" name="email" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+              <label for="message" data-i18n="contact.form.message"></label>
+              <textarea id="message" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn" data-i18n="contact.form.send"></button>
+          </form>
         </div>
-      </section>
-    </div>
-
-    <!-- ============================ PERSONAL ============================ -->
-    <div id="mode-personal" hidden>
-      <section>
-        <div class="container">
-          <p data-i18n="personal.intro"></p>
-        </div>
-      </section>
-
-      <section>
-        <div class="container">
-          <h2 data-i18n="personal.writingHeading"></h2>
-          <p data-i18n="personal.writingBlurb"></p>
-          <div class="mini-list" id="personal-writing"></div>
-          <a class="see-all" href="/writing.html" data-i18n="personal.allWriting"></a>
-        </div>
-      </section>
-
-      <section>
-        <div class="container">
-          <h2 data-i18n="personal.logHeading"></h2>
-          <p data-i18n="personal.logBlurb"></p>
-          <div class="mini-list" id="personal-log"></div>
-          <a class="see-all" href="/progress.html" data-i18n="personal.fullLog"></a>
-        </div>
-      </section>
-    </div>
+      </div>
+    </section>
   </main>
 
   <!-- ============================ FOOTER ============================ -->
@@ -191,12 +266,13 @@
       <p>&copy; <span id="year">2026</span> Aiman Hazim</p>
       <div class="footer-links">
         <div class="footer-socials" id="footer-socials"></div>
+        <a class="footer-top" href="#top" data-i18n="footer.backToTop"></a>
       </div>
     </div>
   </footer>
 
   <noscript>
-    <div style="max-width:640px;margin:60px auto;padding:0 24px">
+    <div style="max-width:680px;margin:120px auto;padding:0 24px;text-align:center">
       <h1>Aiman Hazim</h1>
       <p>4th-year robotics student in Fukui University's Intelligent Robot Laboratory. I build autonomous navigation robots that fuse thermal vision with 3D LiDAR.</p>
       <p><a href="https://github.com/a-haz">github.com/a-haz</a> · <a href="mailto:contact@aimanhazim.com">contact@aimanhazim.com</a></p>
@@ -206,7 +282,6 @@
 
   <script src="/assets/js/content.js"></script>
   <script src="/assets/js/progress.js"></script>
-  <script src="/assets/js/writing.js"></script>
   <script src="/assets/js/app.js"></script>
 </body>
 </html>
