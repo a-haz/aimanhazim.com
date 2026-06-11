@@ -30,7 +30,7 @@ window.SITE_CONTENT = {
     },
 
     hero: {
-      eyebrow: "Robotics Engineering · Fukui University",
+      eyebrow: "Robotics Engineering",
       name: "Aiman Hazim",
       // These rotate one after another in the hero.
       roles: [
@@ -42,7 +42,7 @@ window.SITE_CONTENT = {
         "Fourth-year robotics student in Fukui University's Intelligent Robot Research Laboratory. I build autonomous navigation that fuses thermal vision with 3D LiDAR — right now entirely in simulation, on a deliberate path toward real hardware.",
       ctaPrimary: "See what I'm building",
       ctaSecondary: "Read the log",
-      location: "Fukui, Japan",
+      location: "Japan",
       available: "Open to 2027 roles",
     },
 
@@ -70,7 +70,7 @@ window.SITE_CONTENT = {
         { label: "University", value: "Fukui University — Robotics Course" },
         { label: "Lab",        value: "Intelligent Robot Research Lab" },
         { label: "Year",       value: "B4 · graduating Mar 2027" },
-        { label: "Languages",  value: "English · 日本語 (JLPT N2) · Melayu" },
+        { label: "Languages",  value: "English · 日本語 · Melayu" },
       ],
     },
 
@@ -229,7 +229,7 @@ window.SITE_CONTENT = {
     },
 
     hero: {
-      eyebrow: "ロボティクス専攻 · 福井大学",
+      eyebrow: "ロボティクス専攻",
       name: "アイマン・ハジム",
       roles: [
         "ロボティクス専攻の学生",
@@ -240,7 +240,7 @@ window.SITE_CONTENT = {
         "福井大学 知能ロボット研究室に所属する学部4年生です。熱画像と3D LiDARを融合した自律走行システムを研究しています。いまはすべてシミュレーション上で開発し、実機へと着実に進めています。",
       ctaPrimary: "研究を見る",
       ctaSecondary: "ログを読む",
-      location: "日本・福井",
+      location: "日本",
       available: "2027年からの就業を希望",
     },
 
@@ -267,7 +267,7 @@ window.SITE_CONTENT = {
         { label: "大学",   value: "福井大学 — ロボティクスコース" },
         { label: "研究室", value: "知能ロボット研究室" },
         { label: "学年",   value: "B4 · 2027年3月卒業見込み" },
-        { label: "言語",   value: "英語 · 日本語 (JLPT N2) · マレー語" },
+        { label: "言語",   value: "英語 · 日本語 · マレー語" },
       ],
     },
 
@@ -425,7 +425,7 @@ window.SITE_CONTENT = {
     },
 
     hero: {
-      eyebrow: "Kejuruteraan Robotik · Universiti Fukui",
+      eyebrow: "Kejuruteraan Robotik",
       name: "Aiman Hazim",
       roles: [
         "Pelajar kejuruteraan robotik",
@@ -436,7 +436,7 @@ window.SITE_CONTENT = {
         "Pelajar robotik tahun empat di Makmal Penyelidikan Robot Pintar, Universiti Fukui. Saya membina navigasi autonomi yang menggabungkan penglihatan terma dengan LiDAR 3D — buat masa ini sepenuhnya dalam simulasi, menuju perkakasan sebenar secara berperingkat.",
       ctaPrimary: "Lihat apa yang saya bina",
       ctaSecondary: "Baca log",
-      location: "Fukui, Jepun",
+      location: "Jepun",
       available: "Terbuka untuk peluang 2027",
     },
 
@@ -463,7 +463,7 @@ window.SITE_CONTENT = {
         { label: "Universiti", value: "Universiti Fukui — Kursus Robotik" },
         { label: "Makmal",     value: "Makmal Penyelidikan Robot Pintar" },
         { label: "Tahun",      value: "B4 · bergraduat Mac 2027" },
-        { label: "Bahasa",     value: "Inggeris · 日本語 (JLPT N2) · Melayu" },
+        { label: "Bahasa",     value: "Inggeris · 日本語 · Melayu" },
       ],
     },
 
