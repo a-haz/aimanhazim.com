@@ -1,7 +1,8 @@
 /* ============================================================================
  *  app.js  —  the engine.
- *  It reads content.js + progress.js and renders the page, and handles the
- *  language switch, dark/light theme, animations, and the log feed.
+ *  It reads content.js + progress.js + writing.js and renders the pages, and
+ *  handles the language switch, dark/light theme, the Professional|Personal
+ *  toggle, animations, and the log / writing feeds.
  * ==========================================================================*/
 (function () {
   "use strict";
@@ -11,6 +12,7 @@
   var DEFAULT_LANG = "en";
   var LS_LANG = "ah-lang";
   var LS_THEME = "ah-theme";
+  var LS_MODE = "ah-mode";
   var LOCALE = { en: "en-GB", ja: "ja-JP", ms: "ms-MY" };
 
   /* ---- tiny helpers ---------------------------------------------------- */
@@ -89,10 +91,49 @@
     setTheme(cur === "dark" ? "light" : "dark");
   }
 
+  /* ---- Professional | Personal mode ------------------------------------ */
+  function initialMode() {
+    if (location.hash === "#personal") return "personal";
+    var saved = localStorage.getItem(LS_MODE);
+    return saved === "personal" ? "personal" : "pro";
+  }
+  var mode = initialMode();
+
+  function applyMode() {
+    var pro = qs("#mode-pro"), personal = qs("#mode-personal");
+    if (!pro || !personal) return;
+    pro.hidden = mode !== "pro";
+    personal.hidden = mode !== "personal";
+    observeReveals();
+  }
+  function setMode(next) {
+    mode = next;
+    try { localStorage.setItem(LS_MODE, next); } catch (e) {}
+    var c = C[lang] || C[DEFAULT_LANG];
+    renderNav(c);
+    renderModeSwitch(c);
+    applyMode();
+  }
+  function renderModeSwitch(c) {
+    var ms = qs("#mode-switch");
+    if (!ms) return;
+    clear(ms);
+    ms.setAttribute("aria-label", c.ui.modeLabel);
+    ["pro", "personal"].forEach(function (m) {
+      var b = el("button", {
+        type: "button", class: "mode-btn" + (m === mode ? " is-active" : ""),
+        "aria-pressed": String(m === mode),
+      }, [c.mode[m]]);
+      b.addEventListener("click", function () { setMode(m); });
+      ms.appendChild(b);
+    });
+  }
+
   /* ---- text bindings: [data-i18n], [data-i18n-html], [data-i18n-attr] -- */
   function applyBindings(c) {
     qsa("[data-i18n]").forEach(function (n) {
       var v = get(c, n.getAttribute("data-i18n"));
+      if (v == null) v = get(C[DEFAULT_LANG], n.getAttribute("data-i18n"));
       if (v != null) n.textContent = v;
     });
     qsa("[data-i18n-html]").forEach(function (n) {
@@ -117,8 +158,13 @@
     if (ul) {
       clear(ul);
       // On sub-pages (no #top hero), point section links back to the home page.
-      var base = document.getElementById("top") ? "" : "/";
-      var items = [
+      var onHome = !!document.getElementById("top");
+      var base = onHome ? "" : "/";
+      // On the home page the links follow the active side of the toggle.
+      var items = (onHome && mode === "personal") ? [
+        ["/writing.html", c.nav.writing], ["/progress.html", c.nav.log],
+        ["#contact", c.nav.contact],
+      ] : [
         [base + "#about", c.nav.about], [base + "#research", c.nav.research],
         [base + "#now", c.nav.now], ["/progress.html", c.nav.log],
         [base + "#contact", c.nav.contact],
@@ -127,8 +173,8 @@
         ul.appendChild(el("li", null, [el("a", { href: it[0], class: "nav-link" }, [it[1]])]));
       });
       // On sub-pages (no in-page sections) scroll-spy has nothing to track,
-      // so highlight the Log link directly to keep the active state consistent.
-      if (base === "/") {
+      // so highlight the Log link directly — but only on the log page itself.
+      if (base === "/" && location.pathname.indexOf("progress") >= 0) {
         var logLink = qs('#nav-links a[href="/progress.html"]');
         if (logLink) logLink.classList.add("is-current");
       }
@@ -341,8 +387,13 @@
     });
   }
 
-  /* ---- progress page --------------------------------------------------- */
+  /* ---- entry feeds (build log + writing) -------------------------------- */
   var activeFilter = "__all__";
+  function sortedEntries(list) {
+    return (list || []).slice().sort(function (a, b) {
+      return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
+    });
+  }
   function entryText(entry) {
     return entry[lang] || entry.en || entry.ja || entry.ms || {};
   }
@@ -355,12 +406,39 @@
       }).format(d);
     } catch (e) { return iso; }
   }
+  function entryArticle(e) {
+    var tx = entryText(e);
+    var head = el("header", { class: "log-head" }, [
+      el("time", { class: "log-date", datetime: e.date }, [fmtDate(e.date)]),
+      el("h2", null, [tx.title || ""]),
+    ]);
+    var kids = [head];
+    if (e.tags && e.tags.length) {
+      var tagRow = el("ul", { class: "card-tags" });
+      e.tags.forEach(function (t) { tagRow.appendChild(el("li", null, [t])); });
+      kids.push(tagRow);
+    }
+    var bodyWrap = el("div", { class: "log-body" });
+    var paras = Array.isArray(tx.body) ? tx.body : (tx.body ? [tx.body] : []);
+    paras.forEach(function (p) { bodyWrap.appendChild(el("p", null, [p])); });
+    kids.push(bodyWrap);
+    if (e.images && e.images.length) {
+      var gal = el("div", { class: "log-gallery" });
+      e.images.forEach(function (src) {
+        gal.appendChild(el("a", { href: src, target: "_blank", rel: "noopener noreferrer" }, [
+          el("img", { src: src, alt: tx.title || "", loading: "lazy" }),
+        ]));
+      });
+      kids.push(gal);
+    }
+    return el("article", { class: "log-entry reveal" }, kids);
+  }
+
+  /* the Build Log page: filterable feed */
   function renderProgress(c) {
     var feed = qs("#log-feed");
     if (!feed) return;
-    var entries = (window.PROGRESS_ENTRIES || []).slice().sort(function (a, b) {
-      return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
-    });
+    var entries = sortedEntries(window.PROGRESS_ENTRIES);
 
     // filter chips
     var filters = qs("#log-filters");
@@ -390,32 +468,44 @@
       feed.appendChild(el("p", { class: "log-empty" }, [c.progressPage.empty]));
       return;
     }
-    shown.forEach(function (e) {
-      var tx = entryText(e);
-      var head = el("header", { class: "log-head" }, [
-        el("time", { class: "log-date", datetime: e.date }, [fmtDate(e.date)]),
-        el("h2", null, [tx.title || ""]),
-      ]);
-      var tagRow = el("ul", { class: "card-tags" });
-      (e.tags || []).forEach(function (t) { tagRow.appendChild(el("li", null, [t])); });
-
-      var bodyWrap = el("div", { class: "log-body" });
-      var paras = Array.isArray(tx.body) ? tx.body : (tx.body ? [tx.body] : []);
-      paras.forEach(function (p) { bodyWrap.appendChild(el("p", null, [p])); });
-
-      var kids = [head, tagRow, bodyWrap];
-      if (e.images && e.images.length) {
-        var gal = el("div", { class: "log-gallery" });
-        e.images.forEach(function (src) {
-          gal.appendChild(el("a", { href: src, target: "_blank", rel: "noopener noreferrer" }, [
-            el("img", { src: src, alt: tx.title || "", loading: "lazy" }),
-          ]));
-        });
-        kids.push(gal);
-      }
-      feed.appendChild(el("article", { class: "log-entry reveal" }, kids));
-    });
+    shown.forEach(function (e) { feed.appendChild(entryArticle(e)); });
     observeReveals();
+  }
+
+  /* the Writing page: plain feed, no filters */
+  function renderWriting(c) {
+    var feed = qs("#writing-feed");
+    if (!feed) return;
+    clear(feed);
+    var entries = sortedEntries(window.WRITING_ENTRIES);
+    if (!entries.length) {
+      feed.appendChild(el("p", { class: "log-empty" }, [c.writingPage.empty]));
+      return;
+    }
+    entries.forEach(function (e) { feed.appendChild(entryArticle(e)); });
+    observeReveals();
+  }
+
+  /* the Personal side of the home page: recent titles from writing + log */
+  function renderMiniList(sel, entries, href, emptyText) {
+    var wrap = qs(sel);
+    if (!wrap) return;
+    clear(wrap);
+    var top = sortedEntries(entries).slice(0, 3);
+    if (!top.length) {
+      wrap.appendChild(el("p", { class: "log-empty" }, [emptyText]));
+      return;
+    }
+    top.forEach(function (e) {
+      wrap.appendChild(el("a", { class: "mini-entry", href: href }, [
+        el("time", { class: "mini-date", datetime: e.date }, [fmtDate(e.date)]),
+        el("span", { class: "mini-title" }, [entryText(e).title || ""]),
+      ]));
+    });
+  }
+  function renderPersonal(c) {
+    renderMiniList("#personal-writing", window.WRITING_ENTRIES, "/writing.html", c.personal.nothingYet);
+    renderMiniList("#personal-log", window.PROGRESS_ENTRIES, "/progress.html", c.personal.nothingYet);
   }
 
   /* ---- scroll reveals -------------------------------------------------- */
@@ -467,10 +557,12 @@
     var c = C[lang] || C[DEFAULT_LANG];
     document.documentElement.setAttribute("lang", lang);
     document.documentElement.setAttribute("dir", c.dir || "ltr");
-    document.title = c.hero.name + " · " + c.hero.eyebrow;
+    // Sub-pages set their own <title>; only the home page is renamed per language.
+    if (qs("#mode-switch")) document.title = c.hero.name + " · " + c.hero.eyebrow;
 
     applyBindings(c);
     renderNav(c);
+    renderModeSwitch(c);
     renderHero(c);
     renderLearning(c);
     renderAbout(c);
@@ -480,7 +572,10 @@
     renderProjects(c);
     renderContact(c);
     renderFooter(c);
+    renderPersonal(c);
     renderProgress(c);
+    renderWriting(c);
+    applyMode();
     applyTheme(document.documentElement.getAttribute("data-theme") || initialTheme());
     observeReveals();
   }
@@ -510,8 +605,31 @@
     var y = qs("#year");
     if (y) y.textContent = new Date().getFullYear();
 
+    // A link to an in-page anchor that lives inside the hidden side of the
+    // toggle switches the mode first, so the browser can actually scroll there.
+    document.addEventListener("click", function (ev) {
+      var a = ev.target && ev.target.closest && ev.target.closest('a[href^="#"]');
+      if (!a) return;
+      var id = (a.getAttribute("href") || "").slice(1);
+      var t = id && document.getElementById(id);
+      if (!t) return;
+      var pro = qs("#mode-pro"), personal = qs("#mode-personal");
+      if (pro && pro.hidden && pro.contains(t)) setMode("pro");
+      else if (personal && personal.hidden && personal.contains(t)) setMode("personal");
+    });
+
     render();
     initScrollSpy();
+
+    // Arriving with a #hash that lives on the hidden side (e.g. /#about while
+    // the Personal side is saved) flips to the right side so the jump works.
+    var hid = location.hash.slice(1);
+    var ht = hid && document.getElementById(hid);
+    if (ht) {
+      var hPro = qs("#mode-pro"), hPer = qs("#mode-personal");
+      if (hPro && hPro.hidden && hPro.contains(ht)) { setMode("pro"); ht.scrollIntoView(); }
+      else if (hPer && hPer.hidden && hPer.contains(ht)) { setMode("personal"); ht.scrollIntoView(); }
+    }
   }
 
   if (document.readyState === "loading") {

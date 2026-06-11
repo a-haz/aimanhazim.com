@@ -26,6 +26,7 @@ window.SITE_CONTENT = {
       research: "Research",
       now: "Now",
       log: "Log",
+      writing: "Writing",
       contact: "Contact",
     },
 
@@ -44,6 +45,12 @@ window.SITE_CONTENT = {
       ctaSecondary: "Read the log",
       location: "Japan",
       available: "Open to 2027 roles",
+    },
+
+    // The Professional | Personal view toggle in the hero.
+    mode: {
+      pro: "Professional",
+      personal: "Personal",
     },
 
     // The animated "system monitor" panel in the hero.
@@ -70,7 +77,7 @@ window.SITE_CONTENT = {
         { label: "University", value: "Fukui University — Robotics Course" },
         { label: "Lab",        value: "Intelligent Robot Research Lab" },
         { label: "Year",       value: "B4 · graduating Mar 2027" },
-        { label: "Languages",  value: "English · 日本語 · Melayu" },
+        { label: "Languages",  value: "English · Japanese · Malay" },
       ],
     },
 
@@ -194,6 +201,28 @@ window.SITE_CONTENT = {
       backToTop: "Back to top ↑",
     },
 
+    /* ---------------- the Personal side ---------------- */
+    personal: {
+      intro:
+        "I came to Japan and built my studies and my life here from zero — that shaped me more than anything else. This side of the site is for everything that isn't work.",
+      writingHeading: "Writing",
+      writingBlurb: "Occasional personal essays.",
+      allWriting: "All writing →",
+      logHeading: "Build Log",
+      logBlurb: "Week-to-week notes from the thesis.",
+      fullLog: "Full log →",
+      nothingYet: "Nothing yet.",
+    },
+
+    // The Writing page (writing.html)
+    writingPage: {
+      eyebrow: "Personal notes",
+      title: "Writing",
+      lead: "Personal essays, occasionally.",
+      empty: "Nothing here yet.",
+      home: "← Home",
+    },
+
     // The Build Log page (progress.html)
     progressPage: {
       eyebrow: "Field notes",
@@ -210,6 +239,7 @@ window.SITE_CONTENT = {
       themeToDark: "Switch to dark mode",
       langLabel: "Language",
       menu: "Menu",
+      modeLabel: "Side",
     },
   },
 
@@ -225,6 +255,7 @@ window.SITE_CONTENT = {
       research: "研究",
       now: "いま",
       log: "ログ",
+      writing: "書きもの",
       contact: "連絡",
     },
 
@@ -242,6 +273,11 @@ window.SITE_CONTENT = {
       ctaSecondary: "ログを読む",
       location: "日本",
       available: "2027年からの就業を希望",
+    },
+
+    mode: {
+      pro: "仕事",
+      personal: "個人",
     },
 
     learning: {
@@ -391,6 +427,26 @@ window.SITE_CONTENT = {
       backToTop: "上へ戻る ↑",
     },
 
+    personal: {
+      intro:
+        "来日して、学業も生活もゼロから築いてきました — それが何よりも自分を形づくった経験です。ここは仕事以外のすべての場所。",
+      writingHeading: "書きもの",
+      writingBlurb: "ときどき、個人的なエッセイ。",
+      allWriting: "すべて読む →",
+      logHeading: "ビルドログ",
+      logBlurb: "卒論の週ごとの記録。",
+      fullLog: "全部見る →",
+      nothingYet: "まだありません。",
+    },
+
+    writingPage: {
+      eyebrow: "個人ノート",
+      title: "書きもの",
+      lead: "個人的なエッセイを、ときどき。",
+      empty: "まだありません。",
+      home: "← ホーム",
+    },
+
     progressPage: {
       eyebrow: "フィールドノート",
       title: "ビルドログ",
@@ -406,6 +462,7 @@ window.SITE_CONTENT = {
       themeToDark: "ダークモードへ",
       langLabel: "言語",
       menu: "メニュー",
+      modeLabel: "表示",
     },
   },
 
@@ -421,6 +478,7 @@ window.SITE_CONTENT = {
       research: "Penyelidikan",
       now: "Sekarang",
       log: "Log",
+      writing: "Penulisan",
       contact: "Hubungi",
     },
 
@@ -438,6 +496,11 @@ window.SITE_CONTENT = {
       ctaSecondary: "Baca log",
       location: "Jepun",
       available: "Terbuka untuk peluang 2027",
+    },
+
+    mode: {
+      pro: "Profesional",
+      personal: "Peribadi",
     },
 
     learning: {
@@ -463,7 +526,7 @@ window.SITE_CONTENT = {
         { label: "Universiti", value: "Universiti Fukui — Kursus Robotik" },
         { label: "Makmal",     value: "Makmal Penyelidikan Robot Pintar" },
         { label: "Tahun",      value: "B4 · bergraduat Mac 2027" },
-        { label: "Bahasa",     value: "Inggeris · 日本語 · Melayu" },
+        { label: "Bahasa",     value: "Inggeris · Jepun · Melayu" },
       ],
     },
 
@@ -587,6 +650,26 @@ window.SITE_CONTENT = {
       backToTop: "Ke atas ↑",
     },
 
+    personal: {
+      intro:
+        "Saya datang ke Jepun dan membina pengajian serta kehidupan saya dari sifar — itulah yang paling membentuk diri saya. Sisi ini untuk segala yang bukan kerja.",
+      writingHeading: "Penulisan",
+      writingBlurb: "Esei peribadi, sekali-sekala.",
+      allWriting: "Semua penulisan →",
+      logHeading: "Log Pembinaan",
+      logBlurb: "Nota mingguan daripada tesis.",
+      fullLog: "Log penuh →",
+      nothingYet: "Belum ada.",
+    },
+
+    writingPage: {
+      eyebrow: "Nota peribadi",
+      title: "Penulisan",
+      lead: "Esei peribadi, sekali-sekala.",
+      empty: "Belum ada apa-apa.",
+      home: "← Laman utama",
+    },
+
     progressPage: {
       eyebrow: "Nota lapangan",
       title: "Log Pembinaan",
@@ -602,6 +685,7 @@ window.SITE_CONTENT = {
       themeToDark: "Tukar ke mod gelap",
       langLabel: "Bahasa",
       menu: "Menu",
+      modeLabel: "Sisi",
     },
   },
 };
