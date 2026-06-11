@@ -533,6 +533,47 @@ h1, h2, h3 { font-weight: 700; }
 }
 
 /* =====================================================================
+ *  Professional | Personal toggle + the Personal side
+ * ===================================================================*/
+.mode-switch {
+  display: inline-flex; padding: 3px; gap: 2px; margin-top: 26px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.mode-btn {
+  font-family: var(--font); font-size: 0.88rem; font-weight: 600;
+  color: var(--text-dim); background: transparent; border: 0;
+  padding: 7px 18px; border-radius: 999px; cursor: pointer;
+  transition: background-color 0.25s, color 0.25s;
+}
+.mode-btn:hover { color: var(--text); }
+.mode-btn.is-active { background: var(--accent); color: var(--accent-ink); }
+
+/* mini lists of recent writing / log titles */
+.mini-list { display: flex; flex-direction: column; gap: 8px; }
+.mini-entry {
+  display: flex; gap: 16px; align-items: baseline;
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text);
+  transition: border-color 0.25s;
+}
+.mini-entry:hover { border-color: var(--accent); }
+.mini-date {
+  font-family: var(--mono); font-size: 0.78rem; color: var(--text-mute);
+  flex: none; min-width: 6.5em;
+}
+.mini-title { font-weight: 600; }
+.see-all {
+  display: inline-block; margin-top: 18px;
+  font-family: var(--mono); font-size: 0.85rem; font-weight: 500;
+}
+@media (max-width: 480px) {
+  .mini-entry { gap: 12px; padding: 11px 13px; }
+  .mini-date { min-width: 5.5em; }
+}
+
+/* =====================================================================
  *  reduced motion
  * ===================================================================*/
 @media (prefers-reduced-motion: reduce) {

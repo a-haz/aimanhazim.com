@@ -138,6 +138,7 @@
               <span><span class="dot"></span><span data-i18n="hero.location"></span></span>
               <span class="badge"><span class="pulse"></span><span data-i18n="hero.available"></span></span>
             </div>
+            <div class="mode-switch" id="mode-switch" role="group"></div>
           </div>
 
           <aside class="hud" aria-label="Currently learning">
@@ -153,6 +154,9 @@
         </div>
       </div>
     </header>
+
+    <!-- ===================== PROFESSIONAL SIDE ===================== -->
+    <div id="mode-pro">
 
     <!-- ============================ ABOUT ============================ -->
     <section id="about">
@@ -229,6 +233,45 @@
       </div>
     </section>
 
+    </div><!-- /#mode-pro -->
+
+    <!-- ====================== PERSONAL SIDE ====================== -->
+    <div id="mode-personal" hidden>
+
+    <!-- NB: not id="personal" — that hash is the mode deep-link and must not scroll -->
+    <section id="personal-intro">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="mode.personal"></span>
+          <h2 data-i18n="personal.intro"></h2>
+        </div>
+      </div>
+    </section>
+
+    <section id="writing">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="personal.writingHeading"></span>
+          <h2 data-i18n="personal.writingBlurb"></h2>
+        </div>
+        <div class="mini-list" id="personal-writing"></div>
+        <a class="see-all" href="/writing.html" data-i18n="personal.allWriting"></a>
+      </div>
+    </section>
+
+    <section id="log">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="personal.logHeading"></span>
+          <h2 data-i18n="personal.logBlurb"></h2>
+        </div>
+        <div class="mini-list" id="personal-log"></div>
+        <a class="see-all" href="/progress.html" data-i18n="personal.fullLog"></a>
+      </div>
+    </section>
+
+    </div><!-- /#mode-personal -->
+
     <!-- ============================ CONTACT ============================ -->
     <section id="contact">
       <div class="container">
@@ -282,6 +325,7 @@
 
   <script src="/assets/js/content.js"></script>
   <script src="/assets/js/progress.js"></script>
+  <script src="/assets/js/writing.js"></script>
   <script src="/assets/js/app.js"></script>
 </body>
 </html>
