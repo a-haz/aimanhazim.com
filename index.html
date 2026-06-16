@@ -80,6 +80,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css">
   <link rel="stylesheet" href="/assets/css/refined.css">
+
+  <!-- Cloudflare Turnstile: renders the contact-form CAPTCHA; Formspree verifies the token server-side -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
   <div class="lidar-bg" aria-hidden="true"></div>
@@ -299,6 +302,8 @@
               <label for="message" data-i18n="contact.form.message"></label>
               <textarea id="message" name="message" rows="5" required></textarea>
             </div>
+            <!-- Cloudflare Turnstile widget: injects cf-turnstile-response, which Formspree validates -->
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAADlpsd1J3JMOdgd2" data-theme="auto"></div>
             <button type="submit" class="btn" data-i18n="contact.form.send"></button>
           </form>
         </div>
