@@ -318,7 +318,28 @@
           <p class="lead" data-i18n="contact.lead"></p>
         </div>
         <div class="contact-grid">
-          <div class="social-links" id="contact-links"></div>
+          <div class="connect-side reveal">
+            <button type="button" class="coin" id="connect-coin" aria-pressed="false"
+                    data-i18n-attr="aria-label:contact.coinAria">
+              <span class="coin-inner">
+                <span class="coin-face coin-front">
+                  <img src="/assets/img/profile-pro.jpg" alt="" width="220" height="220"
+                       data-i18n-attr="alt:contact.altPro">
+                </span>
+                <span class="coin-face coin-back">
+                  <img src="/assets/img/profile-personal.jpg" alt="" width="220" height="220"
+                       data-i18n-attr="alt:contact.altPersonal">
+                </span>
+              </span>
+            </button>
+            <p class="coin-hint" data-i18n="contact.coinHint"></p>
+            <div class="resume-links">
+              <a class="btn btn-ghost" href="/assets/resume/aiman-hazim-resume-en.pdf"
+                 target="_blank" rel="noopener" data-i18n="contact.resumeEn"></a>
+              <a class="btn btn-ghost" href="/assets/resume/aiman-hazim-resume-ja.pdf"
+                 target="_blank" rel="noopener" data-i18n="contact.resumeJa"></a>
+            </div>
+          </div>
           <form class="contact-form" action="https://formspree.io/f/xlgzjnby" method="POST">
             <h3 data-i18n="contact.formHeading"></h3>
             <!-- Honeypot: hidden from humans, bots fill it and Formspree drops the submission. -->

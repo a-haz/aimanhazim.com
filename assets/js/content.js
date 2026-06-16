@@ -180,6 +180,12 @@ window.SITE_CONTENT = {
     contact: {
       heading: "Let's connect",
       lead: "I'm aiming for autonomous-driving and mobile-robotics roles from 2027. Reach out about SLAM, simulation, machine perception — or just to talk robots.",
+      coinAria: "Flip the photo to switch between professional and personal",
+      altPro: "Aiman Hazim — professional",
+      altPersonal: "Aiman Hazim — personal",
+      coinHint: "Tap to flip — switch sides",
+      resumeEn: "Résumé (EN)",
+      resumeJa: "履歴書 (JP)",
       links: [
         { label: "GitHub", value: "github.com/a-haz", href: "https://github.com/a-haz" },
         { label: "LinkedIn",  value: "linkedin.com/in/a-haz", href: "https://www.linkedin.com/in/a-haz" },
@@ -406,6 +412,12 @@ window.SITE_CONTENT = {
     contact: {
       heading: "つながる",
       lead: "2027年からの自動運転・移動ロボット分野での就業を目指しています。SLAM・シミュレーション・機械認識、あるいはロボットの話、お気軽にどうぞ。",
+      coinAria: "写真をめくって「仕事」と「個人」を切り替える",
+      altPro: "アイマン・ハジム — 仕事",
+      altPersonal: "アイマン・ハジム — 個人",
+      coinHint: "タップでめくって切り替え",
+      resumeEn: "履歴書（英語）",
+      resumeJa: "履歴書（日本語）",
       links: [
         { label: "GitHub", value: "github.com/a-haz", href: "https://github.com/a-haz" },
         { label: "LinkedIn",  value: "linkedin.com/in/a-haz", href: "https://www.linkedin.com/in/a-haz" },
@@ -629,6 +641,12 @@ window.SITE_CONTENT = {
     contact: {
       heading: "Mari berhubung",
       lead: "Saya menyasarkan peranan pandu autonomi dan robot mudah alih mulai 2027. Hubungi saya tentang SLAM, simulasi, persepsi mesin — atau sekadar berbual tentang robot.",
+      coinAria: "Balikkan foto untuk tukar antara profesional dan peribadi",
+      altPro: "Aiman Hazim — profesional",
+      altPersonal: "Aiman Hazim — peribadi",
+      coinHint: "Ketik untuk balikkan — tukar sisi",
+      resumeEn: "Resume (BI)",
+      resumeJa: "Resume (JP)",
       links: [
         { label: "GitHub", value: "github.com/a-haz", href: "https://github.com/a-haz" },
         { label: "LinkedIn",  value: "linkedin.com/in/a-haz", href: "https://www.linkedin.com/in/a-haz" },
