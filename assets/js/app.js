@@ -101,9 +101,16 @@
 
   function applyMode() {
     var pro = qs("#mode-pro"), personal = qs("#mode-personal");
-    if (!pro || !personal) return;
-    pro.hidden = mode !== "pro";
-    personal.hidden = mode !== "personal";
+    if (pro && personal) {
+      pro.hidden = mode !== "pro";
+      personal.hidden = mode !== "personal";
+    }
+    // The contact "coin" mirrors the active side: front = pro, flipped = personal.
+    var coin = qs("#connect-coin");
+    if (coin) {
+      coin.classList.toggle("is-flipped", mode === "personal");
+      coin.setAttribute("aria-pressed", String(mode === "personal"));
+    }
     observeReveals();
   }
   function setMode(next) {
@@ -331,23 +338,6 @@
     });
   }
 
-  /* ---- contact --------------------------------------------------------- */
-  function renderContact(c) {
-    var l = qs("#contact-links");
-    if (!l) return;
-    clear(l);
-    (c.contact.links || []).forEach(function (lnk) {
-      var ext = lnk.href.indexOf("http") === 0;
-      l.appendChild(el("a", {
-        class: "social-link", href: lnk.href,
-        target: ext ? "_blank" : null, rel: ext ? "noopener noreferrer" : null,
-      }, [
-        el("span", { class: "social-label" }, [lnk.label]),
-        el("span", { class: "social-value" }, [lnk.value]),
-      ]));
-    });
-  }
-
   /* ---- social icons + footer ------------------------------------------- */
   // Icon glyphs are matched to a link by its URL, so adding a social later is
   // just one more entry in contact.links — the right icon is picked up here.
@@ -570,7 +560,6 @@
     renderNow(c);
     renderSkills(c);
     renderProjects(c);
-    renderContact(c);
     renderFooter(c);
     renderPersonal(c);
     renderProgress(c);
@@ -604,6 +593,13 @@
 
     var y = qs("#year");
     if (y) y.textContent = new Date().getFullYear();
+
+    // The contact "coin" is an alternate Professional|Personal toggle: clicking
+    // it switches the mode, and applyMode() flips the coin to the matching side.
+    var coin = qs("#connect-coin");
+    if (coin) coin.addEventListener("click", function () {
+      setMode(mode === "pro" ? "personal" : "pro");
+    });
 
     // A link to an in-page anchor that lives inside the hidden side of the
     // toggle switches the mode first, so the browser can actually scroll there.

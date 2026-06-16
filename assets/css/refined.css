@@ -289,3 +289,84 @@ html { scrollbar-color: color-mix(in srgb, var(--accent) 30%, var(--surface-2)) 
   .brand-mark .rm-glow,
   .brand-mark circle:nth-of-type(3), .brand-mark circle:nth-of-type(4) { animation: none; }
 }
+
+/* ===== "Let's connect": flip-coin profile photo + résumés ================= */
+.connect-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  text-align: center;
+}
+
+/* The coin: a circular button that flips in 3D between the pro & personal photos. */
+.coin {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  cursor: pointer;
+  perspective: 1000px;
+}
+@media (max-width: 760px) {
+  .coin { width: 180px; height: 180px; }
+}
+.coin-inner {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  transition: transform .75s cubic-bezier(.2, .7, .2, 1);
+}
+.coin.is-flipped .coin-inner { transform: rotateY(180deg); }
+
+.coin-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--accent) 12%, transparent),
+    0 18px 40px -18px rgba(0, 0, 0, .7);
+  transition: box-shadow .25s, border-color .25s;
+}
+.coin-back { transform: rotateY(180deg); }
+.coin-face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Affordance: the accent ring brightens on hover / keyboard focus. */
+.coin:hover .coin-face,
+.coin:focus-visible .coin-face {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--accent) 26%, transparent),
+    0 22px 46px -18px rgba(0, 0, 0, .75);
+}
+.coin:focus-visible { outline: none; }
+
+.coin-hint {
+  margin: 0;
+  font-size: .78rem;
+  letter-spacing: .04em;
+  color: var(--text-dim);
+}
+
+.resume-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* The flip is decorative; honour reduced-motion (mode still toggles instantly). */
+@media (prefers-reduced-motion: reduce) {
+  .coin-inner { transition: none; }
+}
