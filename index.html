@@ -81,8 +81,42 @@
   <link rel="stylesheet" href="/assets/css/style.css">
   <link rel="stylesheet" href="/assets/css/refined.css">
 
-  <!-- Cloudflare Turnstile: renders the contact-form CAPTCHA; Formspree verifies the token server-side -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <!-- Cloudflare Turnstile: explicit render so the widget matches the site's live light/dark toggle.
+       Formspree verifies the resulting cf-turnstile-response token server-side. -->
+  <script>
+    (function () {
+      var SITEKEY = "0x4AAAAAADlpsd1J3JMOdgd2";
+      var widgetId = null;
+      function siteTheme() {
+        return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+      }
+      function renderWidget() {
+        var el = document.getElementById("turnstile-widget");
+        if (el && window.turnstile) {
+          widgetId = window.turnstile.render(el, { sitekey: SITEKEY, theme: siteTheme(), size: "flexible" });
+        }
+      }
+      // api.js calls this once the library is ready (?onload=onTurnstileLoad).
+      window.onTurnstileLoad = function () {
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", renderWidget);
+        } else {
+          renderWidget();
+        }
+        // Re-render on theme change so the widget tracks the live light/dark toggle.
+        var last = siteTheme();
+        new MutationObserver(function () {
+          var t = siteTheme();
+          if (t !== last && widgetId !== null) {
+            last = t;
+            window.turnstile.remove(widgetId);
+            renderWidget();
+          }
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+      };
+    })();
+  </script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad" async defer></script>
 </head>
 <body>
   <div class="lidar-bg" aria-hidden="true"></div>
@@ -302,8 +336,8 @@
               <label for="message" data-i18n="contact.form.message"></label>
               <textarea id="message" name="message" rows="5" required></textarea>
             </div>
-            <!-- Cloudflare Turnstile widget: injects cf-turnstile-response, which Formspree validates -->
-            <div class="cf-turnstile" data-sitekey="0x4AAAAAADlpsd1J3JMOdgd2" data-theme="auto"></div>
+            <!-- Turnstile mounts here (explicit render, full-width); spacing matches a .form-group -->
+            <div id="turnstile-widget" style="margin-bottom: 16px;"></div>
             <button type="submit" class="btn" data-i18n="contact.form.send"></button>
           </form>
         </div>
