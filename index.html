@@ -284,6 +284,9 @@
           <div class="social-links" id="contact-links"></div>
           <form class="contact-form" action="https://formspree.io/f/xlgzjnby" method="POST">
             <h3 data-i18n="contact.formHeading"></h3>
+            <!-- Honeypot: hidden from humans, bots fill it and Formspree drops the submission. -->
+            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"
+                   aria-hidden="true" style="display:none !important">
             <div class="form-group">
               <label for="name" data-i18n="contact.form.name"></label>
               <input type="text" id="name" name="name" autocomplete="name" required>
