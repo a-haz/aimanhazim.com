@@ -1,0 +1,25 @@
+---
+description: Design exploration workflow for aimanhazim.com themes
+globs: assets/css/**,*.html,compare/**
+alwaysApply: false
+---
+
+# Design explorations
+
+Overlay CSS layers — never edit base `style.css` for explorations:
+
+1. Add `assets/css/<name>.css`, link it **after** `style.css` on `index.html`, `progress.html`, `404.html`.
+2. Optional decorative `<div>` right after `<body>`.
+3. Develop on `explore/<name>` branch off `main`; revert = remove the `<link>`.
+
+**Live theme (2026-06):** `refined.css` on `main` — field-telemetry (LiDAR radar, robot blueprint, numbered sections). Unmerged reference branches: `explore/cyberpunk`, `explore/pyroscout-dark`.
+
+## Preview
+
+Pages use absolute `/assets/...` paths and JS-rendered content — **`file://` does not work**.
+
+```bash
+python3 -m http.server 8099   # open http://127.0.0.1:8099/
+```
+
+Compare branches with `git checkout <branch>` + refresh. Headless screenshots need a tall `--window-size` (e.g. 1440×6600) so `.reveal` sections are in view, plus `--virtual-time-budget=12000` for fonts/JS.

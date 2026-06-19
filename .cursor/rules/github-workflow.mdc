@@ -1,0 +1,27 @@
+---
+description: GitHub push auth, main-branch workflow, and commit authorship
+alwaysApply: true
+---
+
+# GitHub workflow
+
+## Push authentication
+
+Integrated terminal (VS Code / Cursor): pushes work via injected askpass — `GIT_ASKPASS` + `VSCODE_GIT_IPC_HANDLE` route credentials to the editor's GitHub session. No stored token, `gh`, or `credential.helper` required.
+
+**Do not** conclude "can't push / no credentials" just because `git config credential.helper`, `~/.git-credentials`, and `gh` are absent — check `echo $GIT_ASKPASS` first.
+
+**Cursor agent shells** do not get those env vars injected. Agent `git push` may fail unless the user runs `gh auth setup-git` or pushes via Source Control UI.
+
+## Branch workflow
+
+- `a-haz/aimanhazim.com` and `a-haz/pyroscout` deploy from `main`; direct commits to `main` are normal.
+- `.github/workflows/sitemap.yml` auto-commits `sitemap.xml` on HTML changes — don't hand-edit it; `git pull --rebase origin main` before the next push.
+- `a-haz/project-00` was renamed to `a-haz/pyroscout`.
+- Direct pushes to `main` are classifier-gated — commit locally, ask before pushing unless the user says "push".
+
+## Commit authorship
+
+Git identity: `aiman-hazim <dev@aimanhazim.com>`.
+
+**Commit as the user only** — never append `Co-Authored-By: Claude …` or any Anthropic co-author trailer. Do not rewrite history to strip old trailers unless asked.
