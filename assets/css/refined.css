@@ -352,13 +352,6 @@ html { scrollbar-color: color-mix(in srgb, var(--accent) 30%, var(--surface-2)) 
 }
 .coin:focus-visible { outline: none; }
 
-.coin-hint {
-  margin: 0;
-  font-size: .78rem;
-  letter-spacing: .04em;
-  color: var(--text-dim);
-}
-
 .resume-links {
   display: flex;
   flex-wrap: wrap;

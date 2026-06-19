@@ -183,7 +183,6 @@ window.SITE_CONTENT = {
       coinAria: "Flip the photo to switch between professional and personal",
       altPro: "Aiman Hazim — professional",
       altPersonal: "Aiman Hazim — personal",
-      coinHint: "Tap to flip — switch sides",
       resumeEn: "Résumé (EN)",
       resumeJa: "履歴書 (JP)",
       links: [
@@ -415,7 +414,6 @@ window.SITE_CONTENT = {
       coinAria: "写真をめくって「仕事」と「個人」を切り替える",
       altPro: "アイマン・ハジム — 仕事",
       altPersonal: "アイマン・ハジム — 個人",
-      coinHint: "タップでめくって切り替え",
       resumeEn: "履歴書（英語）",
       resumeJa: "履歴書（日本語）",
       links: [
@@ -644,7 +642,6 @@ window.SITE_CONTENT = {
       coinAria: "Balikkan foto untuk tukar antara profesional dan peribadi",
       altPro: "Aiman Hazim — profesional",
       altPersonal: "Aiman Hazim — peribadi",
-      coinHint: "Ketik untuk balikkan — tukar sisi",
       resumeEn: "Resume (BI)",
       resumeJa: "Resume (JP)",
       links: [
