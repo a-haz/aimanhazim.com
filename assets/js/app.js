@@ -547,6 +547,9 @@
     var c = C[lang] || C[DEFAULT_LANG];
     document.documentElement.setAttribute("lang", lang);
     document.documentElement.setAttribute("dir", c.dir || "ltr");
+    // Home page only: localize the tab title (name only — static <title> stays "Aiman Hazim" for SEO).
+    if (qs("#mode-switch")) document.title = c.hero.name;
+
     applyBindings(c);
     renderNav(c);
     renderModeSwitch(c);
