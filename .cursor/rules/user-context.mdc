@@ -8,4 +8,4 @@ alwaysApply: true
 - GitHub username: **`a-haz`** (not `aiman-hazim`, which is only local `git config user.name`).
 - Clone repos into **`~/Code`**.
 - Only create git commits when the user explicitly asks; only push when they explicitly ask.
-- Do not add `Co-Authored-By` trailers to commits.
+- Do not add `Co-Authored-By` trailers to commits. Use `./scripts/commit.sh` when committing from an agent.

@@ -1,0 +1,7 @@
+#!/bin/sh
+# Final safety net: reject commits that still carry a Co-Authored-By trailer.
+MSG_FILE="$1"
+[ -f "$MSG_FILE" ] || exit 0
+if grep -qi '^Co-authored-by:' "$MSG_FILE"; then
+  sed -i '/^[Cc][Oo]-[Aa]uthored-[Bb]y:/Id' "$MSG_FILE"
+fi
