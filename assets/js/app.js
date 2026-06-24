@@ -547,9 +547,6 @@
     var c = C[lang] || C[DEFAULT_LANG];
     document.documentElement.setAttribute("lang", lang);
     document.documentElement.setAttribute("dir", c.dir || "ltr");
-    // Sub-pages set their own <title>; only the home page is renamed per language.
-    if (qs("#mode-switch")) document.title = c.hero.name + " · " + c.hero.eyebrow;
-
     applyBindings(c);
     renderNav(c);
     renderModeSwitch(c);
