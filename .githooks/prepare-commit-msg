@@ -1,0 +1,5 @@
+#!/bin/sh
+# Strip Co-Authored-By trailers injected by Cursor / other agents.
+MSG_FILE="$1"
+[ -f "$MSG_FILE" ] || exit 0
+sed -i '/^[Cc][Oo]-[Aa]uthored-[Bb]y:/Id' "$MSG_FILE"
