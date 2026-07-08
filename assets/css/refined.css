@@ -87,30 +87,9 @@ body::before {                         /* keep the corner glows, a touch warmer 
 /* tighten the section kicker / mono labels a hair for a sharper read */
 .kicker, .chip-label, .phases-head { letter-spacing: 0.12em; }
 
-/* ---- the "currently learning" HUD becomes a little sensor module --------- */
+/* ---- the "currently learning" HUD (needs a positioning context for the
+ *      corner ticks drawn below) ------------------------------------------- */
 .hud { position: relative; }
-.hud::before {                          /* a scan line sweeps down the panel */
-  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 56px; z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(to bottom, transparent,
-    color-mix(in srgb, var(--accent) 13%, transparent), transparent);
-  animation: hud-scan 4s ease-in-out infinite;
-}
-@keyframes hud-scan {
-  0%   { transform: translateY(-56px); opacity: 0; }
-  12%  { opacity: 1; }
-  78%  { opacity: 1; }
-  90%, 100% { transform: translateY(360px); opacity: 0; }
-}
-.hud-bar { position: relative; }
-.hud-bar::after {                       /* device status LEDs, far right */
-  content: ""; margin-left: auto; flex: none; width: 32px; height: 8px;
-  background:
-    radial-gradient(circle 3px at 4px 4px,  var(--accent) 62%, transparent 64%),
-    radial-gradient(circle 3px at 16px 4px, #f4b740 62%, transparent 64%),
-    radial-gradient(circle 3px at 28px 4px, color-mix(in srgb, var(--accent-2) 88%, #fff) 62%, transparent 64%);
-  background-repeat: no-repeat; opacity: .85;
-}
 
 /* ---- cards/phases get a faint "target-lock" tick (brightens on hover) ---- */
 .card, .phase { position: relative; }
@@ -186,38 +165,12 @@ body::before {                         /* keep the corner glows, a touch warmer 
 @media (max-width: 760px) { .robot-blueprint { height: 36vh; opacity: .15; } }
 
 /* ---- bring the small loops onto the shared ~2s beat --------------------- */
-/* radar 8s · route-blip 8s · antenna 4s · hud-scan 4s · blink 6s ·          */
-/* route-ping 2s · badge-pulse 2s (heartbeat) · spinner 1s · caret 1s        */
+/* radar 8s · route-blip 8s · antenna 4s · blink 6s ·                        */
+/* route-ping 2s · badge-pulse 2s (heartbeat) · spinner 1s                   */
 .spinner { animation-duration: 1s; }            /* the HUD "spinning circle" */
-.hero-roles::after { animation-duration: 1s; }  /* the typing caret          */
 
-/* ---- buttons get a quick "scan shine" on hover -------------------------- */
-.btn { position: relative; overflow: hidden; }
-.btn::after {
-  content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 45%; pointer-events: none;
-  background: linear-gradient(100deg, transparent, color-mix(in srgb, #fff 38%, transparent), transparent);
-  transform: skewX(-18deg);
-}
-.btn:hover::after { animation: btn-shine .7s ease; }
-@keyframes btn-shine { from { left: -60%; } to { left: 130%; } }
-
-/* ---- a one-time "system online" boot scan on load ----------------------- */
-.boot-scan {
-  position: fixed; inset: 0; z-index: 9995; pointer-events: none;
-  background: linear-gradient(to bottom,
-    transparent 0%,
-    color-mix(in srgb, var(--accent) 32%, transparent) 38%,
-    color-mix(in srgb, #d4fbff 88%, transparent) 50%,
-    color-mix(in srgb, var(--accent) 32%, transparent) 62%,
-    transparent 100%);
-  background-size: 100% 26px; background-repeat: no-repeat; background-position: 0 -26px;
-  animation: boot-scan 1.05s ease-out .05s 1 both;
-}
-@keyframes boot-scan {
-  0%  { background-position: 0 -26px; opacity: 1; }
-  85% { opacity: 1; }
-  100%{ background-position: 0 100vh; opacity: 0; }
-}
+/* the hero role line is a single static string now — no typing caret        */
+.hero-roles::after { content: none; }
 
 /* ===========================================================================
  *  POLISH PASS — typography, reveal staggering, theme-aware motifs,
@@ -272,7 +225,6 @@ html { scrollbar-color: color-mix(in srgb, var(--accent) 30%, var(--surface-2)) 
 [data-theme="light"] .lidar-bg { opacity: .5; }
 [data-theme="light"] .robot-blueprint { opacity: .13; }
 [data-theme="light"] body::after { opacity: .38; }
-[data-theme="light"] .boot-scan { opacity: .55; }
 
 /* ---- small screens: tuck the radar into the corner, calm the noise ------- */
 @media (max-width: 760px) {
@@ -281,10 +233,9 @@ html { scrollbar-color: color-mix(in srgb, var(--accent) 30%, var(--surface-2)) 
 
 /* ---- reduced motion ------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
-  .boot-scan { display: none; }
   .site-nav::after { animation: none; }
   .robot-blueprint, .robot-blueprint::after,
-  .lidar-bg::before, .hud::before, .timeline::after,
+  .lidar-bg::before, .timeline::after,
   .milestone.active .milestone-dot::after,
   .brand-mark .rm-glow,
   .brand-mark circle:nth-of-type(3), .brand-mark circle:nth-of-type(4) { animation: none; }
