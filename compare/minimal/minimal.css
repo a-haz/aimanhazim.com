@@ -1,0 +1,155 @@
+/* ============================================================================
+ *  minimal.css — "quiet" character layer for aimanhazim.com
+ *  Inspired by thariq.io: one narrow column, necessary words only, almost no
+ *  decoration. Loads AFTER style.css and overrides it; the base theme tokens
+ *  (colors, dark/light) still come from style.css. Revert by swapping this
+ *  <link> back to refined.css.
+ * ==========================================================================*/
+
+:root {
+  --maxw: 640px;
+  --radius: 10px;
+  --radius-sm: 7px;
+}
+
+/* ---- strip the ambient decoration ---------------------------------------- */
+body::before, body::after { display: none; }
+
+body { font-size: 1rem; line-height: 1.7; }
+
+/* ---- header: static, plain, just brand + controls ------------------------ */
+.site-nav {
+  position: static;
+  background: transparent;
+  border-bottom: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.nav-content { max-width: var(--maxw); padding: 28px 24px 0; gap: 12px; }
+.brand-mark { height: 26px; }
+html { scroll-padding-top: 0; }
+
+.lang-switch { background: transparent; border-color: transparent; }
+.icon-btn { width: 32px; height: 32px; font-size: 0.92rem; background: transparent; }
+
+/* ---- one narrow column --------------------------------------------------- */
+.container { max-width: var(--maxw); }
+section { padding-block: 26px; }
+.hero { padding-top: 44px; padding-bottom: 8px; }
+
+.hero h1 {
+  font-size: 1.7rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.tagline { color: var(--text-dim); margin-bottom: 26px; }
+
+/* ---- Professional | Personal toggle -------------------------------------- */
+.mode-switch {
+  display: inline-flex; gap: 2px; padding: 3px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 999px; margin-bottom: 8px;
+}
+.mode-btn {
+  font-family: var(--font); font-size: 0.88rem; font-weight: 600;
+  color: var(--text-dim); background: transparent; border: 0;
+  padding: 6px 16px; border-radius: 999px; cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.mode-btn:hover { color: var(--text); }
+.mode-btn.is-active { background: var(--accent); color: var(--accent-ink); }
+
+/* ---- small, quiet headings ------------------------------------------------ */
+h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+h2::before { content: "✦ "; color: var(--accent); font-size: 0.8em; }
+section p { color: var(--text-dim); }
+section p + p { margin-top: 12px; }
+
+/* ---- projects: a plain list, no cards ------------------------------------- */
+.cards { display: block; }
+.card {
+  background: transparent; border: 0; border-radius: 0; box-shadow: none;
+  padding: 0 0 18px; gap: 2px;
+}
+.card:last-child { padding-bottom: 0; }
+.card:hover { transform: none; box-shadow: none; }
+.card h3 { font-size: 1rem; font-weight: 600; }
+.card p { font-size: 0.95rem; }
+.card-link { font-family: var(--font); font-size: 0.88rem; font-weight: 500; }
+.card .links-row { display: flex; gap: 14px; margin-top: 2px; }
+
+/* ---- contact: a plain row of links ---------------------------------------- */
+.social-links { flex-direction: row; flex-wrap: wrap; gap: 6px 18px; margin-top: 4px; }
+.social-link {
+  padding: 0; background: transparent; border: 0; border-radius: 0;
+  gap: 6px; justify-content: flex-start;
+}
+.social-link:hover { transform: none; }
+.social-link:hover .social-value { text-decoration: underline; text-underline-offset: 3px; }
+.social-label { display: none; }
+.social-value { font-weight: 500; font-size: 0.95rem; }
+
+/* ---- personal side: mini lists of recent posts ---------------------------- */
+.mini-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.mini-entry {
+  display: flex; gap: 14px; align-items: baseline; color: var(--text);
+}
+.mini-entry:hover .mini-title { text-decoration: underline; text-underline-offset: 3px; }
+.mini-date {
+  font-family: var(--mono); font-size: 0.78rem; color: var(--text-mute);
+  flex: none; min-width: 6.5em;
+}
+.mini-title { font-size: 0.95rem; font-weight: 500; }
+.see-all {
+  display: inline-block; margin-top: 12px;
+  font-size: 0.88rem; font-weight: 500;
+}
+
+/* ---- writing / log pages -------------------------------------------------- */
+.log-header { padding-top: 44px; padding-bottom: 18px; }
+.log-header h1 { font-size: 1.7rem; letter-spacing: -0.02em; margin: 14px 0 8px; }
+.log-header .lead { font-size: 1rem; color: var(--text-dim); }
+.log-back { font-family: var(--mono); font-size: 0.82rem; }
+
+.log-filters { padding-bottom: 22px; }
+.filter-chip { font-size: 0.76rem; padding: 5px 12px; }
+
+.log-feed { gap: 0; padding-bottom: 60px; }
+.log-entry {
+  background: transparent; border: 0; border-radius: 0;
+  border-top: 1px solid var(--border);
+  padding: 26px 0;
+}
+.log-entry:first-child { border-top: 0; padding-top: 6px; }
+.log-head h2 { font-size: 1.15rem; }
+.log-head h2::before { content: ""; }
+.log-date { font-size: 0.78rem; }
+.log-body p { font-size: 0.97rem; }
+.card-tags li { background: transparent; padding: 2px 0; border: 0; }
+
+/* ---- footer ---------------------------------------------------------------- */
+.site-footer { border-top: 0; margin-top: 30px; padding: 20px 24px 44px; }
+.footer-content { max-width: var(--maxw); }
+.site-footer p { font-size: 0.82rem; }
+.foot-social { width: 30px; height: 30px; background: transparent; border-color: transparent; }
+.foot-social:hover { border-color: var(--border); }
+.foot-social svg { width: 15px; height: 15px; }
+
+/* ---- error page ------------------------------------------------------------ */
+.error-page { min-height: 70vh; }
+
+/* ---- reveal: keep it, but gentler ------------------------------------------ */
+.reveal { transform: translateY(10px); }
+
+/* ---- responsive ------------------------------------------------------------ */
+@media (max-width: 480px) {
+  .hero { padding-top: 30px; }
+  .nav-content { padding-top: 20px; }
+  .mini-date { min-width: 5.5em; }
+}

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyberpunk (exploration) · Aiman Hazim</title>
+
+  <!-- SEO -->
+  <meta name="description" content="4th-year robotics student in Fukui University's Intelligent Robot Laboratory. I build autonomous navigation robot.">
+  <meta name="author" content="Aiman Hazim">
+  <meta name="keywords" content="Aiman Hazim, robotics, SLAM, Isaac Sim, LiDAR, thermal, TIR, sim2real, autonomous systems, Fukui University, Mega Rover">
+  <meta name="theme-color" content="#0b1120">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://aimanhazim.com/compare/cyberpunk/">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Structured data: tells Google the site name to show above the result -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://aimanhazim.com/#website",
+        "url": "https://aimanhazim.com/",
+        "name": "Aiman Hazim",
+        "publisher": { "@id": "https://aimanhazim.com/#person" }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://aimanhazim.com/#person",
+        "name": "Aiman Hazim",
+        "url": "https://aimanhazim.com/",
+        "jobTitle": "Robotics engineering student",
+        "affiliation": {
+          "@type": "CollegeOrUniversity",
+          "name": "Fukui University"
+        },
+        "sameAs": ["https://github.com/a-haz"]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Aiman Hazim · Robotics Engineering">
+  <meta property="og:description" content="Building TIR-LiDAR active SLAM in simulation, on a path to real hardware. Robotics student @ Fukui University.">
+  <meta property="og:url" content="https://aimanhazim.com/">
+  <meta property="og:site_name" content="Aiman Hazim">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Aiman Hazim · Robotics Engineering">
+  <meta name="twitter:description" content="Building TIR-LiDAR active SLAM in simulation, on a path to real hardware.">
+
+  <!-- Set theme before paint to avoid a flash -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ah-theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/compare/cyberpunk/cyberpunk.css">
+  <link rel="stylesheet" href="/compare/themes.css">
+</head>
+<body>
+  <nav class="theme-bar" aria-label="Theme explorations">
+    <a class="theme-bar__link" href="/compare/">← all themes</a>
+    <span class="theme-bar__name">Cyberpunk</span>
+    <a class="theme-bar__link theme-bar__live" href="/">live site ▸</a>
+  </nav>
+
+  <div class="scanlines" aria-hidden="true"></div>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============================ NAV ============================ -->
+  <nav class="site-nav" aria-label="Primary">
+    <div class="nav-content">
+      <a class="brand" href="#top" aria-label="Aiman Hazim — home">
+        <svg class="brand-mark" viewBox="6 -2 88 78" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <line x1="50" y1="20" x2="50" y2="7" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <circle class="rm-glow" cx="50" cy="5" r="6.5"/>
+          <circle class="rm-accent" cx="50" cy="5" r="3.4"/>
+          <rect x="8" y="37" width="9" height="18" rx="3" fill="currentColor"/>
+          <rect x="83" y="37" width="9" height="18" rx="3" fill="currentColor"/>
+          <rect x="18" y="20" width="64" height="52" rx="15" fill="currentColor"/>
+          <circle class="rm-accent" cx="38" cy="46" r="7"/>
+          <circle class="rm-accent" cx="62" cy="46" r="7"/>
+          <rect class="rm-mouth" x="40" y="60" width="20" height="3.4" rx="1.7"/>
+        </svg>
+      </a>
+      <div class="nav-spacer"></div>
+      <div id="primary-nav">
+        <ul id="nav-links"></ul>
+      </div>
+      <div class="nav-controls">
+        <div class="lang-switch" id="lang-switch"></div>
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="true">
+          <span class="theme-icon" aria-hidden="true">☀</span>
+        </button>
+        <button class="icon-btn" id="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"
+                aria-label="Menu" data-i18n-attr="aria-label:ui.menu">
+          <span aria-hidden="true">≡</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <!-- ============================ HERO ============================ -->
+    <header class="hero" id="top">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-text">
+            <span class="eyebrow hero-eyebrow" data-i18n="hero.eyebrow"></span>
+            <h1 id="hero-name" data-i18n="hero.name"></h1>
+            <span class="hero-roles" id="hero-roles" aria-hidden="true"></span>
+            <p class="hero-intro" data-i18n="hero.intro"></p>
+            <div class="hero-cta">
+              <a class="btn" href="#research" data-i18n="hero.ctaPrimary"></a>
+              <a class="btn btn-ghost" href="/progress.html" data-i18n="hero.ctaSecondary"></a>
+            </div>
+            <div class="hero-meta">
+              <span><span class="dot"></span><span data-i18n="hero.location"></span></span>
+              <span class="badge"><span class="pulse"></span><span data-i18n="hero.available"></span></span>
+            </div>
+          </div>
+
+          <aside class="hud" aria-label="Currently learning">
+            <div class="hud-bar">
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="hud-title" data-i18n="learning.heading"></span>
+            </div>
+            <div class="hud-body">
+              <p class="hud-caption" data-i18n="learning.caption"></p>
+              <div id="learning-items"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============================ ABOUT ============================ -->
+    <section id="about">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="about.heading"></span>
+          <h2 data-i18n="about.lead"></h2>
+        </div>
+        <div class="about-grid">
+          <div class="about-prose" id="about-paragraphs"></div>
+          <dl class="facts reveal" id="about-facts"></dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ RESEARCH ============================ -->
+    <section id="research">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="research.kicker"></span>
+          <h2 data-i18n="research.heading"></h2>
+        </div>
+        <p class="research-summary" data-i18n="research.summary"></p>
+
+        <div class="callout">
+          <span class="callout-label" data-i18n="research.baseLabel"></span>
+          <p data-i18n="research.base"></p>
+        </div>
+
+        <p class="chip-label" data-i18n="research.sensorsLabel"></p>
+        <ul class="chips" id="research-sensors"></ul>
+
+        <p class="phases-head" data-i18n="research.phasesHeading"></p>
+        <div class="phases" id="research-phases"></div>
+
+        <div class="sim2real">
+          <span class="callout-label" data-i18n="research.sim2realLabel"></span>
+          <p data-i18n="research.sim2real"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ NOW ============================ -->
+    <section id="now">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="nav.now"></span>
+          <h2 data-i18n="now.heading"></h2>
+          <p class="lead" data-i18n="now.lead"></p>
+        </div>
+        <ul class="timeline" id="now-roadmap"></ul>
+      </div>
+    </section>
+
+    <!-- ============================ SKILLS ============================ -->
+    <section id="skills">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="skills.heading"></span>
+          <h2 data-i18n="skills.lead"></h2>
+        </div>
+        <div class="skill-groups" id="skills-groups"></div>
+      </div>
+    </section>
+
+    <!-- ============================ PROJECTS ============================ -->
+    <section id="projects">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="projects.heading"></span>
+          <h2 data-i18n="projects.lead"></h2>
+        </div>
+        <div class="cards" id="projects-grid"></div>
+      </div>
+    </section>
+
+    <!-- ============================ CONTACT ============================ -->
+    <section id="contact">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="nav.contact"></span>
+          <h2 data-i18n="contact.heading"></h2>
+          <p class="lead" data-i18n="contact.lead"></p>
+        </div>
+        <div class="contact-grid">
+          <div class="social-links" id="contact-links"></div>
+          <form class="contact-form" action="https://formspree.io/f/xlgzjnby" method="POST">
+            <h3 data-i18n="contact.formHeading"></h3>
+            <div class="form-group">
+              <label for="name" data-i18n="contact.form.name"></label>
+              <input type="text" id="name" name="name" autocomplete="name" required>
+            </div>
+            <div class="form-group">
+              <label for="email" data-i18n="contact.form.email"></label>
+              <input type="email" id="email" name="email" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+              <label for="message" data-i18n="contact.form.message"></label>
+              <textarea id="message" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn" data-i18n="contact.form.send"></button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>&copy; <span id="year">2026</span> Aiman Hazim · <span data-i18n="footer.tagline"></span></p>
+      <div class="footer-links">
+        <div class="footer-socials" id="footer-socials"></div>
+        <a class="footer-top" href="#top" data-i18n="footer.backToTop"></a>
+      </div>
+    </div>
+  </footer>
+
+  <noscript>
+    <div style="max-width:680px;margin:120px auto;padding:0 24px;text-align:center">
+      <h1>Aiman Hazim</h1>
+      <p>4th-year robotics student in Fukui University's Intelligent Robot Laboratory. I build autonomous navigation robot.</p>
+      <p><a href="https://github.com/a-haz">github.com/a-haz</a> · <a href="mailto:contact@aimanhazim.com">contact@aimanhazim.com</a></p>
+      <p><em>This site is interactive — please enable JavaScript for the full experience.</em></p>
+    </div>
+  </noscript>
+
+  <script src="/compare/cyberpunk/js/content.js"></script>
+  <script src="/compare/cyberpunk/js/progress.js"></script>
+  <script src="/compare/cyberpunk/js/app.js"></script>
+</body>
+</html>
