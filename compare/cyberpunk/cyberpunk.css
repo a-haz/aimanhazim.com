@@ -1,0 +1,227 @@
+/* ============================================================================
+ *  cyberpunk.css — neon "night city" override layer for aimanhazim.com
+ *  EXPLORATION. Loads AFTER style.css and overrides theme tokens + components.
+ *  To revert: remove the <link rel="stylesheet" href="/assets/css/cyberpunk.css">
+ *  from index.html / progress.html / 404.html. The base theme is untouched.
+ * ==========================================================================*/
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Chakra+Petch:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+/* ---- palette + tokens ---------------------------------------------------- */
+:root {
+  --bg:            #05060f;
+  --bg-soft:       #080a1a;
+  --surface:       #0b0f22;
+  --surface-2:     #121833;
+  --border:        rgba(0, 240, 255, 0.16);
+  --border-strong: rgba(0, 240, 255, 0.42);
+  --text:          #e8fbff;
+  --text-dim:      #9ec6d6;
+  --text-mute:     #5f7f96;
+  --accent:        #00f0ff;        /* neon cyan */
+  --accent-2:      #ff2bd6;        /* neon magenta */
+  --accent-ink:    #02060f;
+  --glow:          rgba(0, 240, 255, 0.20);
+  --shadow:        0 18px 50px -24px rgba(0,0,0,.85);
+  --shadow-sm:     0 0 22px -6px rgba(0,240,255,.5);
+
+  --neon-cyan:     #00f0ff;
+  --neon-magenta:  #ff2bd6;
+  --neon-yellow:   #f3ff5e;
+
+  --font:    "Chakra Petch", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
+  --mono:    "Share Tech Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display: "Orbitron", "Chakra Petch", sans-serif;
+
+  --radius:    3px;
+  --radius-sm: 2px;
+  --notch: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+[data-theme="light"] {
+  --bg:            #f4eefb;
+  --bg-soft:       #ece2f7;
+  --surface:       #ffffff;
+  --surface-2:     #f3ecfb;
+  --border:        rgba(214, 0, 155, 0.18);
+  --border-strong: rgba(214, 0, 155, 0.45);
+  --text:          #190a2e;
+  --text-dim:      #4a3563;
+  --text-mute:     #7a6a90;
+  --accent:        #d6009b;        /* magenta ink */
+  --accent-2:      #0098c7;        /* cyan */
+  --accent-ink:    #ffffff;
+  --glow:          rgba(214, 0, 155, 0.14);
+  --shadow:        0 18px 44px -26px rgba(70,10,80,.40);
+  --shadow-sm:     0 0 22px -8px rgba(214,0,155,.5);
+  --neon-cyan:     #0098c7;
+  --neon-magenta:  #d6009b;
+  --neon-yellow:   #b88600;
+}
+
+/* ---- base ----------------------------------------------------------------*/
+body { font-family: var(--font); letter-spacing: 0.01em; }
+
+/* ambient neon corner glows */
+body::before {
+  background:
+    radial-gradient(50% 42% at 86% -6%, color-mix(in srgb, var(--neon-cyan) 22%, transparent), transparent 70%),
+    radial-gradient(46% 40% at 0% 8%,  color-mix(in srgb, var(--neon-magenta) 18%, transparent), transparent 70%),
+    radial-gradient(70% 50% at 50% 112%, color-mix(in srgb, var(--neon-magenta) 12%, transparent), transparent 72%);
+}
+/* ambient neon grid (slowly panning) */
+body::after {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--neon-cyan) 26%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--neon-cyan) 26%, transparent) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(circle at 50% 10%, #000, transparent 78%);
+  mask-image: radial-gradient(circle at 50% 10%, #000, transparent 78%);
+  opacity: 0.32;
+  animation: cyber-grid-pan 20s linear infinite;
+}
+@keyframes cyber-grid-pan { to { background-position: 0 46px, 46px 0; } }
+
+/* CRT scanline + vignette overlay (the .scanlines element sits just inside <body>) */
+.scanlines { position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+  background: repeating-linear-gradient(to bottom,
+    rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,0.14) 2px, rgba(0,0,0,0.14) 3px);
+  opacity: 0.5; }
+.scanlines::after { content: ""; position: absolute; inset: 0;
+  background: radial-gradient(125% 95% at 50% 45%, transparent 55%, rgba(0,0,0,0.45) 100%); }
+
+::selection { background: var(--neon-magenta); color: #fff; }
+a:hover { text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 60%, transparent); }
+
+/* ---- typography ----------------------------------------------------------*/
+.kicker, .eyebrow {
+  font-family: var(--mono); color: var(--accent);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 65%, transparent);
+}
+.kicker::before, .eyebrow::before { content: "> "; opacity: .7; }
+.section-head h2, .hero h1, .log-header h1, .error-page h1 {
+  font-family: var(--display); text-transform: uppercase; letter-spacing: 0.03em; font-weight: 800;
+}
+.section-head h2::after {
+  content: ""; display: block; width: 64px; height: 2px; margin-top: 14px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+  box-shadow: 0 0 12px var(--neon-cyan);
+}
+
+/* ---- nav -----------------------------------------------------------------*/
+.site-nav { border-bottom: 1px solid var(--border-strong);
+  box-shadow: 0 1px 0 0 color-mix(in srgb, var(--neon-cyan) 30%, transparent), 0 10px 34px -22px var(--neon-cyan); }
+.brand-mark { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--neon-cyan) 60%, transparent)); }
+.brand-mark .rm-accent { fill: var(--neon-cyan); }
+.brand-mark .rm-glow   { fill: var(--neon-magenta); opacity: .5; }
+.nav-link { font-family: var(--mono); text-transform: uppercase; letter-spacing: .08em; font-size: .82rem; }
+.nav-link::after { background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); height: 2px; }
+.icon-btn { border-radius: 3px; }
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 16px -2px var(--accent); }
+.lang-switch { border-radius: 3px; }
+.lang-btn { border-radius: 2px; font-family: var(--mono); }
+.lang-btn.is-active { background: var(--accent); color: var(--accent-ink); box-shadow: 0 0 14px -2px var(--accent); }
+
+/* ---- buttons -------------------------------------------------------------*/
+.btn {
+  font-family: var(--display); text-transform: uppercase; letter-spacing: .08em;
+  font-weight: 700; font-size: .82rem; border-radius: 0; clip-path: var(--notch);
+  background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: none; filter: drop-shadow(0 0 14px var(--accent)) brightness(1.05); }
+.btn-ghost { background: transparent; color: var(--accent); border: 1px solid var(--border-strong); }
+.btn-ghost:hover { color: var(--accent); border-color: var(--accent); filter: drop-shadow(0 0 12px var(--accent)); }
+
+/* ---- hero ----------------------------------------------------------------*/
+.hero h1 { font-weight: 900; color: var(--text); }
+#hero-name {
+  text-shadow:
+    -2px 0 color-mix(in srgb, var(--neon-magenta) 90%, transparent),
+     2px 0 color-mix(in srgb, var(--neon-cyan) 90%, transparent),
+     0 0 20px color-mix(in srgb, var(--neon-cyan) 35%, transparent);
+  animation: cyber-flicker 5s infinite steps(80);
+}
+@keyframes cyber-flicker {
+  0%, 91%, 100% { opacity: 1; }
+  92% { opacity: .66; } 93% { opacity: 1; } 95% { opacity: .82; } 96% { opacity: 1; }
+}
+.hero-roles { color: var(--neon-magenta); font-family: var(--mono);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--neon-magenta) 50%, transparent); }
+.hero-roles::after { color: var(--neon-magenta); }
+.badge { border-radius: 2px; }
+
+/* ---- panels: neon "HUD frame" with glowing corner brackets ---------------*/
+.hud, .card, .phase, .skill-group, .contact-form, .log-entry, .social-link, .facts {
+  position: relative; border-radius: var(--radius-sm); border-color: var(--border-strong);
+  background: linear-gradient(180deg, var(--surface), var(--bg-soft));
+}
+.hud::before, .card::before, .phase::before, .skill-group::before,
+.contact-form::before, .log-entry::before {
+  content: ""; position: absolute; top: 0; left: 0; width: 14px; height: 14px; pointer-events: none;
+  border-top: 2px solid var(--neon-cyan); border-left: 2px solid var(--neon-cyan);
+}
+.hud::after, .card::after, .phase::after, .skill-group::after,
+.contact-form::after, .log-entry::after {
+  content: ""; position: absolute; bottom: 0; right: 0; width: 14px; height: 14px; pointer-events: none;
+  border-bottom: 2px solid var(--neon-magenta); border-right: 2px solid var(--neon-magenta);
+}
+.card:hover, .phase:hover, .social-link:hover, .skill-group:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 26px -8px var(--accent), inset 0 0 34px -24px var(--accent);
+}
+
+/* ---- card / phase / skill headings + chips -------------------------------*/
+.card h3, .phase h3, .milestone h3 {
+  font-family: var(--display); text-transform: uppercase; letter-spacing: .02em; font-size: 1.04rem;
+}
+.skill-group-name { font-family: var(--display); text-transform: uppercase; font-size: .9rem; letter-spacing: .04em; }
+.skill-group-name::before { content: "▹ "; color: var(--neon-magenta); }
+.card-link { font-family: var(--mono); color: var(--accent); }
+.card-tags li, .chip {
+  border-radius: 2px; font-family: var(--mono);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface-2));
+  border-color: color-mix(in srgb, var(--accent) 25%, transparent); color: var(--text-dim);
+}
+.chip-note, .phase-tag, .milestone-date, .log-date, .social-value, .hud-title { color: var(--accent); }
+.hud-title, .milestone-date, .log-date { font-family: var(--mono); }
+.hud-bar { background: color-mix(in srgb, var(--neon-cyan) 8%, var(--surface-2)); }
+
+/* ---- callout / sim2real --------------------------------------------------*/
+.callout { border-left: 3px solid var(--neon-cyan); border-radius: var(--radius-sm);
+  box-shadow: -8px 0 24px -16px var(--neon-cyan); }
+.callout .callout-label { color: var(--neon-cyan); }
+.sim2real { border-radius: var(--radius-sm); border-color: var(--border-strong);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--neon-cyan) 12%, transparent), color-mix(in srgb, var(--neon-magenta) 12%, transparent)); }
+
+/* ---- timeline ------------------------------------------------------------*/
+.timeline::before { width: 2px;
+  background: linear-gradient(180deg, var(--neon-cyan), var(--neon-magenta));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--neon-cyan) 50%, transparent); }
+.milestone.active .milestone-dot { background: var(--neon-cyan); border-color: var(--neon-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--neon-cyan) 20%, transparent), 0 0 16px var(--neon-cyan); }
+.milestone.next .milestone-dot { border-color: var(--neon-magenta); }
+
+/* ---- forms ---------------------------------------------------------------*/
+.form-group input, .form-group textarea { border-radius: var(--radius-sm); background: var(--bg-soft); }
+.form-group input:focus, .form-group textarea:focus { border-color: var(--accent); box-shadow: 0 0 14px -4px var(--accent); }
+
+/* ---- footer --------------------------------------------------------------*/
+.site-footer { border-top: 1px solid var(--border-strong);
+  box-shadow: 0 -1px 0 0 color-mix(in srgb, var(--neon-cyan) 24%, transparent); }
+.foot-social { border-radius: 3px; }
+.foot-social:hover { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 14px -3px var(--accent); }
+
+/* ---- build log + 404 -----------------------------------------------------*/
+.log-entry { border-left: 3px solid var(--neon-cyan); }
+.filter-chip { font-family: var(--mono); border-radius: 2px; }
+.filter-chip.is-active { background: var(--accent); color: var(--accent-ink); box-shadow: 0 0 14px -3px var(--accent); }
+.error-code { font-family: var(--mono); color: var(--neon-magenta);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--neon-magenta) 60%, transparent); }
+
+/* ---- thin neon scrollbar -------------------------------------------------*/
+* { scrollbar-color: var(--accent) transparent; scrollbar-width: thin; }
+
+/* ---- respect reduced motion ----------------------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  #hero-name { animation: none; }
+  body::after { animation: none; }
+}

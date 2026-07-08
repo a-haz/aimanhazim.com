@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme explorations · Aiman Hazim</title>
+  <meta name="description" content="Archived design explorations for aimanhazim.com — cyberpunk, minimal, quiet telemetry, and earlier field-telemetry drafts.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://aimanhazim.com/compare/">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ah-theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/compare/themes.css">
+</head>
+<body class="compare-page">
+  <div class="compare-wrap">
+    <h1>Theme explorations</h1>
+    <p class="compare-lead">Frozen snapshots from <code>explore/*</code> branches — design drafts kept for reference. The live site is <strong>field telemetry</strong> at the root.</p>
+
+    <ul class="theme-list">
+      <li>
+        <a class="theme-card" href="/">
+          <div class="theme-card__head">
+            <span class="theme-card__title">Field telemetry</span>
+            <span class="theme-card__badge">live</span>
+          </div>
+          <p class="theme-card__desc">LiDAR radar, robot blueprint, numbered sections — current production theme on <code>main</code>.</p>
+        </a>
+      </li>
+      <li>
+        <a class="theme-card" href="/compare/before/">
+          <div class="theme-card__head">
+            <span class="theme-card__title">Before</span>
+          </div>
+          <p class="theme-card__desc">Early refined pass — smaller blueprint motif, no boot scan sweep.</p>
+        </a>
+      </li>
+      <li>
+        <a class="theme-card" href="/compare/field-telemetry/">
+          <div class="theme-card__head">
+            <span class="theme-card__title">Field telemetry (draft)</span>
+          </div>
+          <p class="theme-card__desc">Mid-iteration of the telemetry look before the final polish merge.</p>
+        </a>
+      </li>
+      <li>
+        <a class="theme-card" href="/compare/quiet-telemetry/">
+          <div class="theme-card__head">
+            <span class="theme-card__title">Quiet telemetry</span>
+          </div>
+          <p class="theme-card__desc">Middle ground — minimal one-column layout with a subtle LiDAR background only.</p>
+        </a>
+      </li>
+      <li>
+        <a class="theme-card" href="/compare/minimal/">
+          <div class="theme-card__head">
+            <span class="theme-card__title">Minimal</span>
+          </div>
+          <p class="theme-card__desc">Stripped-back one-column layout with Professional / Personal toggle and a Writing section.</p>
+        </a>
+      </li>
+      <li>
+        <a class="theme-card" href="/compare/cyberpunk/">
+          <div class="theme-card__head">
+            <span class="theme-card__title">Cyberpunk</span>
+          </div>
+          <p class="theme-card__desc">Neon “night city” palette with CRT scanlines — high contrast, arcade HUD feel.</p>
+        </a>
+      </li>
+    </ul>
+
+    <a class="compare-back" href="/">← back to live site</a>
+  </div>
+</body>
+</html>

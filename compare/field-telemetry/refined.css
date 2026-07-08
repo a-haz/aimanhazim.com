@@ -1,0 +1,291 @@
+/* ============================================================================
+ *  refined.css — "field telemetry" character layer for aimanhazim.com
+ *  EXPLORATION. Keeps the original clean theme intact and adds quiet robotics
+ *  personality + a tighter rhythm:
+ *    · a subtle LiDAR range-ring + radar-sweep background (the .lidar-bg element)
+ *    · the page grid refined to a blueprint dot-grid
+ *    · engineering section numbers (01 / ABOUT …) via CSS counters
+ *    · a "powered-on" pulse on the robot mascot's antenna
+ *    · tightened spacing, slightly crisper borders
+ *  Loads AFTER style.css. Revert by removing the <link> + the .lidar-bg div.
+ * ==========================================================================*/
+
+/* ---- gentle token refinements (cleaner, tighter) ------------------------- */
+:root {
+  --border:        rgba(148, 163, 184, 0.16);
+  --border-strong: rgba(148, 163, 184, 0.32);
+  --radius:        13px;
+  --radius-sm:     9px;
+  --maxw:          1080px;
+}
+
+/* tighter vertical rhythm */
+section { padding-block: clamp(50px, 7vw, 92px); }
+.section-head { margin-bottom: 32px; }
+.hero { padding-top: 128px; padding-bottom: clamp(52px, 7vw, 86px); }
+.hero-grid { gap: 46px; }
+.hero h1 { letter-spacing: -0.035em; }
+.hero-intro { margin-bottom: 26px; }
+.cards, .phases, .skill-groups { gap: 16px; }
+.card { padding: 22px; gap: 11px; }
+.phase, .skill-group { padding: 20px; }
+.about-grid { gap: 40px; }
+
+/* ---- robot-inspired background: LiDAR range rings + radar sweep ---------- */
+.lidar-bg {
+  position: fixed; z-index: -1; pointer-events: none;
+  top: -24vh; right: 15vw; width: 66vh; height: 66vh;
+  background: repeating-radial-gradient(circle at center,
+    transparent 0 52px,
+    color-mix(in srgb, var(--accent) 26%, transparent) 52px 53px);
+  -webkit-mask-image: radial-gradient(circle at center, #000 0, #000 58%, transparent 88%);
+          mask-image: radial-gradient(circle at center, #000 0, #000 58%, transparent 88%);
+  opacity: .82;
+}
+.lidar-bg::before {                    /* the sweeping wedge */
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    color-mix(in srgb, var(--accent) 24%, transparent) 0deg,
+    transparent 36deg 360deg);
+  -webkit-mask-image: radial-gradient(circle at center, #000 0, #000 58%, transparent 88%);
+          mask-image: radial-gradient(circle at center, #000 0, #000 58%, transparent 88%);
+  animation: lidar-sweep 8s linear infinite;
+}
+@keyframes lidar-sweep { to { transform: rotate(360deg); } }
+
+/* ---- background grid -> finer blueprint dot-grid ------------------------- */
+body::after {
+  background-image: radial-gradient(color-mix(in srgb, var(--accent) 17%, transparent) 1px, transparent 1.6px);
+  background-size: 30px 30px;
+  opacity: .5;
+}
+body::before {                         /* keep the corner glows, a touch warmer */
+  background:
+    radial-gradient(55% 45% at 80% -6%, var(--glow), transparent 70%),
+    radial-gradient(42% 38% at 2% 8%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 70%);
+}
+
+/* ---- engineering character: numbered sections --------------------------- */
+#main { counter-reset: sec; }
+.section-head { counter-increment: sec; }
+.section-head .kicker::before {
+  content: counter(sec, decimal-leading-zero) " / ";
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
+/* ---- the robot mascot's antenna gets a "powered-on" pulse ---------------- */
+.brand-mark .rm-glow { animation: antenna-pulse 4s ease-in-out infinite; }
+@keyframes antenna-pulse { 0%, 100% { opacity: .16; } 50% { opacity: .5; } }
+
+/* ---- a little more definition on hover (clean, not heavy) ---------------- */
+.card { transition: transform .25s, border-color .25s, box-shadow .25s; }
+.card:hover { transform: translateY(-4px); border-color: var(--accent);
+  box-shadow: 0 14px 30px -20px color-mix(in srgb, var(--accent) 70%, transparent); }
+.phase:hover { border-color: var(--accent); }
+
+/* tighten the section kicker / mono labels a hair for a sharper read */
+.kicker, .chip-label, .phases-head { letter-spacing: 0.12em; }
+
+/* ---- the "currently learning" HUD becomes a little sensor module --------- */
+.hud { position: relative; }
+.hud::before {                          /* a scan line sweeps down the panel */
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 56px; z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent,
+    color-mix(in srgb, var(--accent) 13%, transparent), transparent);
+  animation: hud-scan 4s ease-in-out infinite;
+}
+@keyframes hud-scan {
+  0%   { transform: translateY(-56px); opacity: 0; }
+  12%  { opacity: 1; }
+  78%  { opacity: 1; }
+  90%, 100% { transform: translateY(360px); opacity: 0; }
+}
+.hud-bar { position: relative; }
+.hud-bar::after {                       /* device status LEDs, far right */
+  content: ""; margin-left: auto; flex: none; width: 32px; height: 8px;
+  background:
+    radial-gradient(circle 3px at 4px 4px,  var(--accent) 62%, transparent 64%),
+    radial-gradient(circle 3px at 16px 4px, #f4b740 62%, transparent 64%),
+    radial-gradient(circle 3px at 28px 4px, color-mix(in srgb, var(--accent-2) 88%, #fff) 62%, transparent 64%);
+  background-repeat: no-repeat; opacity: .85;
+}
+
+/* ---- cards/phases get a faint "target-lock" tick (brightens on hover) ---- */
+.card, .phase { position: relative; }
+.card::after, .phase::after {
+  content: ""; position: absolute; top: 12px; right: 12px; width: 9px; height: 9px;
+  border-top: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent);
+  opacity: .3; transition: opacity .25s;
+}
+.card:hover::after, .phase:hover::after { opacity: .9; }
+
+/* ---- the robot mascot blinks now and then (eyes = 3rd/4th <circle>) ------ */
+.brand-mark circle:nth-of-type(3), .brand-mark circle:nth-of-type(4) {
+  transform-box: fill-box; transform-origin: center;
+  animation: robot-blink 6s ease-in-out infinite;
+}
+@keyframes robot-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.12); } }
+
+/* ---- the "Now" roadmap reads as the robot's planned route ---------------- */
+.timeline::before {                     /* energise the route line */
+  background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 12%, transparent));
+}
+.timeline::after {                      /* a blip travels along the route */
+  content: ""; position: absolute; left: 6px; top: 0; width: 4px; height: 16px;
+  border-radius: 4px; background: var(--accent); box-shadow: 0 0 10px var(--accent);
+  pointer-events: none; animation: route-blip 8s ease-in-out infinite;
+}
+@keyframes route-blip { 0% { top: 0; opacity: 0; } 8% { opacity: 1; } 88% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+.milestone.active .milestone-dot::after {   /* the current step pings */
+  content: ""; position: absolute; inset: -4px; border-radius: 50%;
+  border: 1px solid var(--accent); pointer-events: none;
+  animation: route-ping 2s ease-out infinite;
+}
+@keyframes route-ping { 0% { transform: scale(.55); opacity: .8; } 100% { transform: scale(2.4); opacity: 0; } }
+
+/* ---- the HUD gets a sensor "targeting frame" (corner ticks) -------------- */
+.hud::after {
+  content: ""; position: absolute; inset: 6px; z-index: 2; pointer-events: none; opacity: .55;
+  background:
+    linear-gradient(var(--accent), var(--accent))     0    0    / 11px 1.5px no-repeat,
+    linear-gradient(var(--accent), var(--accent))     0    0    / 1.5px 11px no-repeat,
+    linear-gradient(var(--accent-2), var(--accent-2)) 100% 100% / 11px 1.5px no-repeat,
+    linear-gradient(var(--accent-2), var(--accent-2)) 100% 100% / 1.5px 11px no-repeat;
+}
+
+/* ---- robot-rover blueprint, faint in the bottom-left background --------- */
+/* sized large to balance the LiDAR radar in the opposite (top-right) corner */
+.robot-blueprint {
+  position: fixed; left: 20vw; bottom: 1vh;
+  z-index: -1; pointer-events: none;
+  height: 35vh; aspect-ratio: 420 / 340; opacity: .2;
+  background: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
+  animation: blueprint-plot 1.6s ease-out .35s 1 both;
+}
+@keyframes blueprint-plot {
+  from { clip-path: inset(0 100% 0 0); opacity: 0; }
+  to   { clip-path: inset(0 0 0 0);   opacity: .2; }
+}
+/* a slow sensor scan passes over the schematic, lit only on its lines       */
+/* (masked by the same SVG) — 8s to share the radar's tempo                  */
+.robot-blueprint::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to bottom, transparent 41%, rgba(160,246,255,.95) 50%, transparent 59%);
+  background-size: 100% 240%; background-repeat: no-repeat;
+  -webkit-mask: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
+          mask: url("/assets/img/robot-blueprint.svg") left bottom / contain no-repeat;
+  animation: blueprint-scan 8s ease-in-out infinite;
+}
+@keyframes blueprint-scan {
+  0%   { background-position: 0 -150%; }
+  55%  { background-position: 0 150%; }
+  100% { background-position: 0 150%; }
+}
+@media (max-width: 760px) { .robot-blueprint { height: 36vh; opacity: .15; } }
+
+/* ---- bring the small loops onto the shared ~2s beat --------------------- */
+/* radar 8s · route-blip 8s · antenna 4s · hud-scan 4s · blink 6s ·          */
+/* route-ping 2s · badge-pulse 2s (heartbeat) · spinner 1s · caret 1s        */
+.spinner { animation-duration: 1s; }            /* the HUD "spinning circle" */
+.hero-roles::after { animation-duration: 1s; }  /* the typing caret          */
+
+/* ---- buttons get a quick "scan shine" on hover -------------------------- */
+.btn { position: relative; overflow: hidden; }
+.btn::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 45%; pointer-events: none;
+  background: linear-gradient(100deg, transparent, color-mix(in srgb, #fff 38%, transparent), transparent);
+  transform: skewX(-18deg);
+}
+.btn:hover::after { animation: btn-shine .7s ease; }
+@keyframes btn-shine { from { left: -60%; } to { left: 130%; } }
+
+/* ---- a one-time "system online" boot scan on load ----------------------- */
+.boot-scan {
+  position: fixed; inset: 0; z-index: 9995; pointer-events: none;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 32%, transparent) 38%,
+    color-mix(in srgb, #d4fbff 88%, transparent) 50%,
+    color-mix(in srgb, var(--accent) 32%, transparent) 62%,
+    transparent 100%);
+  background-size: 100% 26px; background-repeat: no-repeat; background-position: 0 -26px;
+  animation: boot-scan 1.05s ease-out .05s 1 both;
+}
+@keyframes boot-scan {
+  0%  { background-position: 0 -26px; opacity: 1; }
+  85% { opacity: 1; }
+  100%{ background-position: 0 100vh; opacity: 0; }
+}
+
+/* ===========================================================================
+ *  POLISH PASS — typography, reveal staggering, theme-aware motifs,
+ *  scroll progress, and small interaction details. Same overlay contract:
+ *  everything below only refines what style.css already draws.
+ * ==========================================================================*/
+
+/* ---- typography: calmer rag, hero name picks up the accent --------------- */
+h1, h2, h3 { text-wrap: balance; }
+p, .lead { text-wrap: pretty; }
+.hero h1 {
+  background: linear-gradient(97deg, var(--text) 58%, var(--accent) 125%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: var(--text);
+}
+
+/* ---- text selection + scrollbar follow the accent ------------------------ */
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+html { scrollbar-color: color-mix(in srgb, var(--accent) 30%, var(--surface-2)) transparent; }
+
+/* ---- mission-progress line under the nav (scroll-driven, Chrome only) ---- */
+.site-nav::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transform: scaleX(0); transform-origin: left; pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .site-nav::after { animation: scroll-progress linear both; animation-timeline: scroll(root); }
+}
+@keyframes scroll-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ---- reveal: cards/phases also fade (style.css's .card transition list
+ *      overrides .reveal's, which made opacity snap). JS adds a small
+ *      per-element stagger via inline transition-delay. ------------------- */
+.card.reveal, .phase.reveal, .skill-group.reveal, .log-entry.reveal {
+  transition: opacity .6s ease, transform .45s ease, border-color .25s, box-shadow .25s;
+}
+
+/* ---- chips + log entries pick up the same target-lock hover language ----- */
+.chip { transition: border-color .25s, color .25s; }
+.chip:hover { border-color: var(--accent); color: var(--text); }
+.log-entry { transition: border-color .25s, box-shadow .25s; }
+.log-entry:hover {
+  border-color: var(--accent);
+  box-shadow: 0 14px 30px -22px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.card-link { text-underline-offset: 3px; }
+.fact { transition: background-color .25s; }
+.fact:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+
+/* ---- light theme: the motifs need a lighter touch on a bright canvas ----- */
+[data-theme="light"] .lidar-bg { opacity: .5; }
+[data-theme="light"] .robot-blueprint { opacity: .13; }
+[data-theme="light"] body::after { opacity: .38; }
+[data-theme="light"] .boot-scan { opacity: .55; }
+
+/* ---- small screens: tuck the radar into the corner, calm the noise ------- */
+@media (max-width: 760px) {
+  .lidar-bg { top: -30vh; right: -22vw; width: 58vh; height: 58vh; opacity: .55; }
+}
+
+/* ---- reduced motion ------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .boot-scan { display: none; }
+  .site-nav::after { animation: none; }
+  .robot-blueprint, .robot-blueprint::after,
+  .lidar-bg::before, .hud::before, .timeline::after,
+  .milestone.active .milestone-dot::after,
+  .brand-mark .rm-glow,
+  .brand-mark circle:nth-of-type(3), .brand-mark circle:nth-of-type(4) { animation: none; }
+}
