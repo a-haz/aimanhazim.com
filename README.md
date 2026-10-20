@@ -8,13 +8,14 @@ Live: <https://aimanhazim.com>
 
 ## Editing the site
 
- **All the words live in two files:**
+**Most of the words live in these files:**
 
 | Action | Edit this file |
 | --- | --- |
 | Change any text on the main page (in any language) | `assets/js/content.js` |
 | Add / edit a Build Log entry | `assets/js/progress.js` |
 | Add a photo to a log entry | drop it in `assets/img/`, then link it in `progress.js` |
+| Add / edit a Writing post | `assets/js/writing.js` |
 
 ### Change wording
 
@@ -64,11 +65,15 @@ one language: the others fall back to it automatically.
 | --- | --- |
 | `index.html` | Main page structure |
 | `progress.html` | Build Log page structure |
+| `writing.html` | Writing page structure |
 | `assets/js/content.js` | **all site text, 3 languages** |
 | `assets/js/progress.js` | **Build Log entries** |
+| `assets/js/writing.js` | **Writing posts** |
 | `assets/js/app.js` | Engine: theme, language, rendering, animations |
 | `assets/css/style.css` | All styling + theme tokens |
 | `assets/img/` | Photos/screenshots for the log |
+| `projects/` | Standalone project write-ups (e.g. `projects/pyroscout/`) |
+| `compare/` | Theme explorations, not linked from the main nav |
 | `favicon.svg` · `404.html` · `robots.txt` · `sitemap.xml` · `CNAME` | Icon, error page, SEO, domain |
 
 ---
