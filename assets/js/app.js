@@ -1,5 +1,5 @@
 /* ============================================================================
- *  app.js  —  the engine.
+ *  app.js: the engine.
  *  It reads content.js + progress.js + writing.js and renders the pages, and
  *  handles the language switch, dark/light theme, the Professional|Personal
  *  toggle, animations, and the log / writing feeds.
@@ -180,7 +180,7 @@
         ul.appendChild(el("li", null, [el("a", { href: it[0], class: "nav-link" }, [it[1]])]));
       });
       // On sub-pages (no in-page sections) scroll-spy has nothing to track,
-      // so highlight the Log link directly — but only on the log page itself.
+      // so highlight the Log link directly, but only on the log page itself.
       if (base === "/" && location.pathname.indexOf("progress") >= 0) {
         var logLink = qs('#nav-links a[href="/progress.html"]');
         if (logLink) logLink.classList.add("is-current");
@@ -340,7 +340,7 @@
 
   /* ---- social icons + footer ------------------------------------------- */
   // Icon glyphs are matched to a link by its URL, so adding a social later is
-  // just one more entry in contact.links — the right icon is picked up here.
+  // just one more entry in contact.links: the right icon is picked up here.
   var ICONS = {
     github: '<path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.56 0-.27-.01-1.16-.02-2.1-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.25 1.84 1.25 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.31-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.12-.31-.54-1.54.12-3.2 0 0 1.01-.33 3.3 1.23a11.4 11.4 0 0 1 6 0c2.29-1.56 3.3-1.23 3.3-1.23.66 1.66.24 2.89.12 3.2.77.84 1.24 1.91 1.24 3.23 0 4.63-2.81 5.65-5.49 5.95.43.38.81 1.12.81 2.26 0 1.63-.01 2.95-.01 3.35 0 .31.21.68.83.56C20.56 21.88 24 17.49 24 12.29 24 5.78 18.63.5 12 .5z"/>',
     email: '<path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2.7.5L12 11.2 19.3 6H4.7ZM20 7.4l-7.4 5.27a1 1 0 0 1-1.16 0L4 7.4V18h16V7.4Z"/>',
@@ -547,7 +547,7 @@
     var c = C[lang] || C[DEFAULT_LANG];
     document.documentElement.setAttribute("lang", lang);
     document.documentElement.setAttribute("dir", c.dir || "ltr");
-    // Home page only: localize the tab title (name only — static <title> stays "Aiman Hazim" for SEO).
+    // Home page only: localize the tab title (name only, static <title> stays "Aiman Hazim" for SEO).
     if (qs("#mode-switch")) document.title = c.hero.name;
 
     applyBindings(c);

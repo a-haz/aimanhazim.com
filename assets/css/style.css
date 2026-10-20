@@ -1,5 +1,5 @@
 /* ============================================================================
- *  style.css — Aiman Hazim portfolio
+ *  style.css: Aiman Hazim portfolio
  *  Theme tokens live in :root (dark) and [data-theme="light"]. Change the
  *  --accent values to recolour the whole site.
  * ==========================================================================*/
@@ -276,7 +276,7 @@ h1, h2, h3 { font-weight: 700; }
 .hud-label { font-weight: 600; font-size: 0.95rem; }
 .hud-detail { font-size: 0.82rem; color: var(--text-mute); }
 
-/* loading spinner — the "in progress" mark. Colour follows --accent, so it recolours too. */
+/* loading spinner: the "in progress" mark. Colour follows --accent, so it recolours too. */
 .spinner {
   flex: none; width: 14px; height: 14px; border-radius: 50%;
   border: 2px solid color-mix(in srgb, var(--accent) 22%, transparent);

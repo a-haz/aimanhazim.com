@@ -1,5 +1,5 @@
 /* ============================================================================
- *  cyberpunk.css — neon "night city" override layer for aimanhazim.com
+ *  cyberpunk.css: neon "night city" override layer for aimanhazim.com
  *  EXPLORATION. Loads AFTER style.css and overrides theme tokens + components.
  *  To revert: remove the <link rel="stylesheet" href="/assets/css/cyberpunk.css">
  *  from index.html / progress.html / 404.html. The base theme is untouched.

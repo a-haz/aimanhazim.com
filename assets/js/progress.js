@@ -1,5 +1,5 @@
 /* ============================================================================
- *  progress.js  —  your BUILD LOG entries.
+ *  progress.js: your BUILD LOG entries.
  * ----------------------------------------------------------------------------
  *  HOW TO ADD A NEW ENTRY
  *  1. Copy one whole { ... } block below (from the "{" to the "}," ).
@@ -16,7 +16,7 @@
  *             If you only write one language, the others fall back to it.
  *
  *  TIP: you don't have to translate every entry into all 3 languages.
- *       Fill in `en` (or whichever you prefer) and leave the rest — the site
+ *       Fill in `en` (or whichever you prefer) and leave the rest: the site
  *       will use whatever is available.
  * ==========================================================================*/
 

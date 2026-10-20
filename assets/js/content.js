@@ -1,14 +1,14 @@
 /* ============================================================================
- *  content.js  —  EVERY WORD on this site lives here.
+ *  content.js: EVERY WORD on this site lives here.
  * ----------------------------------------------------------------------------
  *  HOW TO EDIT
  *  • To change text: find the line, edit what's inside the "quotes". Done.
  *  • Three languages: en (English), ja (日本語), ms (Melayu). Keep them in sync,
- *    but it's fine if a few are rough — you can polish anytime.
+ *    but it's fine if a few are rough: you can polish anytime.
  *  • Keep the structure (the keys / commas / brackets) the same. Only change
  *    the text inside the quotes. If the site goes blank, you probably deleted a
- *    comma or a quote — undo and try again.
- *  • Lists look like ["item one", "item two"] — add/remove items freely.
+ *    comma or a quote: undo and try again.
+ *  • Lists look like ["item one", "item two"]: add/remove items freely.
  *  • To add a LOG entry, edit progress.js instead (separate file).
  * ==========================================================================*/
 
@@ -72,7 +72,7 @@ window.SITE_CONTENT = {
         "I moved to Japan for university and started from zero: new language, no contacts. Getting settled took patience, and that patience carries over into research. I'd rather spend a week on fundamentals than build something I can't explain.",
       ],
       facts: [
-        { label: "University", value: "Fukui University — Robotics Course" },
+        { label: "University", value: "Fukui University, Robotics Course" },
         { label: "Lab",        value: "Intelligent Robot Research Lab" },
         { label: "Year",       value: "B4 · graduating Mar 2027" },
         { label: "Languages",  value: "English · Japanese · Malay" },
@@ -151,7 +151,7 @@ window.SITE_CONTENT = {
       heading: "Logbook",
       lead: "Selected work and experiments.",
       items: [
-        { title: "PyroScout — Thermal × LiDAR search-and-rescue",
+        { title: "PyroScout: Thermal × LiDAR search-and-rescue",
           desc: "A 2D robotics simulator written from scratch. A mobile robot with no map fuses 2D LiDAR for mapping with a thermal sensor to locate a victim, then explores, plans with A*, and drives itself there. 8/8 runs solved, zero wall collisions. The write-up is a narrated notebook you can run yourself.",
           tags: ["Python", "LiDAR", "Thermal", "A*", "Sensor fusion"],
           links: [{ href: "/projects/pyroscout/", label: "Read the write-up" },
@@ -179,8 +179,8 @@ window.SITE_CONTENT = {
       heading: "Get in touch",
       lead: "I'm looking for autonomous-driving and mobile-robotics roles starting 2027. Questions about SLAM, simulation, or anything on this site are welcome too.",
       coinAria: "Flip the photo to switch between professional and personal",
-      altPro: "Aiman Hazim — professional",
-      altPersonal: "Aiman Hazim — personal",
+      altPro: "Aiman Hazim (professional)",
+      altPersonal: "Aiman Hazim (personal)",
       resumeEn: "Résumé (EN)",
       resumeJa: "履歴書 (JP)",
       links: [
@@ -301,7 +301,7 @@ window.SITE_CONTENT = {
         "大学進学のために来日して、言葉も生活もゼロから始めました。落ち着くまでには忍耐が要りましたが、その忍耐は研究にもそのまま生きています。説明できないものを作るより、基礎に1週間かけるほうを選びます。",
       ],
       facts: [
-        { label: "大学",   value: "福井大学 — ロボティクスコース" },
+        { label: "大学",   value: "福井大学 ロボティクスコース" },
         { label: "研究室", value: "知能ロボット研究室" },
         { label: "学年",   value: "B4 · 2027年3月卒業見込み" },
         { label: "言語",   value: "英語 · 日本語 · マレー語" },
@@ -380,7 +380,7 @@ window.SITE_CONTENT = {
       heading: "ログブック",
       lead: "代表的な成果と実験。",
       items: [
-        { title: "PyroScout — 熱画像 × LiDAR の探索救助",
+        { title: "PyroScout：熱画像 × LiDAR の探索救助",
           desc: "ゼロから作った2Dロボットシミュレータ。地図を持たない移動ロボットが2D LiDAR（地図生成）と熱センサ（要救助者の発見）を組み合わせ、フロンティア探査・A*経路計画・自律走行を行います。8回中8回成功、壁との衝突ゼロ。解説付きで実行できるノートブックを同梱しています。",
           tags: ["Python", "LiDAR", "熱画像", "A*", "センサ融合"],
           links: [{ href: "/projects/pyroscout/", label: "解説を読む" },
@@ -408,8 +408,8 @@ window.SITE_CONTENT = {
       heading: "連絡先",
       lead: "2027年から、自動運転や移動ロボットの分野で働くことを目指しています。SLAMやシミュレーションの話でも、このサイトについてでも、気軽にどうぞ。",
       coinAria: "写真をめくって「仕事」と「個人」を切り替える",
-      altPro: "アイマン・ハジム — 仕事",
-      altPersonal: "アイマン・ハジム — 個人",
+      altPro: "アイマン・ハジム（仕事）",
+      altPersonal: "アイマン・ハジム（個人）",
       resumeEn: "履歴書（英語）",
       resumeJa: "履歴書（日本語）",
       links: [
@@ -527,7 +527,7 @@ window.SITE_CONTENT = {
         "Saya berpindah ke Jepun untuk belajar dan bermula dari kosong: bahasa baru, tiada kenalan. Untuk menetap perlukan kesabaran, dan kesabaran itu terbawa ke penyelidikan. Saya lebih rela habiskan seminggu pada asas daripada membina sesuatu yang saya sendiri tak dapat terangkan.",
       ],
       facts: [
-        { label: "Universiti", value: "Universiti Fukui — Kursus Robotik" },
+        { label: "Universiti", value: "Universiti Fukui, Kursus Robotik" },
         { label: "Makmal",     value: "Makmal Penyelidikan Robot Pintar" },
         { label: "Tahun",      value: "B4 · bergraduat Mac 2027" },
         { label: "Bahasa",     value: "Inggeris · Jepun · Melayu" },
@@ -606,7 +606,7 @@ window.SITE_CONTENT = {
       heading: "Buku log",
       lead: "Kerja dan eksperimen terpilih.",
       items: [
-        { title: "PyroScout — Mencari & menyelamat Terma × LiDAR",
+        { title: "PyroScout: Mencari & menyelamat Terma × LiDAR",
           desc: "Simulator robotik 2D yang ditulis dari awal. Robot mudah alih tanpa peta menggabungkan LiDAR 2D untuk pemetaan dengan sensor terma untuk mencari mangsa, kemudian meneroka, merancang dengan A*, dan bergerak sendiri ke sana. 8/8 larian berjaya, sifar perlanggaran dinding. Tulisannya berupa buku nota bernarasi yang boleh anda jalankan sendiri.",
           tags: ["Python", "LiDAR", "Terma", "A*", "Gabungan sensor"],
           links: [{ href: "/projects/pyroscout/", label: "Baca tulisan" },
@@ -634,8 +634,8 @@ window.SITE_CONTENT = {
       heading: "Hubungi saya",
       lead: "Saya mencari peluang dalam pandu autonomi dan robot mudah alih mulai 2027. Soalan tentang SLAM, simulasi, atau apa-apa di laman ini pun dialu-alukan.",
       coinAria: "Balikkan foto untuk tukar antara profesional dan peribadi",
-      altPro: "Aiman Hazim — profesional",
-      altPersonal: "Aiman Hazim — peribadi",
+      altPro: "Aiman Hazim (profesional)",
+      altPersonal: "Aiman Hazim (peribadi)",
       resumeEn: "Resume (BI)",
       resumeJa: "Resume (JP)",
       links: [

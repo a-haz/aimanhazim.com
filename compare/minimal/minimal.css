@@ -1,5 +1,5 @@
 /* ============================================================================
- *  minimal.css — "quiet" character layer for aimanhazim.com
+ *  minimal.css: "quiet" character layer for aimanhazim.com
  *  Inspired by thariq.io: one narrow column, necessary words only, almost no
  *  decoration. Loads AFTER style.css and overrides it; the base theme tokens
  *  (colors, dark/light) still come from style.css. Revert by swapping this
@@ -67,7 +67,6 @@ h2 {
   margin-bottom: 10px;
   color: var(--text);
 }
-h2::before { content: "✦ "; color: var(--accent); font-size: 0.8em; }
 section p { color: var(--text-dim); }
 section p + p { margin-top: 12px; }
 

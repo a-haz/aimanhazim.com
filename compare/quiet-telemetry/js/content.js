@@ -1,12 +1,12 @@
 /* ============================================================================
- *  content.js  —  EVERY WORD on this site lives here.
+ *  content.js: EVERY WORD on this site lives here.
  * ----------------------------------------------------------------------------
  *  HOW TO EDIT
  *  • To change text: find the line, edit what's inside the "quotes". Done.
  *  • Three languages: en (English), ja (日本語), ms (Melayu). Keep them in sync,
- *    but it's fine if a few are rough — a missing key falls back to English.
+ *    but it's fine if a few are rough: a missing key falls back to English.
  *  • Keep the structure (the keys / commas / brackets) the same. If the site
- *    goes blank, you probably deleted a comma or a quote — undo and try again.
+ *    goes blank, you probably deleted a comma or a quote: undo and try again.
  *  • LOG entries live in progress.js; WRITING entries live in writing.js.
  * ==========================================================================*/
 
@@ -32,25 +32,25 @@ window.SITE_CONTENT = {
 
     /* ---------------- professional side ---------------- */
     intro:
-      "Fourth-year robotics student in Fukui University's Intelligent Robot Lab. I build autonomous navigation that fuses thermal vision with 3D LiDAR — in simulation now, real hardware next.",
+      "Fourth-year robotics student in Fukui University's Intelligent Robot Lab. I build autonomous navigation that fuses thermal vision with 3D LiDAR. In simulation now, real hardware next.",
 
     research: {
       heading: "Research",
       summary:
-        "My thesis is TIR-LiDAR active SLAM: a robot that chooses where to look. I'm building a crowded indoor world in Isaac Sim and developing navigation that holds up in the dark, in crowds, and behind occlusions — then proving it against existing methods and carrying it sim2real onto a Mega Rover.",
+        "My thesis is TIR-LiDAR active SLAM: a robot that chooses where to look. I'm building a crowded indoor world in Isaac Sim and developing navigation that holds up in the dark, in crowds, and behind occlusions, then proving it against existing methods and carrying it sim2real onto a Mega Rover.",
     },
 
     now: {
       heading: "Now",
       body:
-        "Mastering Isaac Sim and C++. Thesis experiments late 2026. Real hardware — and graduation — in 2027. Open to autonomous-driving and mobile-robotics roles from 2027.",
+        "Mastering Isaac Sim and C++. Thesis experiments late 2026. Real hardware (and graduation) in 2027. Open to autonomous-driving and mobile-robotics roles from 2027.",
     },
 
     projects: {
       heading: "Projects",
       items: [
         { title: "PyroScout",
-          desc: "From-scratch 2D search-and-rescue simulator — LiDAR mapping, thermal victim search, A* navigation. 8/8 runs, zero collisions.",
+          desc: "From-scratch 2D search-and-rescue simulator: LiDAR mapping, thermal victim search, A* navigation. 8/8 runs, zero collisions.",
           links: [{ href: "/projects/pyroscout/", label: "Write-up" },
                   { href: "https://github.com/a-haz/pyroscout", label: "GitHub" }] },
         { title: "Thermal × 3D LiDAR human following",
@@ -70,7 +70,7 @@ window.SITE_CONTENT = {
 
     contact: {
       heading: "Contact",
-      lead: "SLAM, simulation, roles from 2027 — or just robots.",
+      lead: "SLAM, simulation, roles from 2027, or just robots.",
       links: [
         { label: "Email",     value: "contact@aimanhazim.com", href: "mailto:contact@aimanhazim.com" },
         { label: "GitHub",    value: "a-haz", href: "https://github.com/a-haz" },
@@ -83,7 +83,7 @@ window.SITE_CONTENT = {
     /* ---------------- personal side ---------------- */
     personal: {
       intro:
-        "I came to Japan and built my studies and my life here from zero — that shaped me more than anything else. This side of the site is for everything that isn't work.",
+        "I came to Japan and built my studies and my life here from zero: that shaped me more than anything else. This side of the site is for everything that isn't work.",
       writingHeading: "Writing",
       writingBlurb: "Occasional personal essays.",
       allWriting: "All writing →",
@@ -135,12 +135,12 @@ window.SITE_CONTENT = {
     },
 
     intro:
-      "福井大学 知能ロボット研究室の学部4年。熱画像と3D LiDARを融合した自律ナビゲーションを開発中 — いまはシミュレーション、次は実機。",
+      "福井大学 知能ロボット研究室の学部4年。熱画像と3D LiDARを融合した自律ナビゲーションを開発中。いまはシミュレーション、次は実機。",
 
     research: {
       heading: "研究",
       summary:
-        "卒論テーマはTIR-LiDARアクティブSLAM — ロボット自身が観測地点を選ぶ。Isaac Sim上に人の行き交う屋内環境を構築し、暗所・混雑・遮蔽でも破綻しないナビゲーションを開発。既存手法と比較検証し、sim2realでメガローバーへ。",
+        "卒論テーマはTIR-LiDARアクティブSLAM。ロボット自身が観測地点を選ぶ。Isaac Sim上に人の行き交う屋内環境を構築し、暗所・混雑・遮蔽でも破綻しないナビゲーションを開発。既存手法と比較検証し、sim2realでメガローバーへ。",
     },
 
     now: {
@@ -153,7 +153,7 @@ window.SITE_CONTENT = {
       heading: "プロジェクト",
       items: [
         { title: "PyroScout",
-          desc: "ゼロから作った2D探索救助シミュレータ — LiDAR地図生成・熱センサ探索・A*走行。8/8成功、衝突ゼロ。",
+          desc: "ゼロから作った2D探索救助シミュレータ。LiDAR地図生成・熱センサ探索・A*走行。8/8成功、衝突ゼロ。",
           links: [{ href: "/projects/pyroscout/", label: "解説" },
                   { href: "https://github.com/a-haz/pyroscout", label: "GitHub" }] },
         { title: "熱画像 × 3D LiDAR 人追従",
@@ -173,7 +173,7 @@ window.SITE_CONTENT = {
 
     contact: {
       heading: "連絡",
-      lead: "SLAM、シミュレーション、2027年からの就業 — あるいはロボットの話。",
+      lead: "SLAM、シミュレーション、2027年からの就業、あるいはロボットの話。",
       links: [
         { label: "メール",    value: "contact@aimanhazim.com", href: "mailto:contact@aimanhazim.com" },
         { label: "GitHub",    value: "a-haz", href: "https://github.com/a-haz" },
@@ -185,7 +185,7 @@ window.SITE_CONTENT = {
 
     personal: {
       intro:
-        "来日して、学業も生活もゼロから築いてきました — それが何よりも自分を形づくった経験です。ここは仕事以外のすべての場所。",
+        "来日して、学業も生活もゼロから築いてきました。それが何よりも自分を形づくった経験です。ここは仕事以外のすべての場所。",
       writingHeading: "書きもの",
       writingBlurb: "ときどき、個人的なエッセイ。",
       allWriting: "すべて読む →",
@@ -236,25 +236,25 @@ window.SITE_CONTENT = {
     },
 
     intro:
-      "Pelajar robotik tahun empat di Makmal Robot Pintar, Universiti Fukui. Saya membina navigasi autonomi yang menggabungkan penglihatan terma dengan LiDAR 3D — dalam simulasi sekarang, perkakasan sebenar seterusnya.",
+      "Pelajar robotik tahun empat di Makmal Robot Pintar, Universiti Fukui. Saya membina navigasi autonomi yang menggabungkan penglihatan terma dengan LiDAR 3D. Dalam simulasi sekarang, perkakasan sebenar seterusnya.",
 
     research: {
       heading: "Penyelidikan",
       summary:
-        "Tesis saya: SLAM aktif TIR-LiDAR — robot yang memilih ke mana hendak melihat. Saya membina dunia dalaman yang sesak dalam Isaac Sim dan membangunkan navigasi yang teguh dalam gelap, dalam orang ramai, dan di sebalik halangan — kemudian membuktikannya melawan kaedah sedia ada dan membawanya sim2real ke Mega Rover.",
+        "Tesis saya: SLAM aktif TIR-LiDAR, robot yang memilih ke mana hendak melihat. Saya membina dunia dalaman yang sesak dalam Isaac Sim dan membangunkan navigasi yang teguh dalam gelap, dalam orang ramai, dan di sebalik halangan, kemudian membuktikannya melawan kaedah sedia ada dan membawanya sim2real ke Mega Rover.",
     },
 
     now: {
       heading: "Sekarang",
       body:
-        "Menguasai Isaac Sim dan C++. Eksperimen tesis hujung 2026. Perkakasan sebenar — dan graduasi — pada 2027. Terbuka untuk peranan pandu autonomi / robot mudah alih mulai 2027.",
+        "Menguasai Isaac Sim dan C++. Eksperimen tesis hujung 2026. Perkakasan sebenar (dan graduasi) pada 2027. Terbuka untuk peranan pandu autonomi / robot mudah alih mulai 2027.",
     },
 
     projects: {
       heading: "Projek",
       items: [
         { title: "PyroScout",
-          desc: "Simulator mencari & menyelamat 2D dari awal — pemetaan LiDAR, carian terma, navigasi A*. 8/8 larian, sifar perlanggaran.",
+          desc: "Simulator mencari & menyelamat 2D dari awal: pemetaan LiDAR, carian terma, navigasi A*. 8/8 larian, sifar perlanggaran.",
           links: [{ href: "/projects/pyroscout/", label: "Tulisan" },
                   { href: "https://github.com/a-haz/pyroscout", label: "GitHub" }] },
         { title: "Pengikutan manusia Terma × LiDAR 3D",
@@ -274,7 +274,7 @@ window.SITE_CONTENT = {
 
     contact: {
       heading: "Hubungi",
-      lead: "SLAM, simulasi, peranan mulai 2027 — atau sekadar berbual tentang robot.",
+      lead: "SLAM, simulasi, peranan mulai 2027, atau sekadar berbual tentang robot.",
       links: [
         { label: "E-mel",     value: "contact@aimanhazim.com", href: "mailto:contact@aimanhazim.com" },
         { label: "GitHub",    value: "a-haz", href: "https://github.com/a-haz" },
@@ -286,7 +286,7 @@ window.SITE_CONTENT = {
 
     personal: {
       intro:
-        "Saya datang ke Jepun dan membina pengajian serta kehidupan saya dari sifar — itulah yang paling membentuk diri saya. Sisi ini untuk segala yang bukan kerja.",
+        "Saya datang ke Jepun dan membina pengajian serta kehidupan saya dari sifar: itulah yang paling membentuk diri saya. Sisi ini untuk segala yang bukan kerja.",
       writingHeading: "Penulisan",
       writingBlurb: "Esei peribadi, sekali-sekala.",
       allWriting: "Semua penulisan →",

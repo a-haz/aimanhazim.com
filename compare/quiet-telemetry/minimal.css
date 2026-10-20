@@ -1,5 +1,5 @@
 /* ============================================================================
- *  minimal.css — "quiet telemetry" character layer for aimanhazim.com
+ *  minimal.css: "quiet telemetry" character layer for aimanhazim.com
  *  A middle ground between the stark one-column minimal look and the previous
  *  field-telemetry theme (refined.css): one narrow column and necessary words,
  *  but with a faint LiDAR radar, the blueprint dot-grid, numbered sections,
@@ -190,7 +190,7 @@ section p + p { margin-top: 12px; }
 }
 .log-entry:first-child { border-top: 0; padding-top: 6px; }
 .log-head h2 { font-size: 1.15rem; }
-/* entry titles are h2s too — they must never pick up section numbering */
+/* entry titles are h2s too: they must never pick up section numbering */
 .log-head h2::before { content: none; }
 .log-date { font-size: 0.78rem; }
 .log-body p { font-size: 0.97rem; }

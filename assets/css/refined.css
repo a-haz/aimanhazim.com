@@ -1,5 +1,5 @@
 /* ============================================================================
- *  refined.css — "field telemetry" character layer for aimanhazim.com
+ *  refined.css: "field telemetry" character layer for aimanhazim.com
  *  EXPLORATION. Keeps the original clean theme intact and adds quiet robotics
  *  personality + a tighter rhythm:
  *    · a subtle LiDAR range-ring + radar-sweep background (the .lidar-bg element)
@@ -148,7 +148,7 @@ body::before {                         /* keep the corner glows, a touch warmer 
   to   { clip-path: inset(0 0 0 0);   opacity: .2; }
 }
 /* a slow sensor scan passes over the schematic, lit only on its lines       */
-/* (masked by the same SVG) — 8s to share the radar's tempo                  */
+/* (masked by the same SVG), 8s to share the radar's tempo                  */
 .robot-blueprint::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(to bottom, transparent 41%, rgba(160,246,255,.95) 50%, transparent 59%);
@@ -169,11 +169,11 @@ body::before {                         /* keep the corner glows, a touch warmer 
 /* route-ping 2s · badge-pulse 2s (heartbeat) · spinner 1s                   */
 .spinner { animation-duration: 1s; }            /* the HUD "spinning circle" */
 
-/* the hero role line is a single static string now — no typing caret        */
+/* the hero role line is a single static string now, no typing caret        */
 .hero-roles::after { content: none; }
 
 /* ===========================================================================
- *  POLISH PASS — typography, reveal staggering, theme-aware motifs,
+ *  POLISH PASS: typography, reveal staggering, theme-aware motifs,
  *  scroll progress, and small interaction details. Same overlay contract:
  *  everything below only refines what style.css already draws.
  * ==========================================================================*/

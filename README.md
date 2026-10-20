@@ -2,7 +2,7 @@
 
 My personal website.
 
-🔗 Live: <https://aimanhazim.com>
+Live: <https://aimanhazim.com>
 
 ---
 
@@ -18,7 +18,7 @@ My personal website.
 
 ### Change wording
 
-Open `assets/js/content.js`. It's organised as three blocks — `en`, `ja`, `ms`.
+Open `assets/js/content.js`. It's organised as three blocks: `en`, `ja`, `ms`.
 Find the line, change the text **inside the quotes**, save.
 
 ```js
@@ -28,7 +28,7 @@ hero: {
 }
 ```
 
-> Keep the commas, quotes and brackets exactly as they are — only change the
+> Keep the commas, quotes and brackets exactly as they are and only change the
 > text inside the `"quotes"`. If the page ever goes blank, you probably removed a
 > comma by accident; undo and it's back.
 
@@ -36,7 +36,7 @@ hero: {
 
 Open `assets/js/progress.js`, copy one `{ … }` block, paste it at the **top** of
 the list (newest first), and edit the date / tags / text. You only have to fill in
-one language — the others fall back to it automatically.
+one language: the others fall back to it automatically.
 
 ```js
 {
@@ -64,8 +64,8 @@ one language — the others fall back to it automatically.
 | --- | --- |
 | `index.html` | Main page structure |
 | `progress.html` | Build Log page structure |
-| `assets/js/content.js` | **★ all site text, 3 languages** |
-| `assets/js/progress.js` | **★ Build Log entries** |
+| `assets/js/content.js` | **all site text, 3 languages** |
+| `assets/js/progress.js` | **Build Log entries** |
 | `assets/js/app.js` | Engine: theme, language, rendering, animations |
 | `assets/css/style.css` | All styling + theme tokens |
 | `assets/img/` | Photos/screenshots for the log |
@@ -80,7 +80,7 @@ python3 -m http.server 8000
 # then open http://localhost:8000
 ```
 
-(Use the server rather than opening the file directly — the pages load their content
+(Use the server rather than opening the file directly: the pages load their content
 through `/assets/...` paths.)
 
 ## Deployment
