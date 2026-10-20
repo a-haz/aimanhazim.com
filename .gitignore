@@ -1,0 +1,6 @@
+AGENTS.md
+CLAUDE.md
+.cursor/
+.githooks/
+scripts/commit.sh
+scripts/setup-git-hooks.sh
