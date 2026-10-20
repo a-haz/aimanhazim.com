@@ -1,94 +1,28 @@
 # aimanhazim.com
 
-My personal website.
+My personal website, live at <https://aimanhazim.com>.
 
-Live: <https://aimanhazim.com>
+It is a static site served by GitHub Pages from `main`. The pages are
+`index.html`, `progress.html` (build log) and `writing.html`. Most of the text
+lives in JavaScript files:
 
----
-
-## Editing the site
-
-**Most of the words live in these files:**
-
-| Action | Edit this file |
+| File | Contents |
 | --- | --- |
-| Change any text on the main page (in any language) | `assets/js/content.js` |
-| Add / edit a Build Log entry | `assets/js/progress.js` |
-| Add a photo to a log entry | drop it in `assets/img/`, then link it in `progress.js` |
-| Add / edit a Writing post | `assets/js/writing.js` |
+| `assets/js/content.js` | Main page text in English, Japanese and Malay |
+| `assets/js/progress.js` | Build log entries, newest first |
+| `assets/js/writing.js` | Writing posts |
+| `assets/js/app.js` | Theme, language and rendering |
+| `assets/css/style.css` | Styles and theme colours |
 
-### Change wording
-
-Open `assets/js/content.js`. It's organised as three blocks: `en`, `ja`, `ms`.
-Find the line, change the text **inside the quotes**, save.
-
-```js
-hero: {
-  name: "Aiman Hazim",
-  intro: "Fourth-year robotics student …",   // ← edit this text
-}
-```
-
-> Keep the commas, quotes and brackets exactly as they are and only change the
-> text inside the `"quotes"`. If the page ever goes blank, you probably removed a
-> comma by accident; undo and it's back.
-
-### Add a Build Log entry
-
-Open `assets/js/progress.js`, copy one `{ … }` block, paste it at the **top** of
-the list (newest first), and edit the date / tags / text. You only have to fill in
-one language: the others fall back to it automatically.
-
-```js
-{
-  date: "2026-06-10",
-  tags: ["Isaac Sim", "C++"],
-  images: ["/assets/img/my-screenshot.jpg"],   // or []  for none
-  en: { title: "…", body: ["paragraph one", "paragraph two"] },
-}
-```
-
-### Other tweaks
-
-- **Default language / behaviour:** the site remembers each visitor's last choice.
-  To change the fallback, edit `DEFAULT_LANG` near the top of `assets/js/app.js`.
-- **Colours:** change the `--accent` values at the top of `assets/css/style.css` to
-  re-skin the whole site (both dark and light).
-- **"now_learning" bars & roadmap:** edit the `learning` and `now` sections in
-  `content.js`.
-
----
-
-## Structure
-
-| File / folder | Purpose |
-| --- | --- |
-| `index.html` | Main page structure |
-| `progress.html` | Build Log page structure |
-| `writing.html` | Writing page structure |
-| `assets/js/content.js` | **all site text, 3 languages** |
-| `assets/js/progress.js` | **Build Log entries** |
-| `assets/js/writing.js` | **Writing posts** |
-| `assets/js/app.js` | Engine: theme, language, rendering, animations |
-| `assets/css/style.css` | All styling + theme tokens |
-| `assets/img/` | Photos/screenshots for the log |
-| `projects/` | Standalone project write-ups (e.g. `projects/pyroscout/`) |
-| `compare/` | Theme explorations, not linked from the main nav |
-| `favicon.svg` · `404.html` · `robots.txt` · `sitemap.xml` · `CNAME` | Icon, error page, SEO, domain |
-
----
+Images for the build log go in `assets/img/`. Project write-ups are under
+`projects/`, and `compare/` holds theme experiments that are not linked from
+the main nav.
 
 ## Local preview
 
 ```bash
 python3 -m http.server 8000
-# then open http://localhost:8000
 ```
 
-(Use the server rather than opening the file directly: the pages load their content
-through `/assets/...` paths.)
-
-## Deployment
-
-Served by **GitHub Pages**. Every push to `main` publishes automatically to
-<https://aimanhazim.com>.
+Then open <http://localhost:8000>. Opening the files directly does not work,
+because the pages load content from `/assets/...` paths.
