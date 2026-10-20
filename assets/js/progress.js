@@ -29,22 +29,22 @@ window.PROGRESS_ENTRIES = [
     en: {
       title: "New site, and setting the stage",
       body: [
-        "Rebuilt this site from scratch: three languages, dark/light theme, and this build log, so I can show the work instead of just describing it.",
-        "The next few months are set. Learn Isaac Sim, get comfortable in C++, and build the simulation environment the thesis needs. Hardware waits until that's done.",
+        "Rebuilt this site: three languages, a dark and light theme, and this build log.",
+        "The next few months: learn Isaac Sim, get comfortable in C++, and build the simulation environment the thesis needs. Hardware after that.",
       ],
     },
     ja: {
       title: "サイトを刷新、これからの土台づくり",
       body: [
-        "このサイトをゼロから作り直しました。3言語対応、ダーク/ライト、そしてこのビルドログ。説明するより、作っている様子をそのまま見せたいと思います。",
-        "これからの数か月ですることは決まっています。Isaac Simを覚える、C++に慣れる、卒論に必要なシミュレーション環境を作る。実機はその後です。",
+        "このサイトを作り直しました。3言語、ダークとライト、このビルドログです。",
+        "この数か月は、Isaac Simを覚えること、C++に慣れること、卒論のシミュレーション環境を作ることです。実機はそのあとです。",
       ],
     },
     ms: {
       title: "Laman baharu, dan menyediakan asas",
       body: [
-        "Saya bina semula laman ini dari awal: tiga bahasa, mod gelap/cerah, dan log pembinaan ini, supaya saya boleh tunjuk kerja dan bukan sekadar cerita.",
-        "Beberapa bulan akan datang sudah tetap. Belajar Isaac Sim, biasakan diri dengan C++, dan bina persekitaran simulasi yang tesis saya perlukan. Perkakasan tunggu selepas itu.",
+        "Saya bina semula laman ini: tiga bahasa, mod gelap dan cerah, dan log pembinaan ini.",
+        "Beberapa bulan ini: belajar Isaac Sim, biasakan C++, dan bina persekitaran simulasi untuk tesis. Perkakasan selepas itu.",
       ],
     },
   },
@@ -56,8 +56,7 @@ window.PROGRESS_ENTRIES = [
     en: {
       title: "First 20×20 m world in Isaac Sim",
       body: [
-        "Blocked out the first version of the thesis environment: walls, obstacles, and a few occluders so the sensors have something to struggle with. Still rough, but the robot can drive around and the sensors mount cleanly.",
-        "Next step is dropping in human agents and logging TIR + LiDAR sequences.",
+        "First version of the thesis environment: walls and obstacles. Still rough. The robot can drive around, and the sensors mount cleanly.",
       ],
     },
   },
@@ -69,7 +68,7 @@ window.PROGRESS_ENTRIES = [
     en: {
       title: "From Python to C++",
       body: [
-        "Started taking C++ seriously this week. After two years of mostly Python, pointers and memory ownership take some getting used to. It's the right tool for real-time perception though, so I'm sticking with it.",
+        "Started taking C++ seriously this week. After two years of mostly Python, pointers and memory ownership are new. I need C++ for real-time perception.",
       ],
     },
   },

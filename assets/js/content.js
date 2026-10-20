@@ -35,10 +35,10 @@ window.SITE_CONTENT = {
       name: "Aiman Hazim",
       // One short line under the name. (One entry = static; several rotate.)
       roles: [
-        "SLAM & autonomous navigation",
+        "Autonomous navigation",
       ],
       intro:
-        "I'm a fourth-year robotics student in Fukui University's Intelligent Robot Research Laboratory. My thesis is autonomous navigation that fuses a thermal camera with 3D LiDAR. It all runs in simulation for now; the plan is to move it onto a real robot.",
+        "Fourth-year robotics student at Fukui University, Intelligent Robot Research Laboratory. My thesis is robot navigation with a thermal camera. It runs in simulation for now. I plan to put it on a real robot.",
       ctaPrimary: "Research",
       ctaSecondary: "Build log",
       location: "Japan",
@@ -58,8 +58,6 @@ window.SITE_CONTENT = {
       items: [
         { label: "NVIDIA Isaac Sim", detail: "large-scale dynamic worlds" },
         { label: "C++",              detail: "from Python to real-time perception" },
-        { label: "Active SLAM",      detail: "TIR + LiDAR, frontier exploration" },
-        { label: "Human-behavior AI", detail: "crowd agents that walk like people" },
       ],
     },
 
@@ -67,9 +65,9 @@ window.SITE_CONTENT = {
       heading: "About",
       lead: "I want to build robots that can find their own way around.",
       paragraphs: [
-        "The part of robotics I care about most is autonomous navigation: how a robot senses its surroundings and decides where to go without a person steering it. Most of my study and project time goes into that one problem.",
-        "I'm in my fourth year at Fukui University, in the Intelligent Robot Research Laboratory. My thesis fuses a thermal camera with 3D LiDAR for SLAM. The work is all in simulation at the moment, and the theory underneath it (control, probability, linear algebra) takes up as much of my week as the code does.",
-        "I moved to Japan for university and started from zero: new language, no contacts. Getting settled took patience, and that patience carries over into research. I'd rather spend a week on fundamentals than build something I can't explain.",
+        "Most of my time goes to autonomous navigation. A robot senses its surroundings and chooses where to go.",
+        "Fourth year at Fukui University, Intelligent Robot Research Laboratory. My thesis is robot navigation with a thermal camera. It is all in simulation for now. Control, probability, and linear algebra take about as much of the week as the code.",
+        "I moved to Japan for university and started from zero: a new language, and no contacts. Settling in took patience. The research takes patience too. I spend time on the fundamentals.",
       ],
       facts: [
         { label: "University", value: "Fukui University, Robotics Course" },
@@ -80,54 +78,50 @@ window.SITE_CONTENT = {
     },
 
     research: {
-      kicker: "Bachelor's thesis · 2025–26",
-      heading: "TIR-LiDAR Active SLAM, built in simulation",
+      kicker: "Bachelor's thesis, 2025-26",
+      heading: "Thermal-camera navigation, in simulation",
       summary:
-        "The thesis has two parts. First, a large indoor simulation environment with human agents that walk around like real people. Second, an active SLAM system tested inside it, fusing a thermal (TIR) camera with 3D LiDAR so navigation keeps working in the dark, in crowds, and behind occlusions.",
-      baseLabel: "Building on",
-      base:
-        "HO3-SLAM / Walk2Map++. I'm extending it from passive RGB vision to active perception, where the robot chooses where to look.",
+        "Robot navigation with a thermal camera. It is built and tested in simulation first, then moves to a real robot.",
       sensorsLabel: "Stack",
       sensors: [
-        "Thermal / far-infrared (TIR) camera",
-        "Velodyne 3D LiDAR",
+        "Thermal camera",
         "NVIDIA Isaac Sim",
         "Mega Rover · sim2real target",
       ],
       phasesHeading: "The plan",
       phases: [
         { tag: "Phase 1", title: "Build the world",
-          desc: "A 20×20 m indoor environment in Isaac Sim, with human agents that each have their own appearance, walking style, and a perceive–plan–act loop. The robot drives around it while logging TIR and LiDAR sequences." },
-        { tag: "Phase 2", title: "Active multimodal SLAM",
-          desc: "TIR + LiDAR SLAM with active control (collision avoidance, human following, frontier exploration), evaluated across 100+ environment conditions for accuracy, map usefulness, and compute time." },
-        { tag: "Phase 3", title: "Beat the baseline",
-          desc: "Implement the proposed method and show it outperforms existing approaches in wide, crowded, dark, and occluded conditions." },
+          desc: "An indoor environment in Isaac Sim for the robot to drive in." },
+        { tag: "Phase 2", title: "Navigation",
+          desc: "Robot navigation with a thermal camera, tested in simulation." },
+        { tag: "Phase 3", title: "Evaluate",
+          desc: "Test it across many simulated conditions and compare it with existing methods." },
         { tag: "Phase 4", title: "Hand it over",
-          desc: "Document the environment, agent code, and analysis scripts so next year's students can continue without me." },
+          desc: "Document the environment, code, and analysis scripts so next year's students can continue without me." },
       ],
       sim2realLabel: "Sim → Real",
       sim2real:
-        "Everything above runs in simulation first. Whatever survives the Isaac Sim experiments gets transferred to a real Mega Rover afterwards.",
+        "Simulation first. What holds up in the Isaac Sim experiments moves to a real Mega Rover.",
     },
 
     now: {
-      heading: "What I'm doing right now",
-      lead: "Hardware is expensive and lab time is limited, so I'm getting everything I can out of simulation before touching a real robot. Roughly in order:",
+      heading: "What I'm doing now",
+      lead: "Hardware is expensive and lab time is limited, so simulation comes before a real robot. Roughly in order:",
       roadmap: [
         { date: "2026 · now",  title: "Learn Isaac Sim properly",
-          desc: "Environments, sensors, human agents. C++ practice runs alongside, since Python alone won't cut it for real-time perception.", state: "active" },
+          desc: "Environments and sensors. C++ alongside. Python is not enough for real-time perception.", state: "active" },
         { date: "2026 · H2",   title: "Thesis experiments",
-          desc: "Run the active-SLAM evaluation across 100+ simulated conditions and write it up.", state: "next" },
+          desc: "Run the thesis experiments in simulation and write them up.", state: "next" },
         { date: "2027",        title: "Onto real hardware",
-          desc: "Transfer the sim work onto a Mega Rover, and start a hardware build of my own.", state: "future" },
+          desc: "Move the sim work onto a Mega Rover, and start a hardware build of my own.", state: "future" },
         { date: "Mar 2027",    title: "Graduate",
-          desc: "Finish at Fukui University and start work in autonomous driving or mobile robotics.", state: "future" },
+          desc: "Finish at Fukui University. Then work in autonomous driving or mobile robotics.", state: "future" },
       ],
     },
 
     skills: {
       heading: "Toolbox",
-      lead: "What I actually use, and for how long.",
+      lead: "What I use, and for how long.",
       groups: [
         { name: "Comfortable", items: [
           { name: "Python", note: "~2 yrs" },
@@ -149,35 +143,35 @@ window.SITE_CONTENT = {
 
     projects: {
       heading: "Logbook",
-      lead: "Selected work and experiments.",
+      lead: "Selected work.",
       items: [
         { title: "PyroScout: Thermal × LiDAR search-and-rescue",
-          desc: "A 2D robotics simulator written from scratch. A mobile robot with no map fuses 2D LiDAR for mapping with a thermal sensor to locate a victim, then explores, plans with A*, and drives itself there. 8/8 runs solved, zero wall collisions. The write-up is a narrated notebook you can run yourself.",
+          desc: "A 2D robotics simulator I wrote from scratch. A mobile robot with no map uses 2D LiDAR to map and a thermal sensor to find a victim, then explores, plans with A*, and drives there. 8/8 runs solved, zero wall collisions. The write-up is a notebook you can run.",
           tags: ["Python", "LiDAR", "Thermal", "A*", "Sensor fusion"],
           links: [{ href: "/projects/pyroscout/", label: "Read the write-up" },
                   { href: "https://github.com/a-haz/pyroscout", label: "GitHub" }] },
         { title: "Thermal × 3D LiDAR human following",
-          desc: "Human-following logic that fuses 3D LiDAR point clouds with thermal data, so tracking keeps working where plain cameras fail. This project is what led to my thesis topic.",
+          desc: "Human following that fuses 3D LiDAR point clouds with thermal data, so tracking still works where cameras fail.",
           tags: ["Python", "LiDAR", "Thermal", "SLAM"],
           link: "https://github.com/a-haz", linkLabel: "GitHub" },
         { title: "Transformer trackers (ViT / SPT)",
-          desc: "Reading and reimplementing Vision Transformer and SPT-style trackers for place recognition and object tracking. Building them from scratch is slow, but it's how I make sure I actually understand them.",
+          desc: "Reading and reimplementing Vision Transformer and SPT trackers for place recognition and object tracking. I build them from scratch.",
           tags: ["Python", "Deep learning", "ViT"],
           link: "https://github.com/a-haz", linkLabel: "GitHub" },
         { title: "Embedded C & hardware logic",
-          desc: "Register-level C: driving 7-segment displays and writing control logic that feeds into a larger robot state machine.",
+          desc: "Register-level C: 7-segment displays, and control logic for a larger robot state machine.",
           tags: ["C", "Embedded"],
           link: "https://github.com/a-haz", linkLabel: "GitHub" },
         { title: "Robot Engineering Creative Experiment",
           desc: "Our team's creative-experiment project won the Eiwa System Management Prize.",
-          tags: ["Award · 2023", "Teamwork"],
+          tags: ["Award · 2025", "Teamwork"],
           link: "", linkLabel: "" },
       ],
     },
 
     contact: {
       heading: "Get in touch",
-      lead: "I'm looking for autonomous-driving and mobile-robotics roles starting 2027. Questions about SLAM, simulation, or anything on this site are welcome too.",
+      lead: "Looking for autonomous driving and mobile robotics roles from 2027. Questions about SLAM, simulation, or this site are welcome.",
       coinAria: "Flip the photo to switch between professional and personal",
       altPro: "Aiman Hazim (professional)",
       altPersonal: "Aiman Hazim (personal)",
@@ -200,14 +194,14 @@ window.SITE_CONTENT = {
     },
 
     footer: {
-      tagline: "Plain HTML, CSS and a bit of JavaScript. No framework, no build step.",
+      tagline: "HTML, CSS, and a little JavaScript. No framework, no build step.",
       backToTop: "Back to top ↑",
     },
 
     /* ---------------- the Personal side ---------------- */
     personal: {
       intro:
-        "This side of the site is for everything that isn't work. Moving to Japan and starting from zero shaped me more than any course did; some of the writing here is about that.",
+        "This side is for things that are not work. Moving to Japan and starting from zero shaped me more than any course. Some of the writing is about that.",
       writingHeading: "Writing",
       writingBlurb: "Occasional personal essays.",
       allWriting: "All writing →",
@@ -230,7 +224,7 @@ window.SITE_CONTENT = {
     progressPage: {
       eyebrow: "Field notes",
       title: "Build Log",
-      lead: "Notes on the thesis as it happens. Newest first.",
+      lead: "Thesis notes, as I go. Newest first.",
       filterAll: "All",
       empty: "No entries yet.",
       home: "← Home",
@@ -266,10 +260,10 @@ window.SITE_CONTENT = {
       eyebrow: "ロボティクス専攻",
       name: "アイマン・ハジム",
       roles: [
-        "SLAM・自律ナビゲーション",
+        "自律ナビゲーション",
       ],
       intro:
-        "福井大学 知能ロボット研究室の学部4年です。卒業研究では、熱画像カメラと3D LiDARを組み合わせた自律走行に取り組んでいます。いまはすべてシミュレーション上で開発していて、ゆくゆくは実機に載せる予定です。",
+        "福井大学 知能ロボット研究室の4年です。卒論は、熱画像カメラを使ったロボットのナビゲーションです。いまはシミュレーションで、そのあと実機に載せます。",
       ctaPrimary: "研究を見る",
       ctaSecondary: "ビルドログ",
       location: "日本",
@@ -287,8 +281,6 @@ window.SITE_CONTENT = {
       items: [
         { label: "NVIDIA Isaac Sim", detail: "大規模・動的環境の構築" },
         { label: "C++",              detail: "Pythonからリアルタイム認識へ" },
-        { label: "アクティブSLAM",    detail: "TIR + LiDAR・フロンティア探索" },
-        { label: "人間行動AI",        detail: "人らしく歩く群衆エージェント" },
       ],
     },
 
@@ -296,9 +288,9 @@ window.SITE_CONTENT = {
       heading: "自己紹介",
       lead: "自分で道を見つけて動くロボットをつくりたい。",
       paragraphs: [
-        "ロボティクスの中でいちばん興味があるのは自律ナビゲーションです。ロボットが周囲をどう認識し、人が操縦しなくても進む先をどう決めるか。勉強も制作も、ほとんどの時間をこの問題に使っています。",
-        "福井大学の学部4年で、知能ロボット研究室に所属しています。卒論のテーマは熱画像カメラと3D LiDARを組み合わせたSLAM。開発はいまのところすべてシミュレーション上で、コードと同じくらい、土台になる理論（制御・確率・線形代数）にも時間を割いています。",
-        "大学進学のために来日して、言葉も生活もゼロから始めました。落ち着くまでには忍耐が要りましたが、その忍耐は研究にもそのまま生きています。説明できないものを作るより、基礎に1週間かけるほうを選びます。",
+        "いちばん時間を使っているのは自律ナビゲーションです。ロボットが周囲を見て、自分で行き先を決めます。",
+        "福井大学の4年で、知能ロボット研究室です。卒論は熱画像カメラを使ったロボットのナビゲーションです。いまはすべてシミュレーションです。制御、確率、線形代数にも、コードと同じくらい時間を使っています。",
+        "大学のために来日して、言葉も知り合いもゼロからでした。慣れるまで忍耐が要りました。研究でも基礎に時間をかけています。",
       ],
       facts: [
         { label: "大学",   value: "福井大学 ロボティクスコース" },
@@ -309,54 +301,50 @@ window.SITE_CONTENT = {
     },
 
     research: {
-      kicker: "卒業論文 · 2025–26",
-      heading: "シミュレーションで作る TIR-LiDAR アクティブSLAM",
+      kicker: "卒業論文、2025-26",
+      heading: "熱画像カメラによるナビゲーション（シミュレーション）",
       summary:
-        "卒論は二本立てです。ひとつは、人間らしく歩き回るエージェントを配置した大規模な屋内シミュレーション環境。もうひとつは、その中で検証するアクティブSLAMで、熱画像（TIR）カメラと3D LiDARを融合し、暗所・混雑・遮蔽の中でもナビゲーションが破綻しないことを目指します。",
-      baseLabel: "ベース研究",
-      base:
-        "HO3-SLAM / Walk2Map++。受動的なRGB視覚から、ロボット自身が観測先を選ぶ能動的知覚へ発展させます。",
+        "熱画像カメラを使ったロボットのナビゲーションです。まずシミュレーションで作って試し、そのあと実機に移します。",
       sensorsLabel: "構成",
       sensors: [
-        "熱画像・遠赤外線（TIR）カメラ",
-        "Velodyne 3D LiDAR",
+        "熱画像カメラ",
         "NVIDIA Isaac Sim",
         "メガローバー · sim2realの実機",
       ],
       phasesHeading: "計画",
       phases: [
         { tag: "フェーズ1", title: "環境を作る",
-          desc: "Isaac Sim上に20×20mの屋内環境を作ります。外見や歩き方、知覚→計画→行動のループをそれぞれ持つ人間エージェントを配置し、ロボットが走行しながらTIR/LiDARの系列データを記録します。" },
-        { tag: "フェーズ2", title: "アクティブ・マルチモーダルSLAM",
-          desc: "衝突回避・人追従・フロンティア探索などの能動制御を組み込んだTIR + LiDAR SLAMを実装し、100以上の環境条件で精度・地図の有用性・計算時間を評価します。" },
-        { tag: "フェーズ3", title: "既存手法を上回る",
-          desc: "提案手法を実装し、広い・混んでいる・暗い・遮蔽が多いという厳しい条件で、既存手法より高い性能を示します。" },
+          desc: "ロボットが走るための屋内環境をIsaac Simで作ります。" },
+        { tag: "フェーズ2", title: "ナビゲーション",
+          desc: "熱画像カメラを使ったナビゲーションを、シミュレーションで試します。" },
+        { tag: "フェーズ3", title: "評価",
+          desc: "いろいろなシミュレーション条件で試し、既存手法と比べます。" },
         { tag: "フェーズ4", title: "引き継ぎ",
-          desc: "環境・エージェント・解析コードを文書化して、来年度の学生がそのまま続けられる状態で渡します。" },
+          desc: "環境、コード、解析スクリプトを文書にして、来年の学生が、私がいなくても続けられるようにします。" },
       ],
       sim2realLabel: "Sim → Real",
       sim2real:
-        "まずはすべてシミュレーションで動かします。Isaac Simの実験で確かめられた手法を、その後に実機のメガローバーへ移します。",
+        "まずはすべてシミュレーションです。Isaac Simで確かめられたものを、実機のメガローバーへ移します。",
     },
 
     now: {
-      heading: "いま取り組んでいること",
-      lead: "ハードウェアは高価で、研究室で使える時間も限られています。だから実機に触る前に、シミュレーションから学べることを学びきります。順番はだいたい次のとおりです。",
+      heading: "いまやっていること",
+      lead: "実機は高く、研究室の時間も限られています。だから先にシミュレーションです。だいたいこの順です。",
       roadmap: [
         { date: "2026 · 現在", title: "Isaac Simを身につける",
-          desc: "環境・センサ・人間エージェント。リアルタイム認識はPythonだけでは足りないので、並行してC++の練習も続けます。", state: "active" },
+          desc: "環境とセンサ。リアルタイムの認識にはPythonだけでは足りないので、C++も並行して練習します。", state: "active" },
         { date: "2026 · 後半", title: "卒論の実験",
-          desc: "100以上のシミュレーション条件でアクティブSLAMを評価し、論文にまとめます。", state: "next" },
+          desc: "シミュレーションで卒論の実験をして、論文にまとめます。", state: "next" },
         { date: "2027",       title: "実機へ",
-          desc: "シミュレーションの成果をメガローバーに移し、自作ハードウェアにも手を付けます。", state: "future" },
+          desc: "シミュレーションの成果をメガローバーに移し、自作のハードウェアも始めます。", state: "future" },
         { date: "2027年3月",  title: "卒業",
-          desc: "福井大学を卒業し、自動運転か移動ロボットの仕事に就きます。", state: "future" },
+          desc: "福井大学を卒業し、自動運転か移動ロボットの仕事を始めます。", state: "future" },
       ],
     },
 
     skills: {
       heading: "ツールボックス",
-      lead: "実際に使っているものと、その期間。",
+      lead: "使っているものと、その期間。",
       groups: [
         { name: "得意", items: [
           { name: "Python", note: "約2年" },
@@ -378,35 +366,35 @@ window.SITE_CONTENT = {
 
     projects: {
       heading: "ログブック",
-      lead: "代表的な成果と実験。",
+      lead: "選んだ仕事と実験。",
       items: [
         { title: "PyroScout：熱画像 × LiDAR の探索救助",
-          desc: "ゼロから作った2Dロボットシミュレータ。地図を持たない移動ロボットが2D LiDAR（地図生成）と熱センサ（要救助者の発見）を組み合わせ、フロンティア探査・A*経路計画・自律走行を行います。8回中8回成功、壁との衝突ゼロ。解説付きで実行できるノートブックを同梱しています。",
+          desc: "ゼロから書いた2Dロボットシミュレータです。地図のない移動ロボットが、2D LiDARで地図を作り、熱センサで要救助者を見つけ、探索し、A*で経路を計画して、自分でそこへ行きます。8回中8回成功、壁との衝突はゼロ。実行できるノートブックにまとめています。",
           tags: ["Python", "LiDAR", "熱画像", "A*", "センサ融合"],
           links: [{ href: "/projects/pyroscout/", label: "解説を読む" },
                   { href: "https://github.com/a-haz/pyroscout", label: "GitHub" }] },
         { title: "熱画像 × 3D LiDAR 人追従",
-          desc: "3D LiDARの点群と熱画像を融合し、普通のカメラでは追えなくなる場面でも追跡を続ける人追従ロジック。このプロジェクトが卒論テーマにつながりました。",
+          desc: "3D LiDARの点群と熱画像を合わせた人追従です。普通のカメラでは追えない場所でも追跡します。",
           tags: ["Python", "LiDAR", "熱画像", "SLAM"],
           link: "https://github.com/a-haz", linkLabel: "GitHub" },
         { title: "Transformerトラッカー（ViT / SPT）",
-          desc: "場所認識・物体追跡に使われるVision Transformer系・SPT系のトラッカーを勉強しています。時間はかかりますが、自分で実装するのがいちばん理解が深まります。",
+          desc: "場所認識と物体追跡のため、Vision TransformerとSPTのトラッカーを読んで、自分で実装しています。",
           tags: ["Python", "深層学習", "ViT"],
           link: "https://github.com/a-haz", linkLabel: "GitHub" },
         { title: "組込みCとハードウェア制御",
-          desc: "レジスタを直接触るCの練習。7セグLEDの制御など、より大きなロボットの状態機械につながる下位レイヤのロジックです。",
+          desc: "レジスタを直接触るCです。7セグの制御と、より大きなロボットの状態機械につながる制御です。",
           tags: ["C", "組込み"],
           link: "https://github.com/a-haz", linkLabel: "GitHub" },
         { title: "ロボット工学創造実験",
           desc: "チームの創造実験プロジェクトで永和システムマネジメント賞を受賞しました。",
-          tags: ["受賞 · 2023", "チーム"],
+          tags: ["受賞 · 2025", "チーム"],
           link: "", linkLabel: "" },
       ],
     },
 
     contact: {
       heading: "連絡先",
-      lead: "2027年から、自動運転や移動ロボットの分野で働くことを目指しています。SLAMやシミュレーションの話でも、このサイトについてでも、気軽にどうぞ。",
+      lead: "2027年から、自動運転か移動ロボットの仕事を探しています。SLAM、シミュレーション、このサイトのことも、聞いてください。",
       coinAria: "写真をめくって「仕事」と「個人」を切り替える",
       altPro: "アイマン・ハジム（仕事）",
       altPersonal: "アイマン・ハジム（個人）",
@@ -429,13 +417,13 @@ window.SITE_CONTENT = {
     },
 
     footer: {
-      tagline: "HTMLとCSSと少しのJavaScriptだけで作っています。フレームワークなし、ビルドなし。",
+      tagline: "HTML、CSS、少しのJavaScriptです。フレームワークもビルドもありません。",
       backToTop: "上へ戻る ↑",
     },
 
     personal: {
       intro:
-        "ここは仕事以外のことを置く場所です。来日してゼロから生活を立ち上げた経験は、どんな授業よりも自分を形づくりました。書きものの一部はその話です。",
+        "ここは仕事以外の場所です。来日してゼロから始めたことは、どの授業よりも自分を形作りました。書きものの一部はその話です。",
       writingHeading: "書きもの",
       writingBlurb: "ときどき、個人的なエッセイ。",
       allWriting: "すべて読む →",
@@ -456,7 +444,7 @@ window.SITE_CONTENT = {
     progressPage: {
       eyebrow: "フィールドノート",
       title: "ビルドログ",
-      lead: "卒論の進み具合を、そのまま記録しています。新しい順です。",
+      lead: "卒論の記録です。新しい順。",
       filterAll: "すべて",
       empty: "まだ記録はありません。",
       home: "← ホーム",
@@ -492,10 +480,10 @@ window.SITE_CONTENT = {
       eyebrow: "Kejuruteraan Robotik",
       name: "Aiman Hazim",
       roles: [
-        "SLAM & navigasi autonomi",
+        "Navigasi autonomi",
       ],
       intro:
-        "Saya pelajar robotik tahun empat di Makmal Penyelidikan Robot Pintar, Universiti Fukui. Tesis saya ialah navigasi autonomi yang menggabungkan kamera terma dengan LiDAR 3D. Buat masa ini semuanya berjalan dalam simulasi; rancangannya nanti dipindahkan ke robot sebenar.",
+        "Pelajar robotik tahun empat di Makmal Penyelidikan Robot Pintar, Universiti Fukui. Tesis saya navigasi robot dengan kamera terma. Sekarang dalam simulasi. Lepas ini saya pindahkan ke robot sebenar.",
       ctaPrimary: "Penyelidikan",
       ctaSecondary: "Log pembinaan",
       location: "Jepun",
@@ -513,8 +501,6 @@ window.SITE_CONTENT = {
       items: [
         { label: "NVIDIA Isaac Sim", detail: "dunia dinamik berskala besar" },
         { label: "C++",              detail: "dari Python ke persepsi masa nyata" },
-        { label: "SLAM Aktif",       detail: "TIR + LiDAR, penerokaan frontier" },
-        { label: "AI tingkah laku manusia", detail: "ejen orang ramai yang berjalan realistik" },
       ],
     },
 
@@ -522,9 +508,9 @@ window.SITE_CONTENT = {
       heading: "Tentang",
       lead: "Saya mahu membina robot yang boleh mencari jalannya sendiri.",
       paragraphs: [
-        "Bahagian robotik yang paling saya minati ialah navigasi autonomi: bagaimana robot mengesan sekelilingnya dan memutuskan arah tanpa dikawal manusia. Kebanyakan masa belajar dan masa projek saya habis pada masalah yang satu ini.",
-        "Saya kini di tahun empat di Universiti Fukui, dalam Makmal Penyelidikan Robot Pintar. Tesis saya menggabungkan kamera terma dengan LiDAR 3D untuk SLAM. Setakat ini semuanya dalam simulasi, dan teori di belakangnya (kawalan, kebarangkalian, algebra linear) mengambil masa mingguan saya sama banyak dengan kod.",
-        "Saya berpindah ke Jepun untuk belajar dan bermula dari kosong: bahasa baru, tiada kenalan. Untuk menetap perlukan kesabaran, dan kesabaran itu terbawa ke penyelidikan. Saya lebih rela habiskan seminggu pada asas daripada membina sesuatu yang saya sendiri tak dapat terangkan.",
+        "Yang paling saya buat ialah navigasi autonomi. Robot mengesan sekeliling dan pilih ke mana hendak pergi. Kebanyakan masa belajar dan projek saya di situ.",
+        "Tahun empat di Universiti Fukui, Makmal Penyelidikan Robot Pintar. Tesis saya navigasi robot dengan kamera terma. Buat masa ini semuanya dalam simulasi. Kawalan, kebarangkalian, dan algebra linear ambil masa lebih kurang sama dengan kod.",
+        "Saya pindah ke Jepun untuk universiti dan mula dari kosong: bahasa baru, tiada kenalan. Menetap ambil masa, dan kesabaran itu ada dalam penyelidikan juga. Saya luangkan masa pada asas.",
       ],
       facts: [
         { label: "Universiti", value: "Universiti Fukui, Kursus Robotik" },
@@ -535,54 +521,50 @@ window.SITE_CONTENT = {
     },
 
     research: {
-      kicker: "Tesis sarjana muda · 2025–26",
-      heading: "SLAM Aktif TIR-LiDAR, dibina dalam simulasi",
+      kicker: "Tesis sarjana muda, 2025-26",
+      heading: "Navigasi kamera terma, dalam simulasi",
       summary:
-        "Tesis ini ada dua bahagian. Pertama, persekitaran simulasi dalaman yang besar dengan ejen manusia yang berjalan seperti orang sebenar. Kedua, sistem SLAM aktif yang diuji di dalamnya, menggabungkan kamera terma (TIR) dengan LiDAR 3D supaya navigasi terus berfungsi dalam gelap, dalam kesesakan, dan di sebalik halangan.",
-      baseLabel: "Berasaskan",
-      base:
-        "HO3-SLAM / Walk2Map++. Saya memanjangkannya daripada penglihatan RGB pasif kepada persepsi aktif, di mana robot memilih ke mana hendak melihat.",
+        "Navigasi robot dengan kamera terma. Dibina dan diuji dalam simulasi dahulu, kemudian dipindah ke robot sebenar.",
       sensorsLabel: "Susunan",
       sensors: [
-        "Kamera terma / inframerah jauh (TIR)",
-        "Velodyne LiDAR 3D",
+        "Kamera terma",
         "NVIDIA Isaac Sim",
         "Mega Rover · sasaran sim2real",
       ],
       phasesHeading: "Pelan",
       phases: [
         { tag: "Fasa 1", title: "Bina dunia",
-          desc: "Persekitaran dalaman 20×20 m dalam Isaac Sim, dengan ejen manusia yang masing-masing ada rupa, gaya berjalan, dan gelung tanggap–rancang–tindak sendiri. Robot bergerak di dalamnya sambil merekod jujukan TIR dan LiDAR." },
-        { tag: "Fasa 2", title: "SLAM multimodal aktif",
-          desc: "SLAM TIR + LiDAR dengan kawalan aktif (mengelak perlanggaran, mengikut manusia, penerokaan frontier), dinilai merentas 100+ keadaan persekitaran dari segi ketepatan, kegunaan peta, dan masa pengiraan." },
-        { tag: "Fasa 3", title: "Atasi garis dasar",
-          desc: "Laksanakan kaedah yang dicadangkan dan tunjukkan ia mengatasi pendekatan sedia ada dalam keadaan luas, sesak, gelap, dan terhalang." },
+          desc: "Persekitaran dalaman dalam Isaac Sim untuk robot bergerak." },
+        { tag: "Fasa 2", title: "Navigasi",
+          desc: "Navigasi robot dengan kamera terma, diuji dalam simulasi." },
+        { tag: "Fasa 3", title: "Nilai",
+          desc: "Uji dalam pelbagai keadaan simulasi dan banding dengan kaedah sedia ada." },
         { tag: "Fasa 4", title: "Serah tugas",
-          desc: "Dokumenkan persekitaran, kod ejen, dan skrip analisis supaya pelajar tahun depan boleh menyambung tanpa saya." },
+          desc: "Dokumenkan persekitaran, kod, dan skrip analisis supaya pelajar tahun depan boleh sambung tanpa saya." },
       ],
       sim2realLabel: "Sim → Nyata",
       sim2real:
-        "Semuanya berjalan dalam simulasi dahulu. Apa yang terbukti dalam eksperimen Isaac Sim akan dipindahkan ke Mega Rover sebenar selepas itu.",
+        "Simulasi dahulu. Yang bertahan dalam eksperimen Isaac Sim dipindah ke Mega Rover sebenar.",
     },
 
     now: {
       heading: "Apa yang saya buat sekarang",
-      lead: "Perkakasan mahal dan masa makmal terhad, jadi saya ambil dahulu segala yang boleh daripada simulasi sebelum menyentuh robot sebenar. Lebih kurang ikut urutan:",
+      lead: "Perkakasan mahal dan masa makmal terhad, jadi simulasi dahulu, sebelum robot sebenar. Lebih kurang ikut urutan ini:",
       roadmap: [
         { date: "2026 · kini", title: "Belajar Isaac Sim betul-betul",
-          desc: "Persekitaran, sensor, ejen manusia. Latihan C++ berjalan serentak, sebab Python sahaja tak cukup untuk persepsi masa nyata.", state: "active" },
+          desc: "Persekitaran dan sensor. C++ sekali. Python sahaja tak cukup untuk persepsi masa nyata.", state: "active" },
         { date: "2026 · S2",   title: "Eksperimen tesis",
-          desc: "Jalankan penilaian SLAM aktif merentas 100+ keadaan simulasi dan tuliskannya.", state: "next" },
+          desc: "Jalankan eksperimen tesis dalam simulasi, kemudian tulis.", state: "next" },
         { date: "2027",        title: "Ke perkakasan sebenar",
-          desc: "Pindahkan hasil simulasi ke Mega Rover, dan mulakan binaan perkakasan sendiri.", state: "future" },
+          desc: "Pindah kerja simulasi ke Mega Rover, dan mula bina perkakasan sendiri.", state: "future" },
         { date: "Mac 2027",    title: "Bergraduat",
-          desc: "Tamat di Universiti Fukui dan mula bekerja dalam pandu autonomi atau robot mudah alih.", state: "future" },
+          desc: "Tamat di Universiti Fukui. Kemudian kerja dalam pandu autonomi atau robot mudah alih.", state: "future" },
       ],
     },
 
     skills: {
       heading: "Kotak alat",
-      lead: "Apa yang saya betul-betul guna, dan berapa lama.",
+      lead: "Apa yang saya guna, dan berapa lama.",
       groups: [
         { name: "Selesa", items: [
           { name: "Python", note: "~2 thn" },
@@ -604,35 +586,35 @@ window.SITE_CONTENT = {
 
     projects: {
       heading: "Buku log",
-      lead: "Kerja dan eksperimen terpilih.",
+      lead: "Kerja terpilih.",
       items: [
         { title: "PyroScout: Mencari & menyelamat Terma × LiDAR",
-          desc: "Simulator robotik 2D yang ditulis dari awal. Robot mudah alih tanpa peta menggabungkan LiDAR 2D untuk pemetaan dengan sensor terma untuk mencari mangsa, kemudian meneroka, merancang dengan A*, dan bergerak sendiri ke sana. 8/8 larian berjaya, sifar perlanggaran dinding. Tulisannya berupa buku nota bernarasi yang boleh anda jalankan sendiri.",
+          desc: "Simulator robotik 2D yang saya tulis dari awal. Robot mudah alih tanpa peta guna LiDAR 2D untuk peta dan sensor terma untuk cari mangsa, kemudian teroka, rancang dengan A*, dan pandu ke sana. 8/8 larian berjaya, sifar perlanggaran dinding. Tulisannya nota yang boleh dijalankan.",
           tags: ["Python", "LiDAR", "Terma", "A*", "Gabungan sensor"],
           links: [{ href: "/projects/pyroscout/", label: "Baca tulisan" },
                   { href: "https://github.com/a-haz/pyroscout", label: "GitHub" }] },
         { title: "Pengikutan manusia Terma × LiDAR 3D",
-          desc: "Logik mengikut manusia yang menggabungkan awan titik LiDAR 3D dengan data terma, supaya penjejakan terus berfungsi di tempat kamera biasa gagal. Projek inilah yang membawa kepada tema tesis saya.",
+          desc: "Ikut manusia dengan awan titik LiDAR 3D dan data terma, supaya penjejakan kekal di tempat kamera gagal.",
           tags: ["Python", "LiDAR", "Terma", "SLAM"],
           link: "https://github.com/a-haz", linkLabel: "GitHub" },
         { title: "Penjejak Transformer (ViT / SPT)",
-          desc: "Membaca dan melaksanakan semula penjejak gaya Vision Transformer dan SPT untuk pengecaman tempat dan penjejakan objek. Membinanya dari awal memang lambat, tapi itulah cara saya pastikan saya benar-benar faham.",
+          desc: "Baca dan tulis semula penjejak Vision Transformer dan SPT untuk pengecaman tempat dan penjejakan objek. Saya bina dari awal.",
           tags: ["Python", "Pembelajaran dalam", "ViT"],
           link: "https://github.com/a-haz", linkLabel: "GitHub" },
         { title: "C terbenam & logik perkakasan",
-          desc: "C peringkat daftar: memacu paparan 7-segmen dan menulis logik kawalan yang menyambung ke mesin keadaan robot yang lebih besar.",
+          desc: "C peringkat daftar: paparan 7-segmen, dan logik kawalan untuk mesin keadaan robot yang lebih besar.",
           tags: ["C", "Terbenam"],
           link: "https://github.com/a-haz", linkLabel: "GitHub" },
         { title: "Eksperimen Kreatif Kejuruteraan Robot",
           desc: "Projek eksperimen kreatif pasukan kami memenangi Hadiah Eiwa System Management.",
-          tags: ["Anugerah · 2023", "Berpasukan"],
+          tags: ["Anugerah · 2025", "Berpasukan"],
           link: "", linkLabel: "" },
       ],
     },
 
     contact: {
       heading: "Hubungi saya",
-      lead: "Saya mencari peluang dalam pandu autonomi dan robot mudah alih mulai 2027. Soalan tentang SLAM, simulasi, atau apa-apa di laman ini pun dialu-alukan.",
+      lead: "Saya cari kerja pandu autonomi dan robot mudah alih mulai 2027. Soalan tentang SLAM, simulasi, atau laman ini boleh.",
       coinAria: "Balikkan foto untuk tukar antara profesional dan peribadi",
       altPro: "Aiman Hazim (profesional)",
       altPersonal: "Aiman Hazim (peribadi)",
@@ -655,13 +637,13 @@ window.SITE_CONTENT = {
     },
 
     footer: {
-      tagline: "HTML, CSS dan sedikit JavaScript sahaja. Tiada rangka kerja, tiada langkah binaan.",
+      tagline: "HTML, CSS, dan sedikit JavaScript. Tiada rangka kerja, tiada binaan.",
       backToTop: "Ke atas ↑",
     },
 
     personal: {
       intro:
-        "Sisi ini untuk semua yang bukan kerja. Berpindah ke Jepun dan bermula dari kosong membentuk saya lebih daripada mana-mana kelas; sebahagian tulisan di sini adalah tentang itu.",
+        "Bahagian ini untuk yang bukan kerja. Pindah ke Jepun dan mula dari kosong membentuk saya lebih daripada mana-mana kelas. Sebahagian tulisan tentang itu.",
       writingHeading: "Penulisan",
       writingBlurb: "Esei peribadi, sekali-sekala.",
       allWriting: "Semua penulisan →",
@@ -682,7 +664,7 @@ window.SITE_CONTENT = {
     progressPage: {
       eyebrow: "Nota lapangan",
       title: "Log Pembinaan",
-      lead: "Catatan tesis sepanjang ia berjalan. Terbaharu dahulu.",
+      lead: "Nota tesis semasa berjalan. Terbaharu dahulu.",
       filterAll: "Semua",
       empty: "Belum ada catatan.",
       home: "← Laman utama",

@@ -21,19 +21,19 @@ window.WRITING_ENTRIES = [
     en: {
       title: "A place to write",
       body: [
-        "This page is for the writing that doesn't fit in a build log: thoughts about coming to Japan, learning in a third language, and whatever else feels worth putting down. More soon.",
+        "Notes that do not fit in the build log. Coming to Japan, learning in a third language, and other things I want to write down.",
       ],
     },
     ja: {
       title: "書く場所",
       body: [
-        "ここはビルドログに収まらない文章のための場所です。日本に来たこと、第三の言語で学ぶこと、その他書き残したいことを。少しずつ。",
+        "ビルドログに入らない文章です。日本に来たこと、三つ目の言語で学ぶこと、そのほか書いておきたいこと。",
       ],
     },
     ms: {
       title: "Tempat untuk menulis",
       body: [
-        "Halaman ini untuk tulisan yang tidak muat dalam log pembinaan: tentang datang ke Jepun, belajar dalam bahasa ketiga, dan apa sahaja yang berbaloi dicatat. Lebih lagi nanti.",
+        "Tulisan yang tak muat dalam log pembinaan. Datang ke Jepun, belajar dalam bahasa ketiga, dan nota lain.",
       ],
     },
   },
