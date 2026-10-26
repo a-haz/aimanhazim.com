@@ -20,15 +20,36 @@
     var metas = document.querySelectorAll('meta[name="theme-color"]');
     for (var j = 0; j < metas.length; j++) metas[j].setAttribute('content', light ? '#f1eee8' : '#141312');
   }
+  // the theme follows the system light or dark setting until the toggle is used.
+  // the toggle saves a choice; toggling back to the system's own theme clears it
+  var sysLight = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+  function systemTheme() { return sysLight && sysLight.matches ? 'light' : 'dark'; }
+  function setTheme(next) {
+    if (html.getAttribute('data-theme') === next) return;
+    html.setAttribute('data-theme', next);
+    themeLabels();
+    fire('ah:theme', next);
+  }
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-theme-toggle]');
     if (!b) return;
     var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    html.setAttribute('data-theme', next);
-    try { localStorage.setItem('ah-theme', next); } catch (err) {}
-    themeLabels();
-    fire('ah:theme', next);
+    try {
+      if (next === systemTheme()) localStorage.removeItem('ah-theme');
+      else localStorage.setItem('ah-theme', next);
+    } catch (err) {}
+    setTheme(next);
   });
+  // the system switches (at sunset, say) while the page is open: follow it, unless a choice is saved
+  function onSystem() {
+    var saved = null;
+    try { saved = localStorage.getItem('ah-theme'); } catch (err) {}
+    if (saved !== 'light' && saved !== 'dark') setTheme(systemTheme());
+  }
+  if (sysLight) {
+    if (sysLight.addEventListener) sysLight.addEventListener('change', onSystem);
+    else if (sysLight.addListener) sysLight.addListener(onSystem);
+  }
 
   /* ------------------------------------------------------------ menu */
   var menu = document.getElementById('menu'), opener = null;
