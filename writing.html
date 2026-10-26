@@ -1,110 +1,60 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Writing · Aiman Hazim</title>
-
-  <meta name="description" content="Personal notes on coming to Japan, robotics, and learning.">
+  <meta name="description" content="Aiman Hazim. Projects, writing and photos. Based in Fukui, Japan.">
   <meta name="author" content="Aiman Hazim">
-  <meta name="theme-color" content="#0b1120">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#141312">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f1eee8">
   <link rel="canonical" href="https://aimanhazim.com/writing.html">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
-
-  <meta property="og:type" content="article">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Aiman Hazim">
   <meta property="og:title" content="Writing · Aiman Hazim">
-  <meta property="og:description" content="Personal essays, occasionally.">
+  <meta property="og:description" content="Aiman Hazim. Projects, writing and photos. Based in Fukui, Japan.">
   <meta property="og:url" content="https://aimanhazim.com/writing.html">
   <meta property="og:image" content="https://aimanhazim.com/assets/img/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://aimanhazim.com/assets/img/og-card.png">
-
   <script>
     (function () {
-      try {
-        var t = localStorage.getItem('ah-theme');
-        if (t !== 'light' && t !== 'dark') {
-          t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-        }
-        document.documentElement.setAttribute('data-theme', t);
-      } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+      var t;
+      try { t = localStorage.getItem('ah-theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') t = 'dark';
+      document.documentElement.setAttribute('data-theme', t);
     })();
   </script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/css/style.css">
-  <link rel="stylesheet" href="/assets/css/refined.css">
 </head>
-<body>
-  <div class="lidar-bg" aria-hidden="true"></div>
-  <div class="robot-blueprint" aria-hidden="true"></div>
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <nav class="site-nav" aria-label="Primary">
-    <div class="nav-content">
-      <a class="brand" href="/" aria-label="Aiman Hazim, home">
-        <svg class="brand-mark" viewBox="6 -2 88 78" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <line x1="50" y1="20" x2="50" y2="7" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          <circle class="rm-glow" cx="50" cy="5" r="6.5"/>
-          <circle class="rm-accent" cx="50" cy="5" r="3.4"/>
-          <rect x="8" y="37" width="9" height="18" rx="3" fill="currentColor"/>
-          <rect x="83" y="37" width="9" height="18" rx="3" fill="currentColor"/>
-          <rect x="18" y="20" width="64" height="52" rx="15" fill="currentColor"/>
-          <circle class="rm-accent" cx="38" cy="46" r="7"/>
-          <circle class="rm-accent" cx="62" cy="46" r="7"/>
-          <rect class="rm-mouth" x="40" y="60" width="20" height="3.4" rx="1.7"/>
-        </svg>
-      </a>
-      <div class="nav-spacer"></div>
-      <div id="primary-nav">
-        <ul id="nav-links"></ul>
-      </div>
-      <div class="nav-controls">
-        <div class="lang-switch" id="lang-switch"></div>
-        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="true">
-          <span class="theme-icon" aria-hidden="true">☀</span>
-        </button>
-        <button class="icon-btn" id="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"
-                aria-label="Menu" data-i18n-attr="aria-label:ui.menu">
-          <span aria-hidden="true">≡</span>
-        </button>
-      </div>
+<body class="inner">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <nav class="nav" aria-label="Primary"><a href="/">home</a><a href="/projects/">projects</a><a href="/research/">research</a><a href="/writing.html" aria-current="page">writing</a><a href="/photos/">photos</a><a href="/progress.html">log</a><a href="/about/">about</a></nav>
+    <div class="tools"><button type="button" class="icon-btn theme-btn" data-theme-toggle aria-label="Switch theme"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M3.4 12.6l1.1-1.1M11.5 4.5l1.1-1.1"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M13.6 10.2A5.8 5.8 0 0 1 5.8 2.4a5.8 5.8 0 1 0 7.8 7.8Z"/></svg></button></div>
+    <div class="pill"><a href="/">Aiman Hazim</a><button type="button" class="dots" data-menu-open aria-expanded="false" aria-controls="menu" aria-label="Menu"><svg viewBox="0 0 14 14" aria-hidden="true" fill="currentColor"><rect x="1" y="3" width="12" height="1.4"/><rect x="1" y="9.6" width="12" height="1.4"/></svg></button></div>
+  </header>
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
+    <button type="button" class="icon-btn menu-close" data-menu-close aria-label="Close"><svg viewBox="0 0 14 14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 2l10 10M12 2 2 12"/></svg></button>
+    <ul><li><a href="/">Home</a></li><li><a href="/projects/">Projects</a></li><li><a href="/research/">Research</a></li><li><a href="/writing.html" aria-current="page">Writing</a></li><li><a href="/photos/">Photos</a></li><li><a href="/progress.html">Log</a></li><li><a href="/about/">About</a></li></ul>
+    <div class="menu-foot"><p class="icons" aria-label="Elsewhere"><a href="https://github.com/a-haz" rel="me noopener" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></a><a href="https://www.linkedin.com/in/a-haz" rel="me noopener" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6Z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a><a href="mailto:contact@aimanhazim.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></a><a href="https://x.com/manjym_" rel="me noopener" aria-label="X" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l11.73 16H20L8.27 4Z"/><path d="m4 20 6.77-6.77m2.46-2.46L20 4"/></svg></a><a href="https://instagram.com/manjym_" rel="me noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z"/><path d="M17.5 6.5h.01"/></svg></a></p><button type="button" class="icon-btn theme-btn" data-theme-toggle aria-label="Switch theme"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M3.4 12.6l1.1-1.1M11.5 4.5l1.1-1.1"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M13.6 10.2A5.8 5.8 0 0 1 5.8 2.4a5.8 5.8 0 1 0 7.8 7.8Z"/></svg></button></div>
+  </div>
+  <main id="main" class="page">
+    <div class="lead">
+      <p class="kicker">Writing</p>
+      <h1>Personal essays, occasionally.</h1>
     </div>
-  </nav>
-
-  <main id="main">
-    <header class="log-header">
-      <div class="container">
-        <a class="log-back" href="/#personal" data-i18n="writingPage.home"></a>
-        <span class="eyebrow" data-i18n="writingPage.eyebrow" style="display:block;margin-top:18px"></span>
-        <h1 data-i18n="writingPage.title"></h1>
-        <p class="lead" data-i18n="writingPage.lead"></p>
-      </div>
-    </header>
-
-    <div class="container">
-      <div class="log-feed" id="writing-feed"></div>
-    </div>
+    <ul class="entries" data-list="writing" data-page="/writing.html"></ul>
   </main>
-
-  <footer class="site-footer">
-    <div class="footer-content">
-      <p>&copy; <span id="year">2026</span> Aiman Hazim</p>
-      <div class="footer-links">
-        <div class="footer-socials" id="footer-socials"></div>
-        <a class="footer-top" href="/#personal" data-i18n="writingPage.home"></a>
-      </div>
-    </div>
-  </footer>
-
-  <script src="/assets/js/content.js"></script>
-  <script src="/assets/js/progress.js"></script>
-  <script src="/assets/js/writing.js"></script>
-  <script src="/assets/js/app.js"></script>
+  <footer class="foot"><p class="icons" aria-label="Elsewhere"><a href="https://github.com/a-haz" rel="me noopener" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></a><a href="https://www.linkedin.com/in/a-haz" rel="me noopener" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6Z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a><a href="mailto:contact@aimanhazim.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></a><a href="https://x.com/manjym_" rel="me noopener" aria-label="X" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l11.73 16H20L8.27 4Z"/><path d="m4 20 6.77-6.77m2.46-2.46L20 4"/></svg></a><a href="https://instagram.com/manjym_" rel="me noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z"/><path d="M17.5 6.5h.01"/></svg></a></p><span class="foot-r"><span class="clock" data-clock>Fukui, JST</span><span>&copy; 2026 Aiman Hazim</span></span></footer>
+  <script src="/assets/data/writing.js"></script>
+  <script src="/assets/js/site.js" defer></script>
 </body>
 </html>
