@@ -14,8 +14,8 @@
 (function () {
   'use strict';
 
-  var CYAN = '#E2A04C';
-  var CYAN_RGB = '226,160,76';
+  var AMBER = '#E2A04C';
+  var AMBER_RGB = '226,160,76';
   var INK = [20, 19, 18];
   var PAPER = [241, 236, 228];
   var LEVELS = 20;
@@ -866,7 +866,7 @@
 
     // planned path, as a line of small squares
     if (r.path && r.path.length > 1) {
-      ctx.fillStyle = 'rgba(' + CYAN_RGB + ',0.75)';
+      ctx.fillStyle = 'rgba(' + AMBER_RGB + ',0.75)';
       var gap = 9, carry = 0;
       for (var i = 1; i < r.path.length; i++) {
         var a = i === 1 ? [r.x, r.y] : r.path[i - 1], b = r.path[i];
@@ -882,7 +882,7 @@
     // what it is tracking
     if (r.est && (r.state === 'NAVIGATING' || r.state === 'REACHED')) {
       var ex = r.est.x, ey = r.est.y, k = 15 + Math.sin(t * 5) * 1.5, arm = 6;
-      ctx.strokeStyle = CYAN; ctx.lineWidth = 1.5;
+      ctx.strokeStyle = AMBER; ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(ex - k, ey - k + arm); ctx.lineTo(ex - k, ey - k); ctx.lineTo(ex - k + arm, ey - k);
       ctx.moveTo(ex + k - arm, ey - k); ctx.lineTo(ex + k, ey - k); ctx.lineTo(ex + k, ey - k + arm);
@@ -898,8 +898,8 @@
     // field of view
     var reach = (this.opt.scenario ? this.mpp * 3.2 : 170) * s;
     var grad = ctx.createRadialGradient(0, 0, 6, 0, 0, reach);
-    grad.addColorStop(0, 'rgba(' + CYAN_RGB + ',0.13)');
-    grad.addColorStop(1, 'rgba(' + CYAN_RGB + ',0)');
+    grad.addColorStop(0, 'rgba(' + AMBER_RGB + ',0.13)');
+    grad.addColorStop(1, 'rgba(' + AMBER_RGB + ',0)');
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.moveTo(0, 0);
@@ -928,10 +928,10 @@
     ctx.beginPath(); ctx.moveTo(-6, -9); ctx.lineTo(-6, 9); ctx.stroke();
     // the thermal camera
     var on = r.blink > 0 ? (Math.sin(r.blink * 60) > 0) : true;
-    ctx.fillStyle = 'rgba(' + CYAN_RGB + ',0.28)';
+    ctx.fillStyle = 'rgba(' + AMBER_RGB + ',0.28)';
     ctx.beginPath(); ctx.arc(8, 0, 6, 0, Math.PI * 2); ctx.fill();
     if (on) {
-      ctx.fillStyle = CYAN;
+      ctx.fillStyle = AMBER;
       ctx.beginPath(); ctx.arc(8, 0, 2.8, 0, Math.PI * 2); ctx.fill();
     }
     ctx.restore();

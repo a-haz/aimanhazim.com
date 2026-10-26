@@ -2,12 +2,13 @@
  * robot.js
  *
  * A four-legged walker, drawn in 3D and then snapped to a grid of small
- * square cells, a bit like a terminal drawing. It roams a floor of dots
- * that fills the screen, and cannot see the floor until its sensor sweeps
- * over it. It picks places to explore, rests and looks around, and walks
- * round the text instead of over it. Warm spots in the floor
- * show up in the one accent colour; the counter in the corner keeps track
- * of how many it has found.
+ * square cells, a bit like a terminal drawing. It roams a floor of dots it
+ * cannot see until its sensor sweeps over it: it picks places to explore,
+ * turns, walks round walls, rests and looks around. The view follows it
+ * loosely, so it has its own patch of screen to walk about in, and the
+ * floor only slides along when it walks past the edge of that patch. Warm
+ * spots in the floor show up in the one accent colour; the counter in the
+ * corner keeps track of how many it has found.
  *
  * It wakes up lying down and stands, sits now and then when it stops,
  * lies down to rest after a long quiet spell and stretches as it gets up,
@@ -22,8 +23,9 @@
  * still frame.
  *
  * <canvas data-robot data-mode="home|lost"> plus optional
- * [data-robot-count] and [data-robot-state] elements on the page, and an
- * optional [data-robot-avoid] element whose box is kept quiet behind text.
+ * [data-robot-count] and [data-robot-state] elements on the page, and
+ * optional [data-robot-avoid] elements: the field fades out behind them so
+ * the text stays readable.
  */
 (function () {
   'use strict';
@@ -39,6 +41,7 @@
   /* ------------------------------------------------------------ helpers */
   function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
   function lerp(a, b, t) { return a + (b - a) * t; }
+  function smooth(x) { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); }
   function rng(seed) {
     var s = seed >>> 0 || 1;
     return function () { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; };
@@ -169,12 +172,19 @@
   var headNow = [0.42, HEIGHT + 0.4, 0];
 
   /* -------------------------------------------------------------- the world */
-  // A fixed floor that fills the screen, and the robot walks around on it.
-  // x runs across the screen, z runs into it (negative is further away), y is up.
+  // The floor is a patch of dots around the robot (T): dots, walls and warm
+  // spots that fall off one side of it come back on the other, unmapped. y is up.
+  // The camera looks at C. By default C stays put and the robot roams the
+  // screen; with data-camera="follow" on the canvas (or ?cam=follow) C follows
+  // the robot loosely instead, and the floor slides along under it.
   var R = rng(7);
-  var SP = 0.2;
+  var SP = 0.2, FX = 5.2, FZ = 3.4;
+  var T = { x: 0, z: 0 }, C = { x: 0, z: 0 };
+  var followCam = canvas.getAttribute('data-camera') === 'follow' || /[?&]cam=follow\b/.test(location.search);
   var floor = [], heats = [], walls = [], haze = [], pings = [];
   var found = 0;
+  // how many patch widths v sits outside the patch around c (0 when inside)
+  function wrapK(v, c, half) { return Math.floor((v - c + half) / (2 * half)); }
   function newWall(x, z) {
     var w = 0.3 + R() * 0.6, d = 0.25 + R() * 0.45, h = 0.25 + R() * 0.8;
     var pts = [], st = 0.11;
@@ -194,12 +204,13 @@
   /* ------------------------------------------------------------- the state */
   var t = 0, phase = 0, gaitF = 0.4, gaitMag = 0;
   // the robot: where it stands, which way it faces (forward is cos, -sin), and how fast
-  var bot = { x: 0, z: 0, yaw: -0.5, v: 0, w: 0, placed: false };
-  var route = null;        // { pts: [[x, z], ...], kind: 'wander' | 'go' | 'pointer', since, tries }
+  var bot = { x: 0, z: 0, yaw: 0, v: 0, w: 0 };
+  var route = null;        // { pts: [[x, z], ...], kind: 'wander' | 'go' | 'pointer' | 'sniff', since, tries }
   var stateName = 'explore', stateUntil = 0, look = null, lookUntil = 0;
   var headYaw = 0, headPitch = -0.25, hyV = 0, hpV = 0;
-  var P0 = 0.6, camYaw = 0, camPitch = 0.6;
-  var pointer = { x: 0, y: 0, active: false, mouse: false, at: -99, moved: -99, rx: -1e3, ry: -1e3, sent: true, target: null };
+  var camYaw = 0.95, camPitch = 0.24;
+  // walk: the pointer is over open floor, so the robot goes after it
+  var pointer = { x: 0, y: 0, active: false, mouse: false, at: -99, moved: -99, rx: -1e3, ry: -1e3, walk: false, planned: -99, target: null };
   var crouch = 0;
   // poses, each from 0 to 1 and eased, so it never snaps from one to another.
   // act is what it is doing in place: wake, sit, lie, stretch or sniff
@@ -218,8 +229,9 @@
 
   /* --------------------------------------------------------------- layout */
   var W = 0, H = 0, dpr = 1, cell = 10, cols = 0, rows = 0, scale = 100, cx = 0, cy = 0;
-  var zbuf, lum, kind, mat, heatv, nxs, nys;
-  var avoid = null, avoidEl = document.querySelector('[data-robot-avoid]');
+  var zbuf, lum, kind, mat, heatv, nxs, nys, dimv;
+  // the text on the page, the counter and the top bar: it fades out under all of them
+  var avoidEls = document.querySelectorAll('[data-robot-avoid], .top .nav, .top .tools, .top .pill');
   var countEl = document.querySelector('[data-robot-count]');
   var stateEl = document.querySelector('[data-robot-state]');
   var colors = {}, atlas = null, glyphs = '.:-=+*x#%@o/\\|', glyphIndex = {};
@@ -274,28 +286,54 @@
     var n = cols * rows;
     zbuf = new Float32Array(n); lum = new Float32Array(n); kind = new Uint8Array(n);
     mat = new Uint8Array(n); heatv = new Float32Array(n); nxs = new Float32Array(n); nys = new Float32Array(n);
-    scale = narrow ? Math.min(W * 0.16, H * 0.08) : Math.min(W * 0.07, H * 0.115);
-    cx = W * 0.5; cy = H * 0.5;
-    cam.dist = 12;
-    P0 = Math.max(0.55, Math.atan(cy / (scale * cam.dist)) + 0.14);
-    camYaw = 0; camPitch = P0;
-    avoid = null; blocks = [];
-    if (avoidEl) {
-      var a = avoidEl.getBoundingClientRect();
-      if (a.width) {
-        avoid = { x0: (a.left - r.left - 18) / cell, y0: (a.top - r.top - 14) / cell, x1: (a.right - r.left + 18) / cell, y1: (a.bottom - r.top + 10) / cell };
-        blocks.push({ x0: a.left - r.left - 24, y0: a.top - r.top - 20, x1: a.right - r.left + 24, y1: a.bottom - r.top + 16 });
+    // the framing of the first version: a big robot right of the text, seen from the side
+    if (mode === 'lost') {
+      scale = Math.min(W * (narrow ? 0.28 : 0.14), H * 0.25);
+      cx = W * (narrow ? 0.5 : 0.62); cy = H * (narrow ? 0.36 : 0.42);
+    } else if (narrow) {
+      scale = Math.min(W * 0.3, H * 0.19);
+      cx = W * 0.54; cy = H * 0.33;
+    } else {
+      scale = Math.min(W * 0.17, H * 0.29);
+      cx = W * 0.6; cy = H * 0.4;
+    }
+    cam.dist = 5.4;
+    // follow mode: its patch of screen, in floor units across the view and into it.
+    // a little room to the left (the text is there), more to the right
+    STAGE = { a0: -W * 0.11 / scale, a1: W * (narrow ? 0.12 : 0.16) / scale, d0: -0.3, d1: 1 };
+    // 1 = full strength, 0 = right behind text; it eases back over a few cells.
+    // the robot keeps its whole body clear of the same boxes
+    dimv = new Float32Array(n).fill(1);
+    blocks = [];
+    var pad = cell * 4;
+    for (var e = 0; e < avoidEls.length; e++) {
+      var a = avoidEls[e].getBoundingClientRect();
+      if (!a.width) continue;
+      blocks.push({ x0: a.left - r.left - 24, y0: a.top - r.top - 20, x1: a.right - r.left + 24, y1: a.bottom - r.top + 16 });
+      var bx0 = a.left - r.left - 8, by0 = a.top - r.top - 8, bx1 = a.right - r.left + 8, by1 = a.bottom - r.top + 8;
+      var c0 = Math.max(0, Math.floor((bx0 - pad) / cell)), c1 = Math.min(cols - 1, Math.floor((bx1 + pad) / cell));
+      var r0 = Math.max(0, Math.floor((by0 - pad) / cell)), r1 = Math.min(rows - 1, Math.floor((by1 + pad) / cell));
+      for (var yy = r0; yy <= r1; yy++) {
+        for (var xx = c0; xx <= c1; xx++) {
+          var qx = (xx + 0.5) * cell, qy = (yy + 0.5) * cell;
+          var k = smooth(Math.hypot(Math.max(bx0 - qx, 0, qx - bx1), Math.max(by0 - qy, 0, qy - by1)) / pad);
+          if (k < dimv[yy * cols + xx]) dimv[yy * cols + xx] = k;
+        }
       }
     }
-    var tele = document.querySelector('.tele');
-    if (tele) { var tr = tele.getBoundingClientRect(); if (tr.width) blocks.push({ x0: tr.left - r.left - 12, y0: tr.top - r.top - 12, x1: tr.right - r.left + 12, y1: tr.bottom - r.top + 12 }); }
     var hd = document.querySelector('header.top');
     topLimit = Math.max(56, hd ? hd.getBoundingClientRect().bottom - r.top + 6 : 56);
     readColors();
-    buildWorld();
+    setCamera();
+    // the floor is in world units, so it is built once and survives a resize
+    if (!floor.length) buildWorld();
   }
 
-  // where the robot may stand: its whole box on screen, clear of text and walls
+  // where it may go: anywhere that is clear of walls. It walks under the text
+  // (and fades there) and off the edge of the screen, like a fish in a pond
+  function ok(x, z) { return wallsClear(x, z); }
+  // whether it would stand fully in view and clear of the text: the places it
+  // likes to stop at
   var blocks = [], topLimit = 56;
   function boxAt(x, z) {
     var zc = project(x, 0, z);
@@ -304,13 +342,16 @@
     project(x, 1.45, z);
     return [fx - 0.9 * k, PY, fx + 0.9 * k, fy + 0.25 * k];
   }
-  function ok(x, z) {
+  function inView(x, z) {
     var b = boxAt(x, z);
     if (!b || b[0] < 6 || b[2] > W - 6 || b[1] < topLimit || b[3] > H - 6) return false;
     for (var i = 0; i < blocks.length; i++) {
       var q = blocks[i];
       if (b[0] < q.x1 && b[2] > q.x0 && b[1] < q.y1 && b[3] > q.y0) return false;
     }
+    return true;
+  }
+  function wallsClear(x, z) {
     for (var j = 0; j < walls.length; j++) {
       var dx = x - walls[j].x, dz = z - walls[j].z, rr = walls[j].rad + 0.8;
       if (dx * dx + dz * dz < rr * rr) return false;
@@ -327,7 +368,53 @@
     return true;
   }
   function ground(sx, sy) { var g = unproject(sx, sy); return g[3] ? null : [g[0], g[2]]; }
-  function randomSpot() { return ground(R() * W, topLimit + R() * (H - topLimit)); }
+  // somewhere in reach of the view: on screen, under the text, or a little way off it
+  function randomSpot() { var a = R() * Math.PI * 2, d = 5.5 * Math.sqrt(R()); return [C.x + Math.cos(a) * d, C.z + Math.sin(a) * d]; }
+  // the ground directions of the view: across the screen (AX, AZ) and into it (DX, DZ)
+  var AX = 1, AZ = 0, DX = 0, DZ = -1, STAGE = { a0: -0.6, a1: 0.8, d0: -0.3, d1: 1 }, ZMIN = 4.3;
+  // a spot it is sent to: in follow mode kept inside its patch of screen, so the view
+  // need not slide; otherwise kept from coming so close to the viewer that it looms
+  function fit(x, z) {
+    if (followCam) {
+      var dx = x - C.x, dz = z - C.z;
+      var a = clamp(dx * AX + dz * AZ, STAGE.a0, STAGE.a1), d = clamp(dx * DX + dz * DZ, STAGE.d0, STAGE.d1);
+      return [C.x + a * AX + d * DX, C.z + a * AZ + d * DZ];
+    }
+    var zc = project(x, 0.7, z);
+    if (zc >= ZMIN) return [x, z];
+    var push = (ZMIN - Math.max(zc, 0)) / Math.cos(camPitch);
+    return [x + DX * push, z + DZ * push];
+  }
+  function near(x, z) { return !followCam && project(x, 0.7, z) < ZMIN; }
+  // whether any of it would show on screen at all
+  function onScreen(x, z) { var b = boxAt(x, z); return !!b && b[2] > 0 && b[0] < W && b[3] > 0 && b[1] < H; }
+  // follow mode: the view keeps the robot in its patch, slides along when it walks
+  // past the edge of it, and slowly settles back on it
+  function track(dt, holding) {
+    if (!followCam) return;
+    var dx = bot.x - C.x, dz = bot.z - C.z, a = dx * AX + dz * AZ, d = dx * DX + dz * DZ;
+    var ea = a - clamp(a, STAGE.a0, STAGE.a1), ed = d - clamp(d, STAGE.d0, STAGE.d1);
+    var k = Math.min(1, dt * 6), c = holding ? 0 : Math.min(1, dt * 0.25);
+    C.x += (ea * AX + ed * DX) * k + dx * c;
+    C.z += (ea * AZ + ed * DZ) * k + dz * c;
+  }
+  // the patch of floor goes where the robot goes: dots, walls and warm spots
+  // that fall off one side of it come back on the other, unmapped
+  function carry() {
+    T.x = bot.x; T.z = bot.z;
+    for (var i = 0; i < floor.length; i++) {
+      var f = floor[i], kx = wrapK(f.x, T.x, FX), kz = wrapK(f.z, T.z, FZ);
+      if (kx || kz) { f.x -= kx * 2 * FX; f.z -= kz * 2 * FZ; f.seen = 0; }
+    }
+    for (var w = 0; w < walls.length; w++) {
+      var wl = walls[w], wx = wrapK(wl.x, T.x, FX), wz = wrapK(wl.z, T.z, FZ);
+      if (wx || wz) walls[w] = newWall(wl.x - wx * 2 * FX, wl.z - wz * 2 * FZ + (R() - 0.5) * 1.2);
+    }
+    for (var h = 0; h < heats.length; h++) {
+      var ht = heats[h], hx = wrapK(ht.x, T.x, FX), hz = wrapK(ht.z, T.z, FZ);
+      if (hx || hz) heats[h] = newHeat(ht.x - hx * 2 * FX, ht.z - hz * 2 * FZ + (R() - 0.5) * 1.2);
+    }
+  }
   function freeSpot(minD, maxD) {
     for (var i = 0; i < 120; i++) {
       var s = randomSpot();
@@ -380,47 +467,34 @@
     return true;
   }
 
+  // a patch of dots around the robot, three walls to the sides and five warm spots
   function buildWorld() {
-    camYaw = 0; camPitch = P0;
-    setCamera();
-    var xs = [], zs = [], corners = [[0, 0], [W, 0], [0, H], [W, H]];
-    for (var c = 0; c < 4; c++) { var g = unproject(corners[c][0], corners[c][1]); xs.push(g[0]); zs.push(g[2]); }
-    var x0 = Math.min.apply(null, xs) - 0.4, x1 = Math.max.apply(null, xs) + 0.4;
-    var z0 = Math.min.apply(null, zs) - 0.4, z1 = Math.max.apply(null, zs) + 0.4;
-    SP = clamp(2.8 * cell / scale, 0.15, 0.4);
-    var R2 = rng(11), inv = 1 / 1;
+    T.x = bot.x; T.z = bot.z;
+    var R2 = rng(11);
     floor = [];
-    for (var x = x0; x < x1; x += SP) {
-      for (var z = z0; z < z1; z += SP) {
-        var fx = x + (R2() - 0.5) * SP * 0.3, fz = z + (R2() - 0.5) * SP * 0.3;
-        if (project(fx, 0, fz) < 0 || PX < -cell || PX > W + cell || PY < -cell || PY > H + cell) continue;
-        var ex = clamp(Math.min(PX, W - PX) / (W * 0.1), 0, 1), ey = clamp(Math.min(PY, H - PY) / (H * 0.1), 0, 1);
-        floor.push({ x: fx, z: fz, seen: 0, j: R2(), e: ex * ey });
+    for (var x = -FX; x < FX - 1e-6; x += SP) {
+      for (var z = -FZ; z < FZ - 1e-6; z += SP) {
+        floor.push({ x: T.x + x + (R2() - 0.5) * 0.06, z: T.z + z + (R2() - 0.5) * 0.06, seen: 0, j: R2() });
       }
     }
-    // the robot starts right of centre, or stays where it was if that still fits
     walls = [];
-    if (!bot.placed || !ok(bot.x, bot.z)) {
-      var st = ground(W * (W < 700 ? 0.5 : 0.66), H * (W < 700 ? 0.34 : 0.42)), s0 = st && nearestOk(st[0], st[1]);
-      if (s0) { bot.x = s0[0]; bot.z = s0[1]; }
-      bot.placed = true;
-    }
-    route = null;
-    var nW = W < 700 ? 2 : 4, nH = W < 700 ? 4 : 6;
-    for (var i = 0; i < nW; i++) {
-      var s = freeSpot(1.8, 1e9);
-      if (s) { var wl = newWall(s[0], s[1]); walls.push(wl); if (!ok(bot.x, bot.z)) walls.pop(); }
+    for (var i = 0; i < 3; i++) {
+      var wl = newWall(T.x - FX + (i + 0.6) * (2 * FX / 3), T.z + (R() < 0.5 ? -1 : 1) * (1.5 + R() * 1.6));
+      walls.push(wl);
+      if (!wallsClear(bot.x, bot.z)) walls.pop();
     }
     heats = [];
-    for (var h = 0; h < nH; h++) { var s2 = freeSpot(1.2, 1e9); if (s2) heats.push(newHeat(s2[0], s2[1])); }
+    for (var h = 0; h < 5; h++) heats.push(newHeat(T.x - FX + (h + 0.5) * (2 * FX / 5) + (R() - 0.5), T.z + (R() < 0.5 ? -1 : 1) * (0.4 + R() * 2.4)));
   }
 
   /* --------------------------------------------------------------- camera */
   var cam = { x: 0, y: 0, z: 0, rx: [1, 0, 0], ry: [0, 1, 0], rz: [0, 0, 1], dist: 5.4, focal: 1 };
   var light = [0, 0, 0];
-  var TARGET = [0, 0, 0];
+  var TARGET = [0, 0.7, 0];
   function setCamera() {
+    TARGET[0] = C.x; TARGET[2] = C.z;
     var cp = Math.cos(camPitch), sp = Math.sin(camPitch), cyw = Math.cos(camYaw), syw = Math.sin(camYaw);
+    AX = cyw; AZ = -syw; DX = -syw; DZ = -cyw;
     // forward points from the camera to the target
     var fwd = [-cp * syw, -sp, -cp * cyw];
     cam.x = TARGET[0] - fwd[0] * cam.dist; cam.y = TARGET[1] - fwd[1] * cam.dist; cam.z = TARGET[2] - fwd[2] * cam.dist;
@@ -531,20 +605,42 @@
     shownKey = key;
     stateEl.textContent = key;
   }
-  function bump() { found++; if (countEl) countEl.textContent = (found < 10 ? '0' : '') + (found % 100); }
+  function countText() { var v = found % 100; return (v < 10 ? '0' : '') + v; }
+  function bump() {
+    found++;
+    if (!countEl) return;
+    countEl.textContent = countText();
+    // a short flash ties the find to the number
+    if (running) { countEl.classList.remove('is-new'); void countEl.offsetWidth; countEl.classList.add('is-new'); }
+  }
 
   function step(dt) {
     t += dt;
     var mouse = pointer.active && t - pointer.at < 3;
     var lost = mode === 'lost';
+    // it only settles down where you can see it, not under the text or off the edge
+    var shown = inView(bot.x, bot.z);
+    // the view drifts under a pointer that stands still, so look again at what is under it
+    if (mouse) retarget();
 
-    // a pointer that rests for a moment draws the robot over
-    if (pointer.active && pointer.mouse && !pointer.sent && t - pointer.moved > 1.2 && t - pointer.moved < 8) {
-      pointer.sent = true;
+    // the pointer over open floor: go straight after it and keep up, stopping
+    // a step short so it can look at it
+    var chasing = pointer.active && pointer.mouse && pointer.walk && t - pointer.moved < 2.5;
+    if (chasing && !(act && act.name === 'wake') && t - pointer.planned > 0.12) {
       var pg = ground(pointer.x, pointer.y);
       if (pg) {
+        pg = fit(pg[0], pg[1]);
         var pdx = pg[0] - bot.x, pdz = pg[1] - bot.z, pd = Math.hypot(pdx, pdz);
-        if (pd > 1.8) { var kk = (pd - 1.2) / pd; goTo(bot.x + pdx * kk, bot.z + pdz * kk, 'pointer'); }
+        var end = route && route.kind === 'pointer' ? route.pts[route.pts.length - 1] : null;
+        if (pd > 0.75) {
+          var kk = (pd - 0.6) / pd, gx = bot.x + pdx * kk, gz = bot.z + pdz * kk;
+          // only plan again once the pointer has really moved on
+          if (!end || Math.hypot(end[0] - gx, end[1] - gz) > 0.25) {
+            pointer.planned = t;
+            if (marker && !marker.done) marker.done = t;
+            goTo(gx, gz, 'pointer');
+          }
+        }
       }
     }
     // what it is doing in place comes to an end
@@ -557,17 +653,21 @@
     if (act && t > act.until) {
       var an = act.name; act = null;
       if (an === 'lie') startAct('stretch', 1.9);
-      else if (an === 'sniff' && R() < 0.3 && !lost) startAct('sit', 4 + R() * 3);
+      else if (an === 'sniff' && R() < 0.3 && !lost && shown) startAct('sit', 4 + R() * 3);
       else { stateName = 'idle'; stateUntil = t + (an === 'wake' ? 1.6 : 0.9); }
     }
     // a long quiet spell: lie down for a while
-    if (!route && !act && !lost && quiet > 30 && t > restNext) { startAct('lie', 9 + R() * 6); restNext = t + 50; }
-    // nothing to do: rest a while, or pick somewhere new to look at
+    if (!route && !act && !lost && shown && quiet > 30 && t > restNext) { startAct('lie', 9 + R() * 6); restNext = t + 50; }
+    // nothing to do: pick somewhere new to look at. Mostly in view; now and then
+    // off the edge of the screen for a bit, and back again after that
+    if (!route && !act && !shown && stateUntil > t + 0.6) stateUntil = t + 0.6;
     if (!route && !act && t > stateUntil) {
-      var best = null, bs = -1;
-      for (var c = 0; c < 6; c++) {
+      var away = !followCam && shown && !lost && R() < 0.22, best = null, bs = -1;
+      for (var c = 0; c < 12; c++) {
         var s = freeSpot(2.2, 11);
-        if (!s) continue;
+        // follow mode: anywhere, the view keeps up. otherwise a spot in clear view,
+        // or for a trip away one right off the screen, and never close enough to loom
+        if (!s || (!followCam && (near(s[0], s[1]) || (away ? onScreen(s[0], s[1]) : !inView(s[0], s[1]))))) continue;
         var sc = Math.min(7, Math.hypot(s[0] - bot.x, s[1] - bot.z)) + 6 * fresh(s[0], s[1]) + R() * 2;
         if (sc > bs) { bs = sc; best = s; }
       }
@@ -602,7 +702,7 @@
 
     // steering: turn toward the next point, and only walk once it is roughly ahead,
     // so it turns on the spot first and never walks backwards
-    var vT = 0, wT = 0;
+    var vT = 0, wT = 0, fast = !!route && (route.kind === 'pointer' || route.kind === 'go');
     if (route) {
       var g = route.pts[0], dx = g[0] - bot.x, dz = g[1] - bot.z, d = Math.hypot(dx, dz), lastPt = route.pts.length === 1;
       if (d < (lastPt ? 0.2 : 0.5)) {
@@ -617,17 +717,18 @@
             stateName = 'idle'; stateUntil = t + 2.5 + R() * 1.5;
             look = marker ? [marker.x, 0, marker.z] : [g[0] + Math.cos(bot.yaw) * 1.5, 0, g[1] - Math.sin(bot.yaw) * 1.5]; lookUntil = t + 2;
             if (marker) marker.done = t;
-            if (!lost && rr < 0.35) { startAct('sit', 5 + R() * 3); stateUntil = 0; }
+            if (!lost && shown && kind === 'go' && rr < 0.35) { startAct('sit', 5 + R() * 3); stateUntil = 0; }
           }
-          else if (!lost && rr < 0.18) startAct('sit', 4 + R() * 4);
+          else if (!lost && shown && rr < 0.18) startAct('sit', 4 + R() * 4);
           else if (rr < 0.5) { stateName = 'idle'; stateUntil = t + 2.5 + R() * 3; }
         }
       } else {
         var e = wrap(Math.atan2(-dz, dx) - bot.yaw);
-        var vmax = (route.kind === 'wander' ? 0.65 : 1.05) * (lost ? 0.8 : 1);
+        // quick when it is going somewhere you showed it, easier when it explores
+        var vmax = (fast ? 1.9 : (route.kind === 'wander' ? 0.85 : 1.1)) * (lost ? 0.8 : 1);
         var ce = Math.max(0, Math.cos(e));
-        wT = clamp(e * 2.4, -1.4, 1.4);
-        vT = vmax * ce * ce * ce * (lastPt ? clamp(d / 0.9, 0.25, 1) : 1);
+        wT = fast ? clamp(e * 3.4, -2.8, 2.8) : clamp(e * 2.4, -1.4, 1.4);
+        vT = vmax * ce * ce * ce * (lastPt ? clamp(d / (fast ? 1.2 : 0.9), 0.25, 1) : 1);
       }
       if (route && t - route.since > 25) route = null;
     } else if (lookAt && Math.abs(ty) > 1.15) {
@@ -639,8 +740,8 @@
     var down = Math.max(pose.sit, pose.lie, pose.bow, pose.sniff * 0.6), gate = clamp(1 - down * 1.6, 0, 1);
     if (act) { vT = 0; if (act.name !== 'sniff') wT = 0; }
     vT *= gate * gate; wT *= gate;
-    bot.v += (vT - bot.v) * Math.min(1, dt * 2.2);
-    bot.w += (wT - bot.w) * Math.min(1, dt * 5);
+    bot.v += (vT - bot.v) * Math.min(1, dt * (fast ? 4 : 2.2));
+    bot.w += (wT - bot.w) * Math.min(1, dt * (fast ? 8 : 5));
     bot.yaw = wrap(bot.yaw + bot.w * dt);
     var nx = bot.x + Math.cos(bot.yaw) * bot.v * dt, nz = bot.z - Math.sin(bot.yaw) * bot.v * dt;
     if (ok(nx, nz) || !ok(bot.x, bot.z)) { bot.x = nx; bot.z = nz; }
@@ -658,7 +759,7 @@
 
     // gait: a walk, three feet down most of the time, stepping faster as it goes faster
     gaitMag = Math.abs(bot.v) + 0.45 * Math.abs(bot.w);
-    gaitF = clamp(0.4 + gaitMag * 1.5, 0.4, 1.75);
+    gaitF = clamp(0.4 + gaitMag * 1.5, 0.4, 2.8);
     phase = (phase + dt * gaitF) % 1;
     var moving = clamp(gaitMag / 0.3, 0, 1);
     var y0 = HEIGHT - crouch * 0.12 + 0.012 * Math.sin(phase * Math.PI * 8) * moving + 0.006 * Math.sin(t * 1.7);
@@ -730,11 +831,14 @@
     hyV += (sk * (ty - headYaw) - damp * hyV) * dt; headYaw += hyV * dt;
     hpV += (sk * (tp - headPitch) - damp * hpV) * dt; headPitch += hpV * dt;
 
-    // the camera stays put, with a very slow drift
+    // the camera looks on from the side with a slow drift, and leans a touch toward the pointer
     var px = pointer.active ? (pointer.x / W - 0.5) : 0, py = pointer.active ? (pointer.y / H - 0.5) : 0;
-    var cyT = 0.025 * Math.sin(t * 0.045) + px * 0.02, cpT = P0 + 0.012 * Math.sin(t * 0.07) + py * 0.012;
+    var cyT = 0.95 + 0.22 * Math.sin(t * 0.045) + px * 0.08, cpT = 0.24 + 0.04 * Math.sin(t * 0.07) + py * 0.03;
     camYaw += (cyT - camYaw) * Math.min(1, dt * 1.4);
     camPitch += (cpT - camPitch) * Math.min(1, dt * 1.4);
+    // while it chases the pointer the view holds still, so the spot under the pointer stays put
+    track(dt, chasing);
+    carry();
 
     sense(dt, hp);
   }
@@ -818,7 +922,10 @@
         var ht = heats[h], ddx = f.x - ht.x, ddz = f.z - ht.z, dd = ddx * ddx + ddz * ddz;
         if (dd < ht.r * ht.r * 2.2) heat = Math.max(heat, ht.glow * (1 - dd / (ht.r * ht.r * 2.2)));
       }
-      var l = 0.045 + 0.075 * f.e + f.seen * 0.75 * (0.5 + 0.5 * f.e);
+      // the patch fades out toward its edges
+      var edge = 1 - clamp((Math.abs(f.x - T.x) - FX * 0.55) / (FX * 0.45), 0, 1);
+      edge *= 1 - clamp((Math.abs(f.z - T.z) - FZ * 0.5) / (FZ * 0.5), 0, 1);
+      var l = (0.06 + 0.07 * edge + f.seen * 0.75) * edge;
       if (l < 0.03 && heat < 0.05) continue;
       plot((PX * inv) | 0, (PY * inv) | 0, z + 0.5, l, heat > 0.08 ? K_HEAT : K_FLOOR, 0, heat, f.j, f.seen);
     }
@@ -920,8 +1027,9 @@
       for (var ix = 0; ix < cols; ix++) {
         var i = iy * cols + ix, kd = kind[i];
         if (!kd) continue;
-        var l = lum[i];
-        if (avoid && ix >= avoid.x0 && ix <= avoid.x1 && iy >= avoid.y0 && iy <= avoid.y1) l *= kd === K_ROBOT ? 0.5 : 0.15;
+        // behind text everything fades, the robot a little less, so you still see it pass
+        var l = lum[i], dv = dimv[i], ink = dv > 0.6;
+        if (dv < 1) l *= kd === K_ROBOT ? 0.25 + 0.75 * dv : 0.15 + 0.85 * dv;
         if (kd === K_FLOOR) {
           var seen = nys[i];
           if (seen < 0.25) {
@@ -930,18 +1038,19 @@
             buckets[lv].push(ix, iy, 1);
           } else {
             buckets[clamp((l * (LEVELS - 1)) | 0, 0, LEVELS - 1)].push(ix, iy, 0);
-            if (seen > 0.5 && nxs[i] < 0.35) glyph.push(ix, iy, nxs[i] < 0.12 ? G_PLUS : G_DOT, 1);
+            if (ink && seen > 0.5 && nxs[i] < 0.35) glyph.push(ix, iy, nxs[i] < 0.12 ? G_PLUS : G_DOT, 1);
           }
         } else if (kd === K_HEAT || kd === K_HAZE) {
-          var hv = heatv[i];
+          var hv = heatv[i] * dv;
+          if (hv < 0.1) continue;
           hot[clamp((hv * 4) | 0, 0, 3)].push(ix, iy);
-          if (kd === K_HEAT && hv > 0.55 && hash(ix, iy + tick) < 0.35) glyph.push(ix, iy, hash(ix, iy) < 0.5 ? G_STAR : G_PLUS, 2);
+          if (ink && kd === K_HEAT && hv > 0.55 && hash(ix, iy + tick) < 0.35) glyph.push(ix, iy, hash(ix, iy) < 0.5 ? G_STAR : G_PLUS, 2);
         } else if (kd === K_WALL) {
           buckets[clamp((l * (LEVELS - 1)) | 0, 0, LEVELS - 1)].push(ix, iy, 0);
-          if (nxs[i] < 0.4) glyph.push(ix, iy, nxs[i] < 0.15 ? G_HASH : G_COLON, 1);
+          if (ink && nxs[i] < 0.4) glyph.push(ix, iy, nxs[i] < 0.15 ? G_HASH : G_COLON, 1);
         } else {
           var m = mat[i];
-          if (m === M_LENS) { hot[lens > 0.85 ? 3 : (lens > 0.5 ? 2 : (lens > 0.25 ? 1 : 0))].push(ix, iy); if (lens > 0.5 && hash(ix, iy + tick) < 0.3) glyph.push(ix, iy, G_DASH, 2); continue; }
+          if (m === M_LENS) { hot[lens > 0.85 ? 3 : (lens > 0.5 ? 2 : (lens > 0.25 ? 1 : 0))].push(ix, iy); if (ink && lens > 0.5 && hash(ix, iy + tick) < 0.3) glyph.push(ix, iy, G_DASH, 2); continue; }
           // silhouette: a neighbour with nothing, or something much further away
           var z0 = zbuf[i];
           var up = iy > 0 ? i - cols : -1, dn = iy < rows - 1 ? i + cols : -1, lf = ix > 0 ? i - 1 : -1, rt = ix < cols - 1 ? i + 1 : -1;
@@ -954,6 +1063,7 @@
           else if (oL || oR) l = Math.min(1, l + 0.08);
           buckets[clamp((l * (LEVELS - 1)) | 0, 0, LEVELS - 1)].push(ix, iy, 0);
           var hsh = hash(ix * 7 + (tick >> 3), iy);
+          if (!ink) continue;
           if (m === M_VENT && hsh < 0.7) glyph.push(ix, iy, G_COLON, 0);
           else if (m === M_SEAM && hsh < 0.35) glyph.push(ix, iy, Math.abs(nxs[i]) > Math.abs(nys[i]) ? G_BAR : G_DASH, 0);
         }
@@ -984,28 +1094,34 @@
   }
 
   /* --------------------------------------------------------------- loop */
-  var raf = 0, last = 0, running = false;
+  // fixed 60 Hz steps, so it moves the same on any screen; a slow frame drops
+  // time instead of piling up steps
+  var raf = 0, last = 0, acc = 0, running = false, STEP = 1 / 60, MAX_STEPS = 4;
   function frame(now) {
     raf = 0;
     if (!running) return;
-    var dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
+    var dt = last ? Math.min(0.1, (now - last) / 1000) : STEP;
     last = now;
-    step(dt);
-    render();
+    acc += dt;
+    var n = 0;
+    while (acc >= STEP && n < MAX_STEPS) { step(STEP); acc -= STEP; n++; }
+    if (n === MAX_STEPS) acc = 0;
+    if (n) render();
     raf = requestAnimationFrame(frame);
   }
-  function start() { if (reduce || running) return; running = true; last = 0; raf = requestAnimationFrame(frame); }
+  function start() { if (reduce || running) return; running = true; last = 0; acc = 0; raf = requestAnimationFrame(frame); }
   function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
 
   function still() {
     // a settled, readable pose: some of the floor mapped, one warm spot found
     t = 0; phase = 0.18; crouch = 0.4; lens = 0.7; act = null;
     stateName = 'idle'; route = null; bot.v = 0; bot.w = 0;
-    var st = ground(W * (W < 700 ? 0.5 : 0.64), H * (W < 700 ? 0.34 : 0.42)), s0 = st && nearestOk(st[0], st[1]);
-    if (s0) { bot.x = s0[0]; bot.z = s0[1]; }
-    bot.yaw = -0.45;
-    headYaw = 0.5; headPitch = -0.3;
-    camYaw = 0; camPitch = P0;
+    pose.sit = pose.lie = pose.bow = pose.sniff = 0;
+    if (followCam) { C.x = bot.x; C.z = bot.z; }
+    carry();
+    bot.yaw = 0;
+    headYaw = 0.55; headPitch = -0.3;
+    camYaw = 0.95; camPitch = 0.24;
     render();
     pings = [{ r: 2.4, x: bot.x, z: bot.z }];
     for (var i = 0; i < 40; i++) {
@@ -1026,10 +1142,10 @@
     pings.push({ r: 0.4, x: bot.x, z: bot.z });
     quietAt = t;
     if (!g) return;
-    // it stops just short of the spot, so it can look at it
-    var d = Math.hypot(g[0] - bot.x, g[1] - bot.z), k = d > 0.8 ? (d - 0.45) / d : 1;
     marker = { x: g[0], z: g[1], done: 0 };
-    goTo(bot.x + (g[0] - bot.x) * k, bot.z + (g[1] - bot.z) * k, 'go');
+    // it stops just short of the spot, so it can look at it
+    var s = fit(g[0], g[1]), d = Math.hypot(s[0] - bot.x, s[1] - bot.z), k = d > 0.8 ? (d - 0.45) / d : 1;
+    goTo(bot.x + (s[0] - bot.x) * k, bot.z + (s[1] - bot.z) * k, 'go');
   }
 
   function boot() {
@@ -1038,10 +1154,10 @@
     else {
       // warm up so the first frame is not empty
       for (var i = 0; i < 90; i++) { step(1 / 30); if (i % 10 === 0) render(); }
-      // it starts lying down where it was last time (this visit), and gets up
+      // it starts lying down facing the way it faced last time (this visit), and gets up
       try {
         var sv = JSON.parse(sessionStorage.getItem(SKEY) || 'null');
-        if (sv && ok(sv.x, sv.z)) { bot.x = sv.x; bot.z = sv.z; bot.yaw = sv.yaw; revisit = true; }
+        if (sv && typeof sv.yaw === 'number') { bot.yaw = sv.yaw; revisit = true; }
       } catch (err) {}
       route = null; bot.v = bot.w = 0; prints.length = 0;
       pose.lie = 1; lens = 0.1; quietAt = t; restNext = t + 30;
@@ -1051,36 +1167,43 @@
       start();
     }
     label();
-    if (countEl) countEl.textContent = (found < 10 ? '0' : '') + (found % 100);
+    if (countEl) countEl.textContent = countText();
     canvas.classList.add('is-on');
   }
 
   var SKEY = 'ah-robot-' + mode;
   window.addEventListener('pagehide', function () {
-    try { sessionStorage.setItem(SKEY, JSON.stringify({ x: bot.x, z: bot.z, yaw: bot.yaw })); } catch (err) {}
+    try { sessionStorage.setItem(SKEY, JSON.stringify({ yaw: bot.yaw })); } catch (err) {}
   });
   var host = canvas.closest('[data-robot-host]') || document;
   host.addEventListener('pointermove', function (e) {
     if (e.pointerType === 'touch') return;
     var r = canvas.getBoundingClientRect();
     pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; pointer.active = true; pointer.mouse = true; pointer.at = t;
-    if (Math.hypot(pointer.x - pointer.rx, pointer.y - pointer.ry) > 10) { pointer.rx = pointer.x; pointer.ry = pointer.y; pointer.moved = t; pointer.sent = false; quietAt = t; }
-    var link = e.target.closest && e.target.closest('a, button, nav, header, [data-robot-avoid]');
-    if (link) {
-      // the head still looks at links, but the robot does not walk over to them
-      pointer.sent = true;
-      if (link.matches('a, button')) {
-        var lr = link.getBoundingClientRect();
-        pointer.x = lr.left + lr.width / 2 - r.left; pointer.y = lr.top + lr.height / 2 - r.top;
-      }
+    // links and the bar: the head still looks, but the robot does not walk over.
+    // plain text it walks under, like everything else
+    var link = e.target.closest && e.target.closest('a, button, nav, header');
+    if (Math.hypot(pointer.x - pointer.rx, pointer.y - pointer.ry) > 10) { pointer.rx = pointer.x; pointer.ry = pointer.y; pointer.moved = t; pointer.walk = !link; quietAt = t; }
+    else if (link) pointer.walk = false;
+    if (link && link.matches('a, button')) {
+      var lr = link.getBoundingClientRect();
+      pointer.x = lr.left + lr.width / 2 - r.left; pointer.y = lr.top + lr.height / 2 - r.top;
     }
     retarget();
   }, { passive: true });
-  document.addEventListener('pointerleave', function () { pointer.active = false; });
-  host.addEventListener('pointerdown', function (e) {
-    if (e.target.closest && e.target.closest('a, button, input, label, summary, nav, header')) return;
+  // pointerleave does not bubble, so it has to be heard on the root element itself
+  function away() { pointer.active = false; pointer.walk = false; }
+  html.addEventListener('pointerleave', away);
+  window.addEventListener('blur', away);
+  host.addEventListener('click', function (e) {
+    // the path as it was at dispatch, so a control that changes as it is clicked still counts
+    var path = e.composedPath ? e.composedPath() : [e.target];
+    for (var j = 0; j < path.length; j++) if (path[j].matches && path[j].matches('a, button, input, label, summary, nav, header')) return;
+    // finishing a text selection is not a click on the floor
+    if (window.getSelection && String(window.getSelection())) return;
     var r = canvas.getBoundingClientRect();
-    pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; pointer.active = true; pointer.at = t; pointer.sent = true;
+    pointer.x = pointer.rx = e.clientX - r.left; pointer.y = pointer.ry = e.clientY - r.top;
+    pointer.active = true; pointer.at = t; pointer.walk = false;
     retarget();
     if (reduce) return;
     send(pointer.x, pointer.y);
@@ -1089,7 +1212,7 @@
     var a = e.target.closest && e.target.closest('a, button');
     if (!a || reduce) return;
     var r = canvas.getBoundingClientRect(), lr = a.getBoundingClientRect();
-    pointer.x = lr.left + lr.width / 2 - r.left; pointer.y = lr.top + lr.height / 2 - r.top; pointer.active = true; pointer.at = t; pointer.sent = true;
+    pointer.x = lr.left + lr.width / 2 - r.left; pointer.y = lr.top + lr.height / 2 - r.top; pointer.active = true; pointer.at = t; pointer.walk = false;
     retarget();
   });
 

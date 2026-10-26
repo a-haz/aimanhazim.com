@@ -24,7 +24,7 @@ Other words (nav, home, about) are written straight into each page's HTML.
 ## Look
 
 - `assets/css/style.css`: colours are CSS variables at the top. One accent (amber).
-- `assets/js/robot.js`: the walking robot on the home and 404 pages. A small four-legged walker that roams the whole screen with a sensor head on a mast and an antenna, drawn as points on a grid of cells. Move the pointer and the head follows; click or tap and it sends a ping. It pauses when the tab is hidden and shows a still frame for reduced motion.
+- `assets/js/robot.js`: the walking robot on the home and 404 pages. A four-legged walker with a sensor head on a mast and an antenna, drawn as points on a grid of cells. It roams freely: it walks under the text (fading there so the words stay readable) and now and then off the edge of the screen, and its patch of floor goes with it. Move the pointer over the floor and it comes after it at once; click or tap and it sends a ping and walks there. The camera stays put by default; put `data-camera="follow"` on the canvas (or add `?cam=follow` to the URL to try it) and the view follows the robot instead, keeping it right of the text while the floor slides along. It pauses when the tab is hidden and shows a still frame for reduced motion.
 - `assets/js/thermal.js`: the simulator scenes on the PyroScout write-up.
 - `assets/js/site.js`: theme, menu, footer clock, and the lists built from `assets/data/`.
 

@@ -1,4 +1,4 @@
-/* aimanhazim.com v3. One font, small sizes, a robot. */
+/* aimanhazim.com. One font, small sizes, a robot. */
 @font-face { font-family: "Geist Mono"; src: url("/assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight: 100 900; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: "Geist Mono"; src: url("/assets/fonts/geist-mono-latin-ext.woff2") format("woff2"); font-weight: 100 900; font-display: swap; unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Instrument Serif"; src: url("/assets/fonts/instrument-serif-latin.woff2") format("woff2"); font-weight: 400; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
@@ -65,9 +65,10 @@ a:hover { text-decoration-color: currentColor; }
 [data-theme="light"] .theme-btn .sun { display: none; }
 [data-theme="light"] .theme-btn .moon { display: block; }
 .tools { position: absolute; top: 28px; right: 36px; display: flex; align-items: center; gap: 14px; font-size: 11px; line-height: 20px; }
-.home-mark { position: absolute; top: 28px; left: 36px; font-size: 13px; line-height: 20px; padding: 4px 0; color: var(--muted); text-decoration: none; }
-.home-mark:hover { color: var(--fg); }
 .pill { display: none; }
+/* named, so the bar stays put while the page under it changes */
+.nav { view-transition-name: site-nav; }
+.tools { view-transition-name: site-tools; }
 
 /* ---- mobile menu ---- */
 .menu { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility 0s linear .2s; }
@@ -77,7 +78,10 @@ html.menu-open body { overflow: hidden; }
 .menu li a { display: block; font: 400 52px/1.12 var(--serif); text-decoration: none; color: var(--fg); padding: 2px 16px; letter-spacing: -.01em; }
 .menu li a[aria-current="page"] { color: var(--muted); }
 .menu-foot { position: absolute; left: 0; right: 0; bottom: max(28px, env(safe-area-inset-bottom)); display: flex; justify-content: center; align-items: center; gap: 18px; font-size: 12px; }
-.menu-close { position: absolute; top: 22px; right: 22px; }
+.menu-foot .icon-btn { width: 40px; height: 40px; }
+/* sits exactly over the pill's menu button, so the icon swaps in place */
+.menu-close { position: absolute; top: 19px; right: 22px; width: 44px; height: 44px; }
+.menu-close svg { width: 14px; height: 14px; }
 
 /* ---- icons ---- */
 .icons { display: flex; align-items: center; gap: 4px; margin-left: -11px; }
@@ -86,6 +90,7 @@ html.menu-open body { overflow: hidden; }
 .icons svg { display: block; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ---- home ---- */
+html:has(> body.home) { overscroll-behavior: none; }
 .home { overflow: hidden; height: 100vh; height: 100dvh; }
 .stage { position: fixed; inset: 0; }
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s ease; touch-action: manipulation; }
@@ -98,17 +103,18 @@ html.menu-open body { overflow: hidden; }
 .caption .lines p + p { margin-top: 0; }
 .caption .icons { margin-top: 20px; }
 .caption a:not(.icons a) { text-decoration-color: var(--line); }
-.caption.dim .lines, .caption.dim .epigraph { transition: opacity .15s ease; }
 .tele { position: fixed; right: 36px; bottom: max(9vh, 56px); z-index: 2; font-size: 11px; line-height: 18px; color: var(--faint); text-align: right; font-variant-numeric: tabular-nums; pointer-events: none; }
 .tele b { font-weight: 400; color: var(--muted); display: block; }
 .tele .dot { display: inline-block; width: 6px; height: 6px; background: var(--accent); margin-right: 8px; vertical-align: 1px; opacity: .9; }
-.no-js .stage, .no-canvas .stage { background: radial-gradient(60% 50% at 60% 40%, var(--hair), transparent); }
+.tele .is-new { animation: count-flash .6s ease-out; }
+@keyframes count-flash { from { color: var(--fg); } }
+.no-canvas .stage { background: radial-gradient(60% 50% at 60% 40%, var(--hair), transparent); }
 
-/* hovering a line link dims the rest */
+/* hovering or tabbing to a line link dims the rest */
 .lines a { transition: opacity .15s ease, text-decoration-color .15s ease; }
-.lines:has(a:hover) { color: var(--muted); }
-.lines:has(a:hover) a:not(:hover) { opacity: .6; }
-.lines:has(a:hover) a:hover { color: var(--fg); }
+.lines:has(a:hover), .lines:has(a:focus-visible) { color: var(--muted); }
+.lines:has(a:hover) a:not(:hover), .lines:has(a:focus-visible) a:not(:focus-visible) { opacity: .6; }
+.lines:has(a:hover) a:hover, .lines:has(a:focus-visible) a:focus-visible { color: var(--fg); }
 
 /* ---- inner pages ---- */
 .page { padding: 132px 24px 96px var(--left); max-width: calc(var(--left) + 704px); }
@@ -116,7 +122,6 @@ html.menu-open body { overflow: hidden; }
 .lead { margin-bottom: 56px; }
 .lead .kicker { color: var(--muted); font-size: 13px; }
 .lead h1 { margin-top: 2px; }
-.row-head { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; }
 .small { font-size: 13px; }
 
 /* entries: writing */
@@ -135,7 +140,7 @@ html.menu-open body { overflow: hidden; }
 .works:has(.work:hover) .work:not(:hover) { opacity: .45; }
 .work-n { color: var(--faint); font-size: 12px; padding-top: 2px; font-variant-numeric: tabular-nums; }
 .work h2 { display: flex; gap: 12px; align-items: baseline; }
-.work h2 .yr { color: var(--faint); font-size: 12px; }
+.work h2 .yr { color: var(--muted); font-size: 12px; }
 .work p { color: var(--muted); margin-top: 2px; max-width: 40em; }
 .work .links { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px 26px; font-size: 13px; }
 .work .links .arr { color: var(--faint); }
@@ -155,7 +160,7 @@ html.menu-open body { overflow: hidden; }
 .portrait:hover img, .portrait.is-revealed img, .no-canvas .portrait img { opacity: 1; }
 .portrait:hover canvas, .portrait.is-revealed canvas { opacity: 0; }
 .facts { margin-top: 48px; display: grid; grid-template-columns: 8.5em 1fr; gap: 6px 28px; font-size: 14px; }
-.facts dt { color: var(--faint); }
+.facts dt { color: var(--muted); }
 .facts dd a + a { margin-left: 14px; }
 
 /* gallery */
@@ -170,13 +175,13 @@ html.menu-open body { overflow: hidden; }
 .gallery-empty { min-height: 40vh; display: grid; place-items: center; color: var(--muted); }
 
 /* footer on inner pages */
-.foot { padding: 0 var(--left) 40px; display: flex; justify-content: space-between; align-items: center; gap: 20px; font-size: 12px; color: var(--faint); }
+.foot { padding: 0 var(--left) 40px; display: flex; justify-content: space-between; align-items: center; gap: 20px; font-size: 12px; color: var(--muted); }
 .foot .icons { margin-left: -11px; }
 .foot-r { display: flex; gap: 24px; align-items: center; }
 .clock { font-variant-numeric: tabular-nums; }
 
 /* 404 */
-.lost .caption .lines p:first-child { color: var(--fg); }
+.lost .back-home { margin-top: 14px; }
 
 /* view transitions */
 @view-transition { navigation: auto; }
@@ -188,9 +193,10 @@ html.menu-open body { overflow: hidden; }
 /* ---- narrow screens ---- */
 @media (max-width: 760px) {
   :root { --left: 24px; }
-  .nav, .tools, .home-mark { display: none; }
+  .nav, .tools { display: none; }
   .pill { position: fixed; top: 14px; left: 14px; right: 14px; height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 22px; border-radius: 27px; z-index: 11;
-    background: color-mix(in srgb, var(--fg) 7%, color-mix(in srgb, var(--bg) 78%, transparent)); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px var(--hair); }
+    /* a light tint and a blur, so the floor shows through and the name still reads */
+    background: color-mix(in srgb, var(--fg) 6%, color-mix(in srgb, var(--bg) 28%, transparent)); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 0 0 1px var(--hair); }
   .pill a { text-decoration: none; font-size: 14px; }
   .pill .dots { width: 44px; height: 44px; display: grid; place-items: center; color: var(--muted); }
   .pill .dots svg { width: 14px; height: 14px; }
@@ -217,7 +223,7 @@ html.menu-open body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
   .cursor { animation: none; }
-  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 
 [hidden] { display: none !important; }

@@ -88,10 +88,13 @@
   /* ------------------------------------------------------------ lists */
   function renderEntries(el, list, emptyKey, emptyEn) {
     if (!list || !list.length) { el.innerHTML = '<li class="empty">' + esc(emptyEn) + '</li>'; return; }
-    var page = el.getAttribute('data-page') || '';
+    var page = el.getAttribute('data-page') || '', used = {};
     el.innerHTML = list.map(function (it) {
-      var id = esc(it.date);
-      return '<li id="' + id + '"><time datetime="' + id + '">' + fmtDate(it.date) + '</time><div><h2><a href="' + page + '#' + id + '">' + esc(it.title) + '</a></h2><div class="body">' + paras(it.body) + '</div></div></li>';
+      // the date is the anchor; a second entry on the same day gets -2, -3, ...
+      var id = String(it.date), seen = used[id] = (used[id] || 0) + 1;
+      if (seen > 1) id += '-' + seen;
+      id = esc(id);
+      return '<li id="' + id + '"><time datetime="' + esc(it.date) + '">' + fmtDate(it.date) + '</time><div><h2><a href="' + page + '#' + id + '">' + esc(it.title) + '</a></h2><div class="body">' + paras(it.body) + '</div></div></li>';
     }).join('');
   }
 
@@ -153,13 +156,15 @@
     var img = box.querySelector('img'), cv = box.querySelector('canvas');
     if (!img || !cv) return;
     function go() {
+      // a theme switch can land before the photo has loaded, or after it failed
+      if (!img.naturalWidth) return;
       var size = Math.round(box.getBoundingClientRect().width) || 168;
       var dpr = Math.min(2, window.devicePixelRatio || 1), cell = 6, n = Math.floor(size / cell);
       var off = document.createElement('canvas'); off.width = n; off.height = n;
       var og = off.getContext('2d');
       var iw = img.naturalWidth, ih = img.naturalHeight, side = Math.min(iw, ih);
-      og.drawImage(img, (iw - side) / 2, (ih - side) * 0.3, side, side, 0, 0, n, n);
-      var d; try { d = og.getImageData(0, 0, n, n).data; } catch (e) { return; }
+      var d;
+      try { og.drawImage(img, (iw - side) / 2, (ih - side) * 0.3, side, side, 0, 0, n, n); d = og.getImageData(0, 0, n, n).data; } catch (e) { return; }
       cv.width = size * dpr; cv.height = size * dpr;
       var g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
       var c = colorsNow(), light = html.getAttribute('data-theme') === 'light';
@@ -177,8 +182,9 @@
       g.globalAlpha = 1;
     }
     if (img.complete && img.naturalWidth) go(); else img.addEventListener('load', go);
-    box.addEventListener('click', function () { box.classList.toggle('is-revealed'); });
-    box.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); box.classList.toggle('is-revealed'); } });
+    function flip() { box.setAttribute('aria-pressed', String(box.classList.toggle('is-revealed'))); }
+    box.addEventListener('click', flip);
+    box.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
     document.addEventListener('ah:theme', go);
   }
 

@@ -6,7 +6,7 @@
 .eyebrow { font-size: 13px; color: var(--muted); }
 .page-title { margin-top: 2px; font-size: 15px; }
 .page-lead { margin-top: 10px; max-width: 36em; color: var(--muted); }
-.meta-row { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 24px; font-size: 12px; color: var(--faint); }
+.meta-row { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 24px; font-size: 12px; color: var(--muted); }
 .meta-row a { color: var(--fg); }
 .scene-fig { margin: 0; }
 .scene { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 2px; background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
@@ -23,7 +23,7 @@
 .sheet { padding: 24px var(--left) 96px; }
 .article-grid { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 0 clamp(24px, 4vw, 64px); max-width: 1040px; }
 .toc { position: sticky; top: 96px; align-self: start; font-size: 12px; }
-.toc p { color: var(--faint); margin-bottom: 8px; }
+.toc p { color: var(--muted); margin-bottom: 8px; }
 .toc a { display: grid; grid-template-columns: 26px 1fr; padding: 3px 0; text-decoration: none; color: var(--muted); }
 .toc a:hover, .toc a.is-here { color: var(--fg); }
 .toc a span { color: var(--faint); }
@@ -53,7 +53,7 @@
 .compare { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .compare th, .compare td { text-align: left; padding: 10px 14px 10px 0; border-bottom: 1px solid var(--hair); vertical-align: top; color: var(--muted); font-weight: 400; }
 .compare thead th { color: var(--fg); }
-.compare tbody th { color: var(--faint); width: 22%; }
+.compare tbody th { color: var(--muted); width: 22%; }
 .loop { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 18px 0; border-block: 1px solid var(--hair); font-size: 12px; }
 .loop span { padding: 4px 9px; border: 1px solid var(--hair); border-radius: 4px; color: var(--muted); }
 .loop i { font-style: normal; color: var(--faint); }
