@@ -102,18 +102,26 @@
         return '<a href="' + esc(l.href) + '"' + (ext ? ' rel="noopener"' : '') + '>' + esc(l.label) + '<span class="arr" aria-hidden="true">' + (ext ? ' \u2197' : ' \u2192') + '</span></a>';
       }).join('');
       var n = (i + 1 < 10 ? '0' : '') + (i + 1);
-      return '<li class="work"><span class="work-n" aria-hidden="true">' + n + '</span><div><h2>' + esc(p.title) + (p.year ? ' <span class="yr">' + esc(p.year) + '</span>' : '') + '</h2><p>' + esc(p.line) + '</p>' + (links ? '<p class="links">' + links + '</p>' : '') + '</div></li>';
+      return '<li class="work"><span class="work-n" aria-hidden="true">' + n + '</span><div><h2>' + esc(p.title) + (p.tag ? ' <span class="yr">' + esc(p.tag) + '</span>' : '') + (p.year ? ' <span class="yr">' + esc(p.year) + '</span>' : '') + '</h2><p>' + esc(p.line) + '</p>' + (links ? '<p class="links">' + links + '</p>' : '') + '</div></li>';
     }).join('');
   }
 
-  function renderPhotos(el, list) {
-    var empty = document.querySelector('[data-photos-empty]');
+  function renderGallery(el, list) {
+    var empty = document.querySelector('[data-gallery-empty]');
     if (!list || !list.length) { el.innerHTML = ''; el.hidden = true; if (empty) empty.hidden = false; return; }
     el.hidden = false; if (empty) empty.hidden = true;
-    el.innerHTML = list.map(function (ph) {
-      var cap = ph.caption;
-      return '<figure class="shot"><img src="' + esc(ph.src) + '" alt="' + esc(ph.alt || '') + '"' + (ph.w ? ' width="' + ph.w + '" height="' + ph.h + '"' : '') + ' loading="lazy" decoding="async">' +
-        (cap || ph.date ? '<figcaption><span>' + esc(cap || '') + '</span><span>' + (ph.date ? fmtDate(ph.date) : '') + '</span></figcaption>' : '') + '</figure>';
+    el.innerHTML = list.map(function (it) {
+      var size = it.w ? ' width="' + it.w + '" height="' + it.h + '"' : '', media;
+      if (it.type === 'video') {
+        var srcs = '';
+        if (it.webm) srcs += '<source src="' + esc(it.webm) + '" type="video/webm">';
+        srcs += '<source src="' + esc(it.src) + '" type="video/' + (/\.webm$/i.test(it.src) ? 'webm' : 'mp4') + '">';
+        media = '<video' + size + (it.poster ? ' poster="' + esc(it.poster) + '"' : '') + ' muted playsinline controls preload="none"' + (it.loop ? ' loop' : '') + (it.alt ? ' aria-label="' + esc(it.alt) + '"' : '') + '>' + srcs + '</video>';
+      } else {
+        media = '<img src="' + esc(it.src) + '" alt="' + esc(it.alt || '') + '"' + size + ' loading="lazy" decoding="async">';
+      }
+      return '<figure class="shot' + (it.type === 'video' ? ' is-video' : '') + '">' + media +
+        (it.caption || it.date ? '<figcaption><span>' + esc(it.caption || '') + '</span><span>' + (it.type === 'video' ? 'video' + (it.date ? ' · ' : '') : '') + (it.date ? fmtDate(it.date) : '') + '</span></figcaption>' : '') + '</figure>';
     }).join('');
   }
 
@@ -123,8 +131,7 @@
       var el = els[i], k = el.getAttribute('data-list');
       if (k === 'projects') renderProjects(el, window.AH_PROJECTS);
       else if (k === 'writing') renderEntries(el, window.AH_WRITING, 'writing.empty', 'Nothing here yet.');
-      else if (k === 'log') renderEntries(el, window.AH_LOG, 'log.empty', 'No entries yet.');
-      else if (k === 'photos') renderPhotos(el, window.AH_PHOTOS);
+      else if (k === 'gallery') renderGallery(el, window.AH_GALLERY);
     }
     if (location.hash && !renderAll.done) {
       renderAll.done = true;

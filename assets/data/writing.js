@@ -6,6 +6,6 @@ window.AH_WRITING = [
   {
     date: "2026-06-10",
     title: "A place to write",
-    body: ["Notes that do not fit in the build log. Coming to Japan, learning in a third language, and other things I want to write down."]
+    body: ["Notes on coming to Japan, learning in a third language, and other things I want to write down."]
   }
 ];

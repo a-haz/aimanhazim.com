@@ -13,23 +13,24 @@ Then open http://localhost:8011. Use a server, not file://, because the links st
 
 Everything you add regularly lives in `assets/data/`. Open the file, copy a block, edit it, save. Each file has a short note at the top. All text is plain English strings.
 
-- Projects: `assets/data/projects.js`. Newest or most important first. The page numbers them 01, 02, ... in that order.
+- Projects (research included): `assets/data/projects.js`. Newest or most important first. The page numbers them 01, 02, ... in that order. Add `tag: "research"` to show a small research label.
 - Writing: `assets/data/writing.js`. `date` is "YYYY-MM-DD" and becomes the anchor (writing.html#2026-06-10). `body` is a list of paragraphs.
-- Log: `assets/data/log.js`. Same shape as writing. Shows on progress.html.
-- Photos: put the file in `assets/img/photos/`, then add a block to `assets/data/photos.js` with its width and height. While the list is empty the page says "More soon."
+- Gallery (/gallery/): `assets/data/gallery.js`. Newest first. While the list is empty the page says "More soon."
+  - A photo: put the file in `assets/img/gallery/`, then add a block with `type: "image"`, `src`, `w` and `h` (its size), `alt`, and optional `caption` and `date` ("YYYY-MM").
+  - A video: put an mp4 (H.264) in `assets/video/`, plus a poster image in `assets/img/gallery/`. Add a block with `type: "video"`, `src`, `poster`, `w`, `h`, `alt`, and optional `webm` (a second source), `loop`, `caption` and `date`. Videos are self-hosted, muted, play inline, and load nothing until played (`preload="none"`), so the poster shows first. Keep clips short and small (a few MB); GitHub Pages refuses files over 100 MB.
 
 Other words (nav, home, about) are written straight into each page's HTML.
 
 ## Look
 
 - `assets/css/style.css`: colours are CSS variables at the top. One accent (amber).
-- `assets/js/robot.js`: the walking robot on the home and 404 pages. A small four-legged walker with a sensor head on a mast and an antenna, drawn as points on a grid of cells. Move the pointer and the head follows; click or tap and it sends a ping. It pauses when the tab is hidden and shows a still frame for reduced motion.
+- `assets/js/robot.js`: the walking robot on the home and 404 pages. A small four-legged walker that roams the whole screen with a sensor head on a mast and an antenna, drawn as points on a grid of cells. Move the pointer and the head follows; click or tap and it sends a ping. It pauses when the tab is hidden and shows a still frame for reduced motion.
 - `assets/js/thermal.js`: the simulator scenes on the PyroScout write-up.
 - `assets/js/site.js`: theme, menu, footer clock, and the lists built from `assets/data/`.
 
 ## A new page
 
-Copy a folder like `research/` (its `index.html`), change the title, the text and the `aria-current` link in the nav, and add the URL to `sitemap.xml`. Keep the icon and theme-color tags in the head as they are.
+Copy a folder like `about/` (its `index.html`), change the title, the text and the `aria-current` link in the nav, and add the URL to `sitemap.xml`. Keep the icon and theme-color tags in the head as they are.
 
 ## Icons
 
@@ -37,6 +38,10 @@ Copy a folder like `research/` (its `index.html`), change the title, the text an
 - `favicon.ico`: 16, 32 and 48 px, for browsers that skip SVG.
 - `assets/img/apple-touch-icon.png`: 180 px, for iOS home screens.
 - `assets/img/icon-192.png`, `icon-512.png` and the `icon-maskable-*` pair: listed in `site.webmanifest`.
+
+## Old URLs
+
+`/progress.html` (the old log), `/research/` and `/photos/` are tiny noindex pages that send you on to `/`, `/projects/` and `/gallery/`. Keep them so old links do not break.
 
 ## Files to keep
 

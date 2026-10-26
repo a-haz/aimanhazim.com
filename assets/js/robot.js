@@ -2,13 +2,21 @@
  * robot.js
  *
  * A four-legged walker, drawn in 3D and then snapped to a grid of small
- * square cells, a bit like a terminal drawing. It walks on a floor of dots
- * it cannot see until its sensor sweeps over it. Warm spots in the floor
+ * square cells, a bit like a terminal drawing. It roams a floor of dots
+ * that fills the screen, and cannot see the floor until its sensor sweeps
+ * over it. It picks places to explore, rests and looks around, and walks
+ * round the text instead of over it. Warm spots in the floor
  * show up in the one accent colour; the counter in the corner keeps track
  * of how many it has found.
  *
- * The head follows the pointer (or whatever link you hover). A click or a
- * tap sends out a ping that lights up the whole floor for a moment.
+ * It wakes up lying down and stands, sits now and then when it stops,
+ * lies down to rest after a long quiet spell and stretches as it gets up,
+ * and goes to sniff a warm spot it has just found close by. It reads the
+ * name on the page from time to time. Its lens dims while it rests.
+ *
+ * The head follows the pointer (or whatever link you hover). Rest the
+ * pointer somewhere and it walks over. A click or a tap sends out a ping
+ * that lights up the floor for a moment, and sends the robot there.
  *
  * No libraries. Pauses when the tab is hidden. Reduced motion gets one
  * still frame.
@@ -161,22 +169,15 @@
   var headNow = [0.42, HEIGHT + 0.4, 0];
 
   /* -------------------------------------------------------------- the world */
+  // A fixed floor that fills the screen, and the robot walks around on it.
+  // x runs across the screen, z runs into it (negative is further away), y is up.
   var R = rng(7);
-  var FLOOR_X = 5.2, FLOOR_Z = 3.4, SP = 0.2;
-  var floor = [];
-  for (var fx = -FLOOR_X; fx < FLOOR_X; fx += SP) {
-    for (var fz = -FLOOR_Z; fz <= FLOOR_Z + 1e-6; fz += SP) {
-      floor.push({ x: fx + (R() - 0.5) * 0.06, z: fz + (R() - 0.5) * 0.06, seen: 0, j: R() });
-    }
-  }
-  var heats = [], walls = [];
-  function newHeat(x) {
-    var side = R() < 0.5 ? -1 : 1;
-    return { x: x, z: side * (0.4 + R() * 2.4), r: 0.22 + R() * 0.2, found: false, glow: 0 };
-  }
-  function newWall(x) {
-    var side = R() < 0.5 ? -1 : 1, w = 0.3 + R() * 0.7, d = 0.25 + R() * 0.5, h = 0.25 + R() * 0.9;
-    var z = side * (1.5 + R() * 1.6), pts = [], st = 0.11;
+  var SP = 0.2;
+  var floor = [], heats = [], walls = [], haze = [], pings = [];
+  var found = 0;
+  function newWall(x, z) {
+    var w = 0.3 + R() * 0.6, d = 0.25 + R() * 0.45, h = 0.25 + R() * 0.8;
+    var pts = [], st = 0.11;
     for (var a = -w / 2; a <= w / 2 + 1e-6; a += st) {
       for (var y = st / 2; y <= h; y += st) {
         pts.push([a, y, -d / 2], [a, y, d / 2]);
@@ -186,21 +187,34 @@
       for (var y2 = st / 2; y2 <= h; y2 += st) pts.push([-w / 2, y2, b], [w / 2, y2, b]);
     }
     for (var a2 = -w / 2; a2 <= w / 2 + 1e-6; a2 += st) for (var b2 = -d / 2; b2 <= d / 2 + 1e-6; b2 += st) pts.push([a2, h, b2]);
-    return { x: x, z: z, pts: pts, seen: new Float32Array(pts.length) };
+    return { x: x, z: z, rad: Math.sqrt(w * w + d * d) / 2, pts: pts, seen: new Float32Array(pts.length) };
   }
-  for (var hi = 0; hi < 5; hi++) heats.push(newHeat(-FLOOR_X + (hi + 0.5) * (2 * FLOOR_X / 5) + (R() - 0.5)));
-  for (var wi = 0; wi < 3; wi++) walls.push(newWall(-FLOOR_X + (wi + 0.6) * (2 * FLOOR_X / 3)));
-  var haze = [];
-  var pings = [];
-  var found = 0;
+  function newHeat(x, z) { return { x: x, z: z, r: 0.22 + R() * 0.2, found: false, glow: 0, at: 0 }; }
 
   /* ------------------------------------------------------------- the state */
-  var t = 0, phase = 0, speed = 0.5, speedTarget = 0.5, FREQ = 1.15, gaitF = 1.15;
-  var stateName = 'explore', stateUntil = 9;
+  var t = 0, phase = 0, gaitF = 0.4, gaitMag = 0;
+  // the robot: where it stands, which way it faces (forward is cos, -sin), and how fast
+  var bot = { x: 0, z: 0, yaw: -0.5, v: 0, w: 0, placed: false };
+  var route = null;        // { pts: [[x, z], ...], kind: 'wander' | 'go' | 'pointer', since, tries }
+  var stateName = 'explore', stateUntil = 0, look = null, lookUntil = 0;
   var headYaw = 0, headPitch = -0.25, hyV = 0, hpV = 0;
-  var camYaw = 0.95, camPitch = 0.24, camYawT = 0.95, camPitchT = 0.24;
-  var pointer = { x: 0, y: 0, active: false, at: -99, target: null };
+  var P0 = 0.6, camYaw = 0, camPitch = 0.6;
+  var pointer = { x: 0, y: 0, active: false, mouse: false, at: -99, moved: -99, rx: -1e3, ry: -1e3, sent: true, target: null };
   var crouch = 0;
+  // poses, each from 0 to 1 and eased, so it never snaps from one to another.
+  // act is what it is doing in place: wake, sit, lie, stretch or sniff
+  var pose = { sit: 0, lie: 0, bow: 0, sniff: 0 }, act = null;
+  var quietAt = 0, restNext = 30, lens = 0.2, prints = [], marker = null, readPt = null, revisit = false;
+  var legFx = [0, 0, 0, 0], legFz = [0, 0, 0, 0], legLift = [0, 0, 0, 0], legPh = [0, 0, 0, 0], bodyOx = 0;
+  // body height, pitch, shift and where the feet go (front, hind) for each pose
+  var POSES = {
+    sit: { y: 0.6, pitch: 0.48, ox: -0.12, ff: 0.03, hf: 0.27, fz: 0 },
+    lie: { y: 0.27, pitch: 0, ox: 0, ff: -0.04, hf: 0.04, fz: 0.03 },
+    bow: { y: 0.64, pitch: -0.4, ox: 0.04, ff: 0.36, hf: 0, fz: 0.02 },
+    sniff: { y: 0.84, pitch: -0.12, ox: 0.03, ff: 0.04, hf: 0, fz: 0 }
+  };
+  function startAct(name, dur) { act = { name: name, until: t + dur, at: t }; route = null; }
+  function wrap(a) { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; }
 
   /* --------------------------------------------------------------- layout */
   var W = 0, H = 0, dpr = 1, cell = 10, cols = 0, rows = 0, scale = 100, cx = 0, cy = 0;
@@ -260,28 +274,151 @@
     var n = cols * rows;
     zbuf = new Float32Array(n); lum = new Float32Array(n); kind = new Uint8Array(n);
     mat = new Uint8Array(n); heatv = new Float32Array(n); nxs = new Float32Array(n); nys = new Float32Array(n);
-    if (mode === 'lost') {
-      scale = Math.min(W * (narrow ? 0.28 : 0.14), H * 0.25);
-      cx = W * (narrow ? 0.5 : 0.62); cy = H * (narrow ? 0.36 : 0.42);
-    } else if (narrow) {
-      scale = Math.min(W * 0.3, H * 0.19);
-      cx = W * 0.54; cy = H * 0.33;
-    } else {
-      scale = Math.min(W * 0.17, H * 0.29);
-      cx = W * 0.6; cy = H * 0.4;
-    }
-    avoid = null;
+    scale = narrow ? Math.min(W * 0.16, H * 0.08) : Math.min(W * 0.07, H * 0.115);
+    cx = W * 0.5; cy = H * 0.5;
+    cam.dist = 12;
+    P0 = Math.max(0.55, Math.atan(cy / (scale * cam.dist)) + 0.14);
+    camYaw = 0; camPitch = P0;
+    avoid = null; blocks = [];
     if (avoidEl) {
       var a = avoidEl.getBoundingClientRect();
-      if (a.width) avoid = { x0: (a.left - r.left - 18) / cell, y0: (a.top - r.top - 14) / cell, x1: (a.right - r.left + 18) / cell, y1: (a.bottom - r.top + 10) / cell };
+      if (a.width) {
+        avoid = { x0: (a.left - r.left - 18) / cell, y0: (a.top - r.top - 14) / cell, x1: (a.right - r.left + 18) / cell, y1: (a.bottom - r.top + 10) / cell };
+        blocks.push({ x0: a.left - r.left - 24, y0: a.top - r.top - 20, x1: a.right - r.left + 24, y1: a.bottom - r.top + 16 });
+      }
     }
+    var tele = document.querySelector('.tele');
+    if (tele) { var tr = tele.getBoundingClientRect(); if (tr.width) blocks.push({ x0: tr.left - r.left - 12, y0: tr.top - r.top - 12, x1: tr.right - r.left + 12, y1: tr.bottom - r.top + 12 }); }
+    var hd = document.querySelector('header.top');
+    topLimit = Math.max(56, hd ? hd.getBoundingClientRect().bottom - r.top + 6 : 56);
     readColors();
+    buildWorld();
+  }
+
+  // where the robot may stand: its whole box on screen, clear of text and walls
+  var blocks = [], topLimit = 56;
+  function boxAt(x, z) {
+    var zc = project(x, 0, z);
+    if (zc < 0) return null;
+    var fx = PX, fy = PY, k = cam.focal / zc;
+    project(x, 1.45, z);
+    return [fx - 0.9 * k, PY, fx + 0.9 * k, fy + 0.25 * k];
+  }
+  function ok(x, z) {
+    var b = boxAt(x, z);
+    if (!b || b[0] < 6 || b[2] > W - 6 || b[1] < topLimit || b[3] > H - 6) return false;
+    for (var i = 0; i < blocks.length; i++) {
+      var q = blocks[i];
+      if (b[0] < q.x1 && b[2] > q.x0 && b[1] < q.y1 && b[3] > q.y0) return false;
+    }
+    for (var j = 0; j < walls.length; j++) {
+      var dx = x - walls[j].x, dz = z - walls[j].z, rr = walls[j].rad + 0.8;
+      if (dx * dx + dz * dz < rr * rr) return false;
+    }
+    return true;
+  }
+  // is the straight line clear? a start that is already out of bounds may walk back in
+  function clear(ax, az, bx, bz) {
+    var dx = bx - ax, dz = bz - az, n = Math.ceil(Math.sqrt(dx * dx + dz * dz) / 0.2), inside = !ok(ax, az);
+    for (var i = 1; i <= n; i++) {
+      var good = ok(ax + dx * i / n, az + dz * i / n);
+      if (good) inside = false; else if (!inside) return false;
+    }
+    return true;
+  }
+  function ground(sx, sy) { var g = unproject(sx, sy); return g[3] ? null : [g[0], g[2]]; }
+  function randomSpot() { return ground(R() * W, topLimit + R() * (H - topLimit)); }
+  function freeSpot(minD, maxD) {
+    for (var i = 0; i < 120; i++) {
+      var s = randomSpot();
+      if (!s || !ok(s[0], s[1])) continue;
+      var d = Math.hypot(s[0] - bot.x, s[1] - bot.z);
+      if (d >= minD && d <= maxD) return s;
+    }
+    return null;
+  }
+  function nearestOk(x, z) {
+    if (ok(x, z)) return [x, z];
+    for (var r = 0.25; r < 9; r += 0.25) {
+      for (var i = 0; i < 20; i++) {
+        var a = i / 20 * Math.PI * 2, px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r;
+        if (ok(px, pz)) return [px, pz];
+      }
+    }
+    return null;
+  }
+  // a straight line if it is clear, otherwise one waypoint that gets around
+  function plan(tx, tz) {
+    if (clear(bot.x, bot.z, tx, tz)) return [[tx, tz]];
+    var best = null, bd = 1e9;
+    for (var i = 0; i < 70; i++) {
+      var s = randomSpot();
+      if (!s) continue;
+      var d = Math.hypot(s[0] - bot.x, s[1] - bot.z) + Math.hypot(tx - s[0], tz - s[1]);
+      if (d >= bd || !ok(s[0], s[1])) continue;
+      if (clear(bot.x, bot.z, s[0], s[1]) && clear(s[0], s[1], tx, tz)) { bd = d; best = s; }
+    }
+    return best ? [best, [tx, tz]] : null;
+  }
+  // how much of the floor around a spot it has not looked at lately (0 to 1)
+  function fresh(x, z) {
+    var n = 0, u = 0;
+    for (var i = 0; i < floor.length; i++) {
+      var f = floor[i], dx = f.x - x, dz = f.z - z;
+      if (dx * dx + dz * dz < 2.25) { n++; u += 1 - Math.min(1, f.seen); }
+    }
+    return n ? u / n : 0;
+  }
+  function goTo(x, z, kind) {
+    var p = nearestOk(x, z);
+    if (!p) return false;
+    var pts = plan(p[0], p[1]);
+    if (!pts) return false;
+    route = { pts: pts, kind: kind, since: t, tries: 0 };
+    if (act && kind !== 'wander') act = null;
+    stateName = kind === 'wander' ? 'explore' : 'follow';
+    return true;
+  }
+
+  function buildWorld() {
+    camYaw = 0; camPitch = P0;
+    setCamera();
+    var xs = [], zs = [], corners = [[0, 0], [W, 0], [0, H], [W, H]];
+    for (var c = 0; c < 4; c++) { var g = unproject(corners[c][0], corners[c][1]); xs.push(g[0]); zs.push(g[2]); }
+    var x0 = Math.min.apply(null, xs) - 0.4, x1 = Math.max.apply(null, xs) + 0.4;
+    var z0 = Math.min.apply(null, zs) - 0.4, z1 = Math.max.apply(null, zs) + 0.4;
+    SP = clamp(2.8 * cell / scale, 0.15, 0.4);
+    var R2 = rng(11), inv = 1 / 1;
+    floor = [];
+    for (var x = x0; x < x1; x += SP) {
+      for (var z = z0; z < z1; z += SP) {
+        var fx = x + (R2() - 0.5) * SP * 0.3, fz = z + (R2() - 0.5) * SP * 0.3;
+        if (project(fx, 0, fz) < 0 || PX < -cell || PX > W + cell || PY < -cell || PY > H + cell) continue;
+        var ex = clamp(Math.min(PX, W - PX) / (W * 0.1), 0, 1), ey = clamp(Math.min(PY, H - PY) / (H * 0.1), 0, 1);
+        floor.push({ x: fx, z: fz, seen: 0, j: R2(), e: ex * ey });
+      }
+    }
+    // the robot starts right of centre, or stays where it was if that still fits
+    walls = [];
+    if (!bot.placed || !ok(bot.x, bot.z)) {
+      var st = ground(W * (W < 700 ? 0.5 : 0.66), H * (W < 700 ? 0.34 : 0.42)), s0 = st && nearestOk(st[0], st[1]);
+      if (s0) { bot.x = s0[0]; bot.z = s0[1]; }
+      bot.placed = true;
+    }
+    route = null;
+    var nW = W < 700 ? 2 : 4, nH = W < 700 ? 4 : 6;
+    for (var i = 0; i < nW; i++) {
+      var s = freeSpot(1.8, 1e9);
+      if (s) { var wl = newWall(s[0], s[1]); walls.push(wl); if (!ok(bot.x, bot.z)) walls.pop(); }
+    }
+    heats = [];
+    for (var h = 0; h < nH; h++) { var s2 = freeSpot(1.2, 1e9); if (s2) heats.push(newHeat(s2[0], s2[1])); }
   }
 
   /* --------------------------------------------------------------- camera */
   var cam = { x: 0, y: 0, z: 0, rx: [1, 0, 0], ry: [0, 1, 0], rz: [0, 0, 1], dist: 5.4, focal: 1 };
   var light = [0, 0, 0];
-  var TARGET = [0, 0.7, 0];
+  var TARGET = [0, 0, 0];
   function setCamera() {
     var cp = Math.cos(camPitch), sp = Math.sin(camPitch), cyw = Math.cos(camYaw), syw = Math.sin(camYaw);
     // forward points from the camera to the target
@@ -389,7 +526,7 @@
   function setState(name, dur) { stateName = name; stateUntil = t + dur; }
   function label(force) {
     if (!stateEl) return;
-    var key = reduce ? 'still' : (pointer.active && t - pointer.at < 3 && mode !== 'lost' ? 'follow' : stateName);
+    var key = reduce ? 'still' : (act ? (act.name === 'lie' ? 'rest' : act.name) : ((route && route.kind !== 'wander' && route.kind !== 'sniff') || (!route && pointer.active && t - pointer.at < 3) ? 'follow' : (route ? 'explore' : 'idle')));
     if (key === shownKey && !force) return;
     shownKey = key;
     stateEl.textContent = key;
@@ -398,87 +535,215 @@
 
   function step(dt) {
     t += dt;
-    var following = pointer.active && t - pointer.at < 3;
-    if (mode === 'lost') {
-      speedTarget = 0;
-      if (stateName !== 'idle') setState('idle', 1e9);
-    } else if (t > stateUntil) {
-      if (stateName === 'explore') { setState('idle', 4 + R() * 3); }
-      else setState('explore', 9 + R() * 7);
-    }
-    if (mode !== 'lost') speedTarget = stateName === 'idle' ? 0 : (following ? 0.32 : 0.5);
-    label();
-    speed += (speedTarget - speed) * Math.min(1, dt * 1.2);
-    crouch += ((stateName === 'idle' ? 1 : 0) - crouch) * Math.min(1, dt * 1.5);
+    var mouse = pointer.active && t - pointer.at < 3;
+    var lost = mode === 'lost';
 
-    // gait: a walk, three feet on the floor most of the time
-    gaitF = FREQ * clamp(0.35 + speed * 1.6, 0, 1);
-    phase = (phase + dt * gaitF) % 1;
-    var moving = clamp(speed / 0.3, 0, 1);
-    body.y = HEIGHT - crouch * 0.12 + 0.012 * Math.sin(phase * Math.PI * 8) * moving + 0.006 * Math.sin(t * 1.7);
-    body.roll = 0.025 * Math.sin(phase * Math.PI * 2) * moving;
-    body.pitch = -0.015 - crouch * 0.04 + 0.01 * Math.sin(t * 0.9) + 0.012 * Math.sin(phase * Math.PI * 4) * moving;
-    // the antenna lags behind the body
-    var aT = -speed * 0.16 - (body.y - HEIGHT) * 0.6;
-    ant.v += (60 * (aT - ant.x) - 3.2 * ant.v) * dt; ant.x += ant.v * dt;
-
-    // the world slides back under the robot
-    var dx = speed * dt;
-    for (var i = 0; i < floor.length; i++) {
-      var f = floor[i];
-      f.x -= dx;
-      if (f.x < -FLOOR_X) { f.x += 2 * FLOOR_X; f.seen = 0; }
-      f.seen *= Math.exp(-dt * 0.35);
+    // a pointer that rests for a moment draws the robot over
+    if (pointer.active && pointer.mouse && !pointer.sent && t - pointer.moved > 1.2 && t - pointer.moved < 8) {
+      pointer.sent = true;
+      var pg = ground(pointer.x, pointer.y);
+      if (pg) {
+        var pdx = pg[0] - bot.x, pdz = pg[1] - bot.z, pd = Math.hypot(pdx, pdz);
+        if (pd > 1.8) { var kk = (pd - 1.2) / pd; goTo(bot.x + pdx * kk, bot.z + pdz * kk, 'pointer'); }
+      }
     }
-    for (var h = 0; h < heats.length; h++) {
-      heats[h].x -= dx; heats[h].glow *= Math.exp(-dt * 0.25);
-      if (heats[h].x < -FLOOR_X - 0.5) heats[h] = newHeat(FLOOR_X + R() * 1.5);
+    // what it is doing in place comes to an end
+    var quiet = t - quietAt;
+    if (!readPt || ((t * 60) | 0) % 60 === 0) {
+      var nm = document.querySelector('h1');
+      if (nm) { var nr = nm.getBoundingClientRect(), cr = canvas.getBoundingClientRect(), gq = ground(nr.left + nr.width / 2 - cr.left, nr.bottom - cr.top + 10); if (gq) readPt = [gq[0], 0.1, gq[1]]; }
     }
-    for (var w = 0; w < walls.length; w++) {
-      var wl = walls[w];
-      wl.x -= dx;
-      for (var s = 0; s < wl.seen.length; s++) wl.seen[s] *= Math.exp(-dt * 0.3);
-      if (wl.x < -FLOOR_X - 1) walls[w] = newWall(FLOOR_X + 0.6 + R() * 2);
+    if (act && act.name === 'lie' && quiet < 0.5 && t - act.at > 2.5) act.until = Math.min(act.until, t);
+    if (act && t > act.until) {
+      var an = act.name; act = null;
+      if (an === 'lie') startAct('stretch', 1.9);
+      else if (an === 'sniff' && R() < 0.3 && !lost) startAct('sit', 4 + R() * 3);
+      else { stateName = 'idle'; stateUntil = t + (an === 'wake' ? 1.6 : 0.9); }
     }
-    for (var z = haze.length - 1; z >= 0; z--) {
-      var hz = haze[z]; hz.y += dt * hz.v; hz.x -= dx; hz.life -= dt;
-      if (hz.life <= 0) haze.splice(z, 1);
+    // a long quiet spell: lie down for a while
+    if (!route && !act && !lost && quiet > 30 && t > restNext) { startAct('lie', 9 + R() * 6); restNext = t + 50; }
+    // nothing to do: rest a while, or pick somewhere new to look at
+    if (!route && !act && t > stateUntil) {
+      var best = null, bs = -1;
+      for (var c = 0; c < 6; c++) {
+        var s = freeSpot(2.2, 11);
+        if (!s) continue;
+        var sc = Math.min(7, Math.hypot(s[0] - bot.x, s[1] - bot.z)) + 6 * fresh(s[0], s[1]) + R() * 2;
+        if (sc > bs) { bs = sc; best = s; }
+      }
+      if (!best || !goTo(best[0], best[1], 'wander')) { stateName = 'idle'; stateUntil = t + 1.5; }
     }
-    for (var p = pings.length - 1; p >= 0; p--) { pings[p].r += dt * 3.2; if (pings[p].r > 7) pings.splice(p, 1); }
 
     // where the head wants to look
-    var ty, tp;
-    var headPos = headNow;
-    if (following && pointer.target) {
-      var tg = pointer.target;
-      ty = Math.atan2(-(tg[2] - headPos[2]), tg[0] - headPos[0]);
-      tp = Math.atan2(tg[1] - headPos[1], Math.sqrt(Math.pow(tg[0] - headPos[0], 2) + Math.pow(tg[2] - headPos[2], 2)));
-    } else if (stateName === 'idle') {
-      ty = Math.sin(t * 0.7) * 1.05; tp = -0.32 + 0.12 * Math.sin(t * 0.43);
-    } else {
-      ty = Math.sin(t * 0.37) * 0.6 + Math.sin(t * 0.13) * 0.25; tp = -0.3 + 0.08 * Math.sin(t * 0.5);
+    var lookAt = null, ty, tp, hp = headNow;
+    var resting = act && (act.name === 'lie' || act.name === 'wake');
+    if (mouse && pointer.target && !pointer.target[3] && !(act && act.name === 'wake')) lookAt = pointer.target;
+    else if (look && t < lookUntil) lookAt = look;
+    // standing or sitting about: now and then it reads the name
+    if (!lookAt && !route && !resting && readPt && !lost && (t % 26) < 11) {
+      var ry = wrap(Math.atan2(-(readPt[2] - hp[2]), readPt[0] - hp[0]) - bot.yaw);
+      if (Math.abs(ry) < 1.3) lookAt = [readPt[0] + 0.3 * Math.sin(t * 0.6), readPt[1], readPt[2]];
     }
+    if (lookAt) {
+      ty = wrap(Math.atan2(-(lookAt[2] - hp[2]), lookAt[0] - hp[0]) - bot.yaw);
+      tp = Math.atan2(lookAt[1] - hp[1], Math.hypot(lookAt[0] - hp[0], lookAt[2] - hp[2]));
+    } else if (resting) {
+      // waking up or lying down: head low, looking at the floor in front
+      ty = 0.15 * Math.sin(t * 0.25); tp = -0.62;
+    } else if (!route) {
+      // looking around; on the 404 it searches, wider and quicker
+      ty = lost ? Math.sin(t * 1.0) * 1.3 + Math.sin(t * 0.27) * 0.2 : Math.sin(t * 0.7) * 1.05;
+      tp = -0.32 + 0.12 * Math.sin(t * 0.43);
+    } else {
+      ty = Math.sin(t * 0.9) * 0.45 + Math.sin(t * 0.31) * 0.2; tp = -0.32 + 0.06 * Math.sin(t * 0.5);
+    }
+    if (act && act.name === 'stretch') { ty *= 0.3; tp = -0.05; }
+    if (act && act.name === 'sniff') tp = Math.min(tp, -0.7);
+
+    // steering: turn toward the next point, and only walk once it is roughly ahead,
+    // so it turns on the spot first and never walks backwards
+    var vT = 0, wT = 0;
+    if (route) {
+      var g = route.pts[0], dx = g[0] - bot.x, dz = g[1] - bot.z, d = Math.hypot(dx, dz), lastPt = route.pts.length === 1;
+      if (d < (lastPt ? 0.2 : 0.5)) {
+        route.pts.shift();
+        if (!route.pts.length) {
+          var kind = route.kind, sniffAt = route.at;
+          route = null;
+          var rr = R();
+          if (kind === 'sniff') { startAct('sniff', 2.2); if (sniffAt) { look = sniffAt; lookUntil = t + 2.2; } }
+          else if (kind !== 'wander') {
+            // it looks at the spot it was sent to, and sometimes sits down there
+            stateName = 'idle'; stateUntil = t + 2.5 + R() * 1.5;
+            look = marker ? [marker.x, 0, marker.z] : [g[0] + Math.cos(bot.yaw) * 1.5, 0, g[1] - Math.sin(bot.yaw) * 1.5]; lookUntil = t + 2;
+            if (marker) marker.done = t;
+            if (!lost && rr < 0.35) { startAct('sit', 5 + R() * 3); stateUntil = 0; }
+          }
+          else if (!lost && rr < 0.18) startAct('sit', 4 + R() * 4);
+          else if (rr < 0.5) { stateName = 'idle'; stateUntil = t + 2.5 + R() * 3; }
+        }
+      } else {
+        var e = wrap(Math.atan2(-dz, dx) - bot.yaw);
+        var vmax = (route.kind === 'wander' ? 0.65 : 1.05) * (lost ? 0.8 : 1);
+        var ce = Math.max(0, Math.cos(e));
+        wT = clamp(e * 2.4, -1.4, 1.4);
+        vT = vmax * ce * ce * ce * (lastPt ? clamp(d / 0.9, 0.25, 1) : 1);
+      }
+      if (route && t - route.since > 25) route = null;
+    } else if (lookAt && Math.abs(ty) > 1.15) {
+      // something interesting behind it: turn round to face it
+      wT = clamp(ty * 1.2, -1, 1);
+    }
+    if (!route && stateName !== 'idle') stateName = 'idle';
+    // it only walks once it is standing again
+    var down = Math.max(pose.sit, pose.lie, pose.bow, pose.sniff * 0.6), gate = clamp(1 - down * 1.6, 0, 1);
+    if (act) { vT = 0; if (act.name !== 'sniff') wT = 0; }
+    vT *= gate * gate; wT *= gate;
+    bot.v += (vT - bot.v) * Math.min(1, dt * 2.2);
+    bot.w += (wT - bot.w) * Math.min(1, dt * 5);
+    bot.yaw = wrap(bot.yaw + bot.w * dt);
+    var nx = bot.x + Math.cos(bot.yaw) * bot.v * dt, nz = bot.z - Math.sin(bot.yaw) * bot.v * dt;
+    if (ok(nx, nz) || !ok(bot.x, bot.z)) { bot.x = nx; bot.z = nz; }
+    else {
+      // about to touch an edge or the text: stop, turn, and find another way
+      bot.v *= 0.3;
+      if (route) {
+        var fin = route.pts[route.pts.length - 1], k2 = route.kind, tries = route.tries + 1;
+        route = null;
+        if (tries < 4 && goTo(fin[0], fin[1], k2)) route.tries = tries;
+      }
+    }
+    label();
+    crouch += ((route ? 0 : 1) - crouch) * Math.min(1, dt * 1.5);
+
+    // gait: a walk, three feet down most of the time, stepping faster as it goes faster
+    gaitMag = Math.abs(bot.v) + 0.45 * Math.abs(bot.w);
+    gaitF = clamp(0.4 + gaitMag * 1.5, 0.4, 1.75);
+    phase = (phase + dt * gaitF) % 1;
+    var moving = clamp(gaitMag / 0.3, 0, 1);
+    var y0 = HEIGHT - crouch * 0.12 + 0.012 * Math.sin(phase * Math.PI * 8) * moving + 0.006 * Math.sin(t * 1.7);
+    var p0 = -0.015 - crouch * 0.04 + 0.01 * Math.sin(t * 0.9) + 0.012 * Math.sin(phase * Math.PI * 4) * moving;
+    body.roll = 0.025 * Math.sin(phase * Math.PI * 2) * moving + 0.05 * bot.w * clamp(bot.v / 0.4, 0, 1);
+    // ease each pose toward what it is doing, then blend them over the standing pose
+    var an2 = act ? act.name : '';
+    var want = { sit: an2 === 'sit' ? 1 : 0, lie: an2 === 'lie' || an2 === 'wake' ? 1 : 0, bow: an2 === 'stretch' && t - act.at < 1.5 ? 1 : 0, sniff: an2 === 'sniff' ? 1 : 0 };
+    // still slowing down from a walk: finish stopping before going down
+    if (Math.abs(bot.v) > 0.12) want.sit = want.lie = want.bow = 0;
+    var ws = 0, wy = 0, wp = 0, wo = 0, wff = 0, whf = 0, wfz = 0;
+    for (var pk in POSES) {
+      var rate = pk === 'lie' && want.lie < pose.lie ? 1.3 : 2.1;
+      pose[pk] += (want[pk] - pose[pk]) * Math.min(1, dt * rate);
+      var wk = pose[pk] * pose[pk] * (3 - 2 * pose[pk]), P = POSES[pk];
+      ws += wk; wy += wk * P.y; wp += wk * P.pitch; wo += wk * P.ox; wff += wk * P.ff; whf += wk * P.hf; wfz += wk * P.fz;
+    }
+    if (ws > 1) { wy /= ws; wp /= ws; wo /= ws; wff /= ws; whf /= ws; wfz /= ws; ws = 1; }
+    // breathing, slower and deeper when it is down
+    var breathe = 0.008 * Math.sin(t * 1.4) * ws;
+    body.y = y0 * (1 - ws) + wy + breathe;
+    body.pitch = p0 * (1 - ws) + wp;
+    bodyOx = wo;
+    for (var lg = 0; lg < 4; lg++) {
+      var nf = LEGS[lg].fx > 0 ? wff : whf, nfz = LEGS[lg].side * wfz;
+      // a foot that has to move to a new spot lifts a little on the way
+      var mv = Math.hypot(nf - legFx[lg], nfz - legFz[lg]) / Math.max(dt, 1e-3);
+      legLift[lg] += (clamp(mv * 0.25, 0, 0.09) - legLift[lg]) * Math.min(1, dt * 10);
+      legFx[lg] = nf; legFz[lg] = nfz;
+    }
+    // the lens: dim while it rests, bright when it is watching something
+    var lensT = resting ? 0.15 : (lookAt && mouse ? 1 : 0.7);
+    lens += (lensT - lens) * Math.min(1, dt * 3);
+    // footprints where a foot comes down, fading out
+    var TsF = DUTY / gaitF;
+    for (var fp = 0; fp < 4; fp++) {
+      var phf = (phase + LEG_OFFSET[fp]) % 1;
+      if (phf < legPh[fp] && gaitMag > 0.08 && !reduce) {
+        var LL = LEGS[fp], fdx = -(bot.v + bot.w * LL.fz) * TsF, fdz = bot.w * LL.fx * TsF;
+        var lx2 = LL.fx + legFx[fp] - fdx / 2, lz2 = LL.fz + legFz[fp] - fdz / 2, cy0 = Math.cos(bot.yaw), sy0 = Math.sin(bot.yaw);
+        prints.push({ x: bot.x + lx2 * cy0 + lz2 * sy0, z: bot.z - lx2 * sy0 + lz2 * cy0, t: t });
+      }
+      legPh[fp] = phf;
+    }
+    while (prints.length && (prints.length > 90 || t - prints[0].t > 5)) prints.shift();
+    if (marker && marker.done && t - marker.done > 2) marker = null;
+    // the antenna lags behind the body
+    var aT = -bot.v * 0.16 - (body.y - HEIGHT) * 0.6;
+    ant.v += (60 * (aT - ant.x) - 3.2 * ant.v) * dt; ant.x += ant.v * dt;
+
+    for (var h = 0; h < heats.length; h++) {
+      var ht = heats[h];
+      ht.glow *= Math.exp(-dt * 0.25);
+      // found ones cool off and turn up somewhere else later
+      if (ht.found && t - ht.at > 16 && ht.glow < 0.08) {
+        var ns = freeSpot(3, 1e9);
+        if (ns) heats[h] = newHeat(ns[0], ns[1]);
+      }
+    }
+    for (var z = haze.length - 1; z >= 0; z--) {
+      var hz = haze[z]; hz.y += dt * hz.v; hz.life -= dt;
+      if (hz.life <= 0) haze.splice(z, 1);
+    }
+    for (var p = pings.length - 1; p >= 0; p--) { pings[p].r += dt * 3.2; if (pings[p].r > 9) pings.splice(p, 1); }
+
     ty = clamp(ty, -1.5, 1.5); tp = clamp(tp, -0.7, 0.45);
     // a spring, so it settles instead of snapping
-    var k = 26, damp = 9;
-    hyV += (k * (ty - headYaw) - damp * hyV) * dt; headYaw += hyV * dt;
-    hpV += (k * (tp - headPitch) - damp * hpV) * dt; headPitch += hpV * dt;
+    var sk = 26, damp = 9;
+    hyV += (sk * (ty - headYaw) - damp * hyV) * dt; headYaw += hyV * dt;
+    hpV += (sk * (tp - headPitch) - damp * hpV) * dt; headPitch += hpV * dt;
 
-    // camera drifts, and leans a little toward the pointer
+    // the camera stays put, with a very slow drift
     var px = pointer.active ? (pointer.x / W - 0.5) : 0, py = pointer.active ? (pointer.y / H - 0.5) : 0;
-    camYawT = 0.95 + 0.22 * Math.sin(t * 0.045) + px * 0.3;
-    camPitchT = 0.24 + 0.04 * Math.sin(t * 0.07) + py * 0.1;
-    camYaw += (camYawT - camYaw) * Math.min(1, dt * 1.4);
-    camPitch += (camPitchT - camPitch) * Math.min(1, dt * 1.4);
+    var cyT = 0.025 * Math.sin(t * 0.045) + px * 0.02, cpT = P0 + 0.012 * Math.sin(t * 0.07) + py * 0.012;
+    camYaw += (cyT - camYaw) * Math.min(1, dt * 1.4);
+    camPitch += (cpT - camPitch) * Math.min(1, dt * 1.4);
 
-    sense(dt, headPos);
+    sense(dt, hp);
   }
 
   // the sensor: a cone from the head, plus any ping rings
   function sense(dt, headPos) {
-    var dirYaw = headYaw, dirPitch = headPitch;
+    var dirYaw = bot.yaw + headYaw, dirPitch = headPitch;
     var dxh = Math.cos(dirPitch) * Math.cos(dirYaw), dyh = Math.sin(dirPitch), dzh = -Math.cos(dirPitch) * Math.sin(dirYaw);
-    var cosCone = Math.cos(0.36), reach = 4.6;
+    var cosCone = Math.cos(0.36), reach = 4.6, fade = Math.exp(-dt * 0.1), wfade = Math.exp(-dt * 0.15);
     function seeAmount(x, y, z) {
       var vx = x - headPos[0], vy = y - headPos[1], vz = z - headPos[2];
       var d = Math.sqrt(vx * vx + vy * vy + vz * vz);
@@ -487,40 +752,57 @@
       if (c < cosCone) return 0;
       return (1 - d / reach) * clamp((c - cosCone) / (1 - cosCone) * 3, 0, 1);
     }
+    function ring(x, z, width) {
+      var s = 0;
+      for (var p = 0; p < pings.length; p++) {
+        var pg = pings[p], dd = Math.abs(Math.hypot(x - pg.x, z - pg.z) - pg.r);
+        if (dd < width) s = Math.max(s, (1 - dd / width) * (1 - pg.r / 9.5));
+      }
+      return s;
+    }
     for (var i = 0; i < floor.length; i++) {
       var f = floor[i], s = seeAmount(f.x, 0, f.z);
-      for (var p = 0; p < pings.length; p++) {
-        var rr = Math.sqrt(f.x * f.x + f.z * f.z), dd = Math.abs(rr - pings[p].r);
-        if (dd < 0.25) s = Math.max(s, (1 - dd / 0.25) * (1 - pings[p].r / 7.5));
-      }
+      f.seen *= fade;
+      if (pings.length) s = Math.max(s, ring(f.x, f.z, 0.25));
       if (s > f.seen) f.seen = Math.min(1, f.seen + (s - f.seen) * Math.min(1, dt * 8));
     }
     for (var w = 0; w < walls.length; w++) {
       var wl = walls[w];
       for (var j = 0; j < wl.pts.length; j++) {
         var q = wl.pts[j], x = wl.x + q[0], z = wl.z + q[2], s2 = seeAmount(x, q[1], z);
-        for (var p2 = 0; p2 < pings.length; p2++) {
-          var r2 = Math.sqrt(x * x + z * z), d2 = Math.abs(r2 - pings[p2].r);
-          if (d2 < 0.3) s2 = Math.max(s2, (1 - d2 / 0.3) * (1 - pings[p2].r / 7.5));
-        }
+        wl.seen[j] *= wfade;
+        if (pings.length) s2 = Math.max(s2, ring(x, z, 0.3));
         if (s2 > wl.seen[j]) wl.seen[j] = Math.min(1, wl.seen[j] + (s2 - wl.seen[j]) * Math.min(1, dt * 8));
       }
     }
     for (var h = 0; h < heats.length; h++) {
       var ht = heats[h], s3 = seeAmount(ht.x, 0, ht.z);
-      for (var p3 = 0; p3 < pings.length; p3++) {
-        var r3 = Math.sqrt(ht.x * ht.x + ht.z * ht.z);
-        if (Math.abs(r3 - pings[p3].r) < 0.35) s3 = Math.max(s3, 0.8);
-      }
+      if (pings.length && ring(ht.x, ht.z, 0.35) > 0) s3 = Math.max(s3, 0.8);
       if (s3 > 0.15) {
         ht.glow = Math.min(1, ht.glow + dt * 3);
-        if (!ht.found && ht.glow > 0.5) { ht.found = true; bump(); }
+        if (!ht.found && ht.glow > 0.5) {
+          ht.found = true; ht.at = t; bump();
+          // a warm spot close by: go and sniff it
+          var hd = Math.hypot(ht.x - bot.x, ht.z - bot.z);
+          if (!reduce && !act && (!route || route.kind === 'wander') && hd < 3.2 && hd > 0.6 && R() < 0.75) {
+            var k2 = (hd - 0.75) / hd;
+            goTo(bot.x + (ht.x - bot.x) * k2, bot.z + (ht.z - bot.z) * k2, 'sniff');
+            if (route && route.kind === 'sniff') { route.at = [ht.x, 0, ht.z]; act = null; }
+          }
+        }
+        if (ht.found) ht.at = Math.max(ht.at, t - 10);
         if (!reduce && R() < dt * 14) haze.push({ x: ht.x + (R() - 0.5) * ht.r * 1.4, y: 0.05, z: ht.z + (R() - 0.5) * ht.r * 1.4, v: 0.25 + R() * 0.3, life: 1.4 + R() });
       }
     }
   }
 
   /* ------------------------------------------------------------- render */
+  // body-local to world: turn by the heading, then move to where the robot stands
+  var hc0 = 1, hs0 = 0;
+  function rw(v) { return [v[0] * hc0 + v[2] * hs0, v[1], -v[0] * hs0 + v[2] * hc0]; }
+  function pw(v) { var r = rw(v); r[0] += bot.x; r[2] += bot.z; return r; }
+  function dl(set, a, b, c, o) { drawSet(set, rw(a), rw(b), rw(c), pw(o)); }
+
   function render() {
     setCamera();
     zbuf.fill(1e9); kind.fill(0);
@@ -536,10 +818,7 @@
         var ht = heats[h], ddx = f.x - ht.x, ddz = f.z - ht.z, dd = ddx * ddx + ddz * ddz;
         if (dd < ht.r * ht.r * 2.2) heat = Math.max(heat, ht.glow * (1 - dd / (ht.r * ht.r * 2.2)));
       }
-      var edge = 1 - clamp((Math.abs(f.x) - FLOOR_X * 0.55) / (FLOOR_X * 0.45), 0, 1);
-      edge *= 1 - clamp((Math.abs(f.z) - FLOOR_Z * 0.5) / (FLOOR_Z * 0.5), 0, 1);
-      var base = 0.06 + 0.07 * edge;
-      var l = (base + f.seen * 0.75) * edge;
+      var l = 0.045 + 0.075 * f.e + f.seen * 0.75 * (0.5 + 0.5 * f.e);
       if (l < 0.03 && heat < 0.05) continue;
       plot((PX * inv) | 0, (PY * inv) | 0, z + 0.5, l, heat > 0.08 ? K_HEAT : K_FLOOR, 0, heat, f.j, f.seen);
     }
@@ -559,55 +838,75 @@
       plot((PX * inv) | 0, (PY * inv) | 0, z3, clamp(hz.life, 0, 1), K_HAZE, 0, clamp(hz.life, 0, 1), 0, 0);
     }
 
-    // the robot
-    var B = bodyBasis(), O = [0, body.y, 0];
-    drawSet(BODY, B[0], B[1], B[2], O);
-    drawSet(DECK, B[0], B[1], B[2], toWorld(B, O, -0.08, 0.15, 0));
-    drawSet(BELLY, B[0], B[1], B[2], toWorld(B, O, 0, -0.14, 0));
-    var stride = speed * DUTY / gaitF, lift = 0.15 * clamp(speed / 0.2, 0, 1);
+    // footprints, fading
+    for (var fq = 0; fq < prints.length; fq++) {
+      var pr = prints[fq], zp = project(pr.x, 0, pr.z), age = (t - pr.t) / 5;
+      if (zp < 0) continue;
+      plot((PX * inv) | 0, (PY * inv) | 0, zp + 0.45, 0.5 * (1 - age), K_FLOOR, 0, 0, 0.5, 1);
+    }
+    // the spot it was sent to: a small amber ring until it has had a look
+    if (marker) {
+      var mk = marker.done ? clamp(1 - (t - marker.done) / 2, 0, 1) : 0.75 + 0.25 * Math.sin(t * 5);
+      for (var mq2 = 0; mq2 < 14; mq2++) {
+        var ma = mq2 / 14 * Math.PI * 2, zm = project(marker.x + Math.cos(ma) * 0.16, 0, marker.z + Math.sin(ma) * 0.16);
+        if (zm >= 0) plot((PX * inv) | 0, (PY * inv) | 0, zm + 0.4, mk, K_HEAT, 0, 0.6 * mk + 0.2, 0, 0);
+      }
+    }
+
+    // the robot, built in its own frame and then turned and moved into place
+    hc0 = Math.cos(bot.yaw); hs0 = Math.sin(bot.yaw);
+    var B = bodyBasis(), O = [bodyOx, body.y, 0];
+    dl(BODY, B[0], B[1], B[2], O);
+    dl(DECK, B[0], B[1], B[2], toWorld(B, O, -0.08, 0.15, 0));
+    dl(BELLY, B[0], B[1], B[2], toWorld(B, O, 0, -0.14, 0));
+    // feet on the floor slide back at exactly the speed the body moves (turning
+    // included), so planted feet stay planted; lifted feet swing to the front
+    var Ts = DUTY / gaitF;
     for (var g = 0; g < LEGS.length; g++) {
       var L = LEGS[g];
-      var ph = (phase + LEG_OFFSET[g]) % 1, fx, fy = 0;
-      if (ph < DUTY) { fx = L.fx + stride / 2 - stride * (ph / DUTY); }
-      else { var sw = (ph - DUTY) / (1 - DUTY), e = sw * sw * (3 - 2 * sw); fx = L.fx - stride / 2 + stride * e; fy = lift * Math.sin(Math.PI * sw); }
+      var Dx = -(bot.v + bot.w * L.fz) * Ts, Dz = bot.w * L.fx * Ts;
+      var lift = 0.15 * clamp(Math.hypot(Dx, Dz) / 0.12, 0, 1);
+      var nzL = L.fz + L.side * crouch * 0.04 + legFz[g], nfx = L.fx + legFx[g];
+      var ph = (phase + LEG_OFFSET[g]) % 1, fx, fz, fy = 0;
+      if (ph < DUTY) { var u = ph / DUTY; fx = nfx - Dx / 2 + Dx * u; fz = nzL - Dz / 2 + Dz * u; }
+      else { var sw = (ph - DUTY) / (1 - DUTY), e = sw * sw * (3 - 2 * sw); fx = nfx + Dx / 2 - Dx * e; fz = nzL + Dz / 2 - Dz * e; fy = lift * Math.sin(Math.PI * sw); }
       var p1 = toWorld(B, O, L.hx, L.hy, L.pz);
-      var foot = [fx, fy + 0.06, L.fz + L.side * crouch * 0.04];
+      var foot = [fx, fy + legLift[g] + 0.06, fz];
       // two links in the leg's vertical plane, knee pointing back
       var ta = foot[0] - p1[0], tb = foot[1] - p1[1], tz = foot[2] - p1[2];
-      var dd = Math.sqrt(ta * ta + tb * tb), dc = clamp(dd, Math.abs(L1 - L2) + 1e-3, L1 + L2 - 1e-3);
+      var dd2 = Math.sqrt(ta * ta + tb * tb), dc = clamp(dd2, Math.abs(L1 - L2) + 1e-3, L1 + L2 - 1e-3);
       var th = Math.atan2(tb, ta) - Math.acos(clamp((L1 * L1 + dc * dc - L2 * L2) / (2 * L1 * dc), -1, 1));
       var knee = [p1[0] + Math.cos(th) * L1, p1[1] + Math.sin(th) * L1, p1[2] + tz * (L1 / (L1 + L2))];
       var fb = segBasis(p1, knee), tb2 = segBasis(knee, foot);
       var side = [0, 0, L.side * 0.12], kside = [0, 0, L.side * 0.1];
-      drawSet(THIGH, fb[0], fb[1], fb[2], p1);
-      drawSet(SHANK, tb2[0], tb2[1], tb2[2], knee);
-      drawSet(MOTOR, side, IDENT_B, [L.side, 0, 0], toWorld(B, O, L.hx, L.hy, L.hz));
-      drawSet(KNEE, kside, IDENT_B, [L.side, 0, 0], [knee[0], knee[1], knee[2] - L.side * 0.05]);
-      drawSet(FOOT, IDENT_A, IDENT_B, IDENT_C, foot);
+      dl(THIGH, fb[0], fb[1], fb[2], p1);
+      dl(SHANK, tb2[0], tb2[1], tb2[2], knee);
+      dl(MOTOR, side, IDENT_B, [L.side, 0, 0], toWorld(B, O, L.hx, L.hy, L.hz));
+      dl(KNEE, kside, IDENT_B, [L.side, 0, 0], [knee[0], knee[1], knee[2] - L.side * 0.05]);
+      dl(FOOT, IDENT_A, IDENT_B, IDENT_C, foot);
     }
     // the mast and the sensor head
     var mb = toWorld(B, O, 0.36, 0.1, 0), mt = toWorld(B, O, 0.36, 0.28, 0);
     var nb = segBasis(mb, mt);
-    drawSet(MAST, nb[0], nb[1], nb[2], mb);
+    dl(MAST, nb[0], nb[1], nb[2], mb);
     var cyh = Math.cos(headYaw), syh = Math.sin(headYaw), cph = Math.cos(headPitch), sph = Math.sin(headPitch);
     var ha = [cph * cyh, sph, -cph * syh];
     var hb = [-sph * cyh, cph, sph * syh];
     var hc = [syh, 0, cyh];
     var hcen = [mt[0] + hb[0] * 0.08, mt[1] + hb[1] * 0.08, mt[2] + hb[2] * 0.08];
-    headNow = hcen;
-    drawSet(HEAD, ha, hb, hc, hcen);
+    headNow = pw(hcen);
+    dl(HEAD, ha, hb, hc, hcen);
     // the lens sits off to one side of the face
     var lo = [hcen[0] + ha[0] * 0.13 + hc[0] * 0.05, hcen[1] + ha[1] * 0.13 + 0.01, hcen[2] + ha[2] * 0.13 + hc[2] * 0.05];
-    drawSet(LENS, [ha[0] * 0.07, ha[1] * 0.07, ha[2] * 0.07], hb, hc, lo);
+    dl(LENS, [ha[0] * 0.07, ha[1] * 0.07, ha[2] * 0.07], hb, hc, lo);
     // the antenna, swaying on a spring
     var ab = toWorld(B, O, -0.42, 0.16, -0.1), at = [ab[0] + ant.x, ab[1] + 0.5, ab[2] + ant.x * 0.3];
     var abs2 = segBasis(ab, at);
-    drawSet(ANT, abs2[0], abs2[1], abs2[2], ab);
-    drawSet(ANT_TIP, IDENT_A, IDENT_B, IDENT_C, at);
+    dl(ANT, abs2[0], abs2[1], abs2[2], ab);
+    dl(ANT_TIP, IDENT_A, IDENT_B, IDENT_C, at);
 
     paint();
   }
-
   function paint() {
     var c = ctx, s = cell * dpr, gap = Math.max(1, Math.round(dpr)), sz = s - gap;
     c.setTransform(1, 0, 0, 1, 0, 0);
@@ -642,7 +941,7 @@
           if (nxs[i] < 0.4) glyph.push(ix, iy, nxs[i] < 0.15 ? G_HASH : G_COLON, 1);
         } else {
           var m = mat[i];
-          if (m === M_LENS) { hot[3].push(ix, iy); if (hash(ix, iy + tick) < 0.3) glyph.push(ix, iy, G_DASH, 2); continue; }
+          if (m === M_LENS) { hot[lens > 0.85 ? 3 : (lens > 0.5 ? 2 : (lens > 0.25 ? 1 : 0))].push(ix, iy); if (lens > 0.5 && hash(ix, iy + tick) < 0.3) glyph.push(ix, iy, G_DASH, 2); continue; }
           // silhouette: a neighbour with nothing, or something much further away
           var z0 = zbuf[i];
           var up = iy > 0 ? i - cols : -1, dn = iy < rows - 1 ? i + cols : -1, lf = ix > 0 ? i - 1 : -1, rt = ix < cols - 1 ? i + 1 : -1;
@@ -699,19 +998,21 @@
   function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
 
   function still() {
-    // a settled, readable pose: the floor partly mapped, one warm spot found
-    t = 0; phase = 0.18; speed = 0; crouch = 0.4;
-    stateName = 'idle';
-    headYaw = 0.55; headPitch = -0.3;
-    camYaw = 0.95; camPitch = 0.24;
-    pings = [{ r: 2.4 }];
+    // a settled, readable pose: some of the floor mapped, one warm spot found
+    t = 0; phase = 0.18; crouch = 0.4; lens = 0.7; act = null;
+    stateName = 'idle'; route = null; bot.v = 0; bot.w = 0;
+    var st = ground(W * (W < 700 ? 0.5 : 0.64), H * (W < 700 ? 0.34 : 0.42)), s0 = st && nearestOk(st[0], st[1]);
+    if (s0) { bot.x = s0[0]; bot.z = s0[1]; }
+    bot.yaw = -0.45;
+    headYaw = 0.5; headPitch = -0.3;
+    camYaw = 0; camPitch = P0;
+    render();
+    pings = [{ r: 2.4, x: bot.x, z: bot.z }];
     for (var i = 0; i < 40; i++) {
-      var hp = headNow;
-      sense(0.1, hp);
+      sense(0.1, headNow);
       pings[0].r += 0.08;
     }
     pings = [];
-    speed = 0.0001;
     render();
     label(true);
   }
@@ -720,13 +1021,32 @@
     if (!pointer.active) return;
     pointer.target = unproject(pointer.x, pointer.y);
   }
+  function send(sx, sy) {
+    var g = ground(sx, sy);
+    pings.push({ r: 0.4, x: bot.x, z: bot.z });
+    quietAt = t;
+    if (!g) return;
+    // it stops just short of the spot, so it can look at it
+    var d = Math.hypot(g[0] - bot.x, g[1] - bot.z), k = d > 0.8 ? (d - 0.45) / d : 1;
+    marker = { x: g[0], z: g[1], done: 0 };
+    goTo(bot.x + (g[0] - bot.x) * k, bot.z + (g[1] - bot.z) * k, 'go');
+  }
 
   function boot() {
     layout();
     if (reduce) { still(); }
     else {
       // warm up so the first frame is not empty
-      for (var i = 0; i < 90; i++) step(1 / 30);
+      for (var i = 0; i < 90; i++) { step(1 / 30); if (i % 10 === 0) render(); }
+      // it starts lying down where it was last time (this visit), and gets up
+      try {
+        var sv = JSON.parse(sessionStorage.getItem(SKEY) || 'null');
+        if (sv && ok(sv.x, sv.z)) { bot.x = sv.x; bot.z = sv.z; bot.yaw = sv.yaw; revisit = true; }
+      } catch (err) {}
+      route = null; bot.v = bot.w = 0; prints.length = 0;
+      pose.lie = 1; lens = 0.1; quietAt = t; restNext = t + 30;
+      startAct('wake', revisit ? 0.5 : 1.4);
+      step(1 / 60);
       render();
       start();
     }
@@ -735,15 +1055,24 @@
     canvas.classList.add('is-on');
   }
 
+  var SKEY = 'ah-robot-' + mode;
+  window.addEventListener('pagehide', function () {
+    try { sessionStorage.setItem(SKEY, JSON.stringify({ x: bot.x, z: bot.z, yaw: bot.yaw })); } catch (err) {}
+  });
   var host = canvas.closest('[data-robot-host]') || document;
   host.addEventListener('pointermove', function (e) {
     if (e.pointerType === 'touch') return;
     var r = canvas.getBoundingClientRect();
-    pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; pointer.active = true; pointer.at = t;
-    var link = e.target.closest && e.target.closest('a, button');
+    pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; pointer.active = true; pointer.mouse = true; pointer.at = t;
+    if (Math.hypot(pointer.x - pointer.rx, pointer.y - pointer.ry) > 10) { pointer.rx = pointer.x; pointer.ry = pointer.y; pointer.moved = t; pointer.sent = false; quietAt = t; }
+    var link = e.target.closest && e.target.closest('a, button, nav, header, [data-robot-avoid]');
     if (link) {
-      var lr = link.getBoundingClientRect();
-      pointer.x = lr.left + lr.width / 2 - r.left; pointer.y = lr.top + lr.height / 2 - r.top;
+      // the head still looks at links, but the robot does not walk over to them
+      pointer.sent = true;
+      if (link.matches('a, button')) {
+        var lr = link.getBoundingClientRect();
+        pointer.x = lr.left + lr.width / 2 - r.left; pointer.y = lr.top + lr.height / 2 - r.top;
+      }
     }
     retarget();
   }, { passive: true });
@@ -751,17 +1080,16 @@
   host.addEventListener('pointerdown', function (e) {
     if (e.target.closest && e.target.closest('a, button, input, label, summary, nav, header')) return;
     var r = canvas.getBoundingClientRect();
-    pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; pointer.active = true; pointer.at = t;
+    pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; pointer.active = true; pointer.at = t; pointer.sent = true;
     retarget();
     if (reduce) return;
-    pings.push({ r: 0.4 });
-    if (stateName === 'idle' && mode !== 'lost') setState('explore', 8 + R() * 5);
+    send(pointer.x, pointer.y);
   }, { passive: true });
   document.addEventListener('focusin', function (e) {
     var a = e.target.closest && e.target.closest('a, button');
     if (!a || reduce) return;
     var r = canvas.getBoundingClientRect(), lr = a.getBoundingClientRect();
-    pointer.x = lr.left + lr.width / 2 - r.left; pointer.y = lr.top + lr.height / 2 - r.top; pointer.active = true; pointer.at = t;
+    pointer.x = lr.left + lr.width / 2 - r.left; pointer.y = lr.top + lr.height / 2 - r.top; pointer.active = true; pointer.at = t; pointer.sent = true;
     retarget();
   });
 
@@ -775,7 +1103,20 @@
   if (mq && mq.addEventListener) mq.addEventListener('change', function (e) { reduce = e.matches; if (reduce) { stop(); still(); } else start(); });
 
   // for screenshots and debugging
-  window.AH_ROBOT = { ping: function () { pings.push({ r: 0.4 }); }, step: function (n) { for (var i = 0; i < n; i++) step(1 / 60); render(); }, stop: stop, start: start, state: function () { return { t: t, found: found, state: stateName }; } };
+  window.AH_ROBOT = {
+    ping: function () { pings.push({ r: 0.4, x: bot.x, z: bot.z }); },
+    go: function (sx, sy) { send(sx, sy); },
+    step: function (n) { for (var i = 0; i < n; i++) step(1 / 60); render(); },
+    stop: stop, start: start,
+    face: function (yaw) { bot.yaw = yaw; },
+    act: function (name, dur) { if (name === 'stand') { act = null; return; } startAct(name, dur || 8); },
+    quiet: function (s) { quietAt = t - s; restNext = 0; },
+    fits: function (sx, sy) { setCamera(); var g = ground(sx, sy); return !!g && ok(g[0], g[1]); },
+    state: function () {
+      setCamera(); project(bot.x, 0, bot.z);
+      return { t: t, found: found, state: stateName, x: bot.x, z: bot.z, yaw: bot.yaw, v: bot.v, sx: PX, sy: PY, ok: ok(bot.x, bot.z), route: route ? route.kind : null, act: act ? act.name : null, pose: { sit: +pose.sit.toFixed(2), lie: +pose.lie.toFixed(2), bow: +pose.bow.toFixed(2), sniff: +pose.sniff.toFixed(2) }, lens: +lens.toFixed(2), prints: prints.length };
+    }
+  };
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(boot); else boot();
 })();
