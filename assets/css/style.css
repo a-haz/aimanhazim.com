@@ -64,11 +64,9 @@ a:hover { text-decoration-color: currentColor; }
 .theme-btn .moon { display: none; }
 [data-theme="light"] .theme-btn .sun { display: none; }
 [data-theme="light"] .theme-btn .moon { display: block; }
-.tools { position: absolute; top: 28px; right: 36px; display: flex; align-items: center; gap: 14px; font-size: 11px; line-height: 20px; }
 .pill { display: none; }
 /* named, so the bar stays put while the page under it changes */
 .nav { view-transition-name: site-nav; }
-.tools { view-transition-name: site-tools; }
 
 /* ---- mobile menu ---- */
 .menu { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility 0s linear .2s; }
@@ -88,6 +86,10 @@ html.menu-open body { overflow: hidden; }
 .icons a { width: 40px; height: 40px; display: inline-grid; place-items: center; color: var(--muted); text-decoration: none; border-radius: 50%; }
 .icons a:hover { color: var(--fg); }
 .icons svg { display: block; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+/* the theme switch sits just after the last icon, a little apart, the same size */
+.caption-foot, .foot-l { display: flex; align-items: center; }
+.caption-foot .theme-btn, .foot-l .theme-btn { width: 40px; height: 40px; margin-left: 10px; }
+.caption-foot .theme-btn svg, .foot-l .theme-btn svg { width: 17px; height: 17px; }
 
 /* ---- home ---- */
 html:has(> body.home) { overscroll-behavior: none; }
@@ -101,9 +103,10 @@ html:has(> body.home) { overscroll-behavior: none; }
 @keyframes caret { 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .caret { animation: none; opacity: .6; } }
 .caption .lines p + p { margin-top: 0; }
-.caption .icons { margin-top: 20px; }
+.caption-foot { margin-top: 20px; }
 .caption a:not(.icons a) { text-decoration-color: var(--line); }
-.tele { position: fixed; right: 36px; bottom: max(9vh, 56px); z-index: 2; font-size: 11px; line-height: 18px; color: var(--faint); text-align: right; font-variant-numeric: tabular-nums; pointer-events: none; }
+/* the robot's readout, on the same row as the icons and the theme switch */
+.tele { margin-left: 26px; font-size: 11px; line-height: 18px; color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; pointer-events: none; }
 .tele b { font-weight: 400; color: var(--muted); display: block; }
 .tele .dot { display: inline-block; width: 6px; height: 6px; background: var(--accent); margin-right: 8px; vertical-align: 1px; opacity: .9; }
 .tele .is-new { animation: count-flash .6s ease-out; }
@@ -193,7 +196,7 @@ html:has(> body.home) { overscroll-behavior: none; }
 /* ---- narrow screens ---- */
 @media (max-width: 760px) {
   :root { --left: 24px; }
-  .nav, .tools { display: none; }
+  .nav { display: none; }
   .pill { position: fixed; top: 14px; left: 14px; right: 14px; height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 22px; border-radius: 27px; z-index: 11;
     /* a light tint and a blur, so the floor shows through and the name still reads */
     background: color-mix(in srgb, var(--fg) 6%, color-mix(in srgb, var(--bg) 28%, transparent)); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 0 0 1px var(--hair); }
@@ -202,8 +205,10 @@ html:has(> body.home) { overscroll-behavior: none; }
   .pill .dots svg { width: 14px; height: 14px; }
   .caption { left: 24px; right: 24px; bottom: max(34px, env(safe-area-inset-bottom)); }
   .epigraph { margin-bottom: 18px; }
-  .caption .icons { margin-top: 12px; }
-  .tele { top: 84px; right: 26px; bottom: auto; }
+  .caption-foot { margin-top: 12px; }
+  .caption-foot .theme-btn { margin-left: 6px; }
+  .tele { margin-left: 16px; }
+  .tele .fig { display: none; }
   .page { padding: 108px 24px 72px; }
   .page.wide { padding-right: 24px; }
   .lead { margin-bottom: 40px; }

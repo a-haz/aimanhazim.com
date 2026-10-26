@@ -230,8 +230,8 @@
   /* --------------------------------------------------------------- layout */
   var W = 0, H = 0, dpr = 1, cell = 10, cols = 0, rows = 0, scale = 100, cx = 0, cy = 0;
   var zbuf, lum, kind, mat, heatv, nxs, nys, dimv;
-  // the text on the page, the counter and the top bar: it fades out under all of them
-  var avoidEls = document.querySelectorAll('[data-robot-avoid], .top .nav, .top .tools, .top .pill');
+  // the text on the page (the counter sits in it) and the top bar: it fades out under them
+  var avoidEls = document.querySelectorAll('[data-robot-avoid], .top .nav, .top .pill');
   var countEl = document.querySelector('[data-robot-count]');
   var stateEl = document.querySelector('[data-robot-state]');
   var colors = {}, atlas = null, glyphs = '.:-=+*x#%@o/\\|', glyphIndex = {};
