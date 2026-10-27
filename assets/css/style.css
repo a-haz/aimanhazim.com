@@ -32,7 +32,9 @@ body:has(.page.wide), body:has(.article-band) { --col: 1080px; }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--bg); }
+/* the scrollbar's room is kept on every page, scrolling or not, so the page is the same
+   width everywhere and the centred bar does not shift between pages */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--bg); scrollbar-gutter: stable; }
 body {
   margin: 0; min-height: 100vh; min-height: 100dvh;
   background: var(--bg); color: var(--fg);
@@ -68,6 +70,9 @@ a:hover { text-decoration-color: currentColor; }
 .theme-btn .moon { display: none; }
 [data-theme="light"] .theme-btn .sun { display: none; }
 [data-theme="light"] .theme-btn .moon { display: block; }
+/* switching theme: the old look stays put and the new one grows over it from the
+   switch (site.js draws the circle). only for this, never between pages */
+html.theme-spread::view-transition-old(root), html.theme-spread::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 .pill { display: none; }
 
 /* ---- mobile menu ---- */

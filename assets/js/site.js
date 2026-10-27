@@ -30,6 +30,21 @@
     themeLabels();
     fire('ah:theme', next);
   }
+  // the new theme spreads out from the switch as a growing circle, where the browser can
+  // do that and motion is welcome; anywhere else it simply changes
+  function spread(btn, change) {
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!document.startViewTransition || calm) { change(); return; }
+    var r = btn.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    var far = Math.ceil(Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)));
+    html.classList.add('theme-spread');
+    var vt = document.startViewTransition(change);
+    vt.ready.then(function () {
+      html.animate({ clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + far + 'px at ' + x + 'px ' + y + 'px)'] },
+        { duration: 560, easing: 'cubic-bezier(.3, 0, .2, 1)', pseudoElement: '::view-transition-new(root)' });
+    }).catch(function () {});
+    vt.finished.then(function () { html.classList.remove('theme-spread'); }, function () { html.classList.remove('theme-spread'); });
+  }
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-theme-toggle]');
     if (!b) return;
@@ -38,7 +53,7 @@
       if (next === systemTheme()) localStorage.removeItem('ah-theme');
       else localStorage.setItem('ah-theme', next);
     } catch (err) {}
-    setTheme(next);
+    spread(b, function () { setTheme(next); });
   });
   // the system switches (at sunset, say) while the page is open: follow it, unless a choice is saved
   function onSystem() {
