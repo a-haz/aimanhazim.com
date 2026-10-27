@@ -286,16 +286,16 @@
     var n = cols * rows;
     zbuf = new Float32Array(n); lum = new Float32Array(n); kind = new Uint8Array(n);
     mat = new Uint8Array(n); heatv = new Float32Array(n); nxs = new Float32Array(n); nys = new Float32Array(n);
-    // the framing of the first version: a big robot right of the text, seen from the side
+    // the framing of the first version: a big robot seen from the side, above the centred text
     if (mode === 'lost') {
       scale = Math.min(W * (narrow ? 0.28 : 0.14), H * 0.25);
-      cx = W * (narrow ? 0.5 : 0.62); cy = H * (narrow ? 0.36 : 0.42);
+      cx = W * 0.5; cy = H * (narrow ? 0.36 : 0.42);
     } else if (narrow) {
       scale = Math.min(W * 0.3, H * 0.19);
-      cx = W * 0.54; cy = H * 0.33;
+      cx = W * 0.5; cy = H * 0.33;
     } else {
       scale = Math.min(W * 0.17, H * 0.29);
-      cx = W * 0.6; cy = H * 0.4;
+      cx = W * 0.5; cy = H * 0.4;
     }
     cam.dist = 5.4;
     REACH = clamp(0.9 * W / scale, 2.6, 5.5);

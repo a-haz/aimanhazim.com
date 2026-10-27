@@ -1,5 +1,5 @@
 /* PyroScout write-up. Loaded only on /projects/pyroscout/. */
-.article-band { padding: 132px max(24px, calc(var(--left) * .6)) 72px var(--left); max-width: calc(var(--left) + 1180px); }
+.article-band { margin-inline: auto; padding: 132px 24px 72px; max-width: calc(var(--col) + 48px); }
 .article-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, min(460px, 42%)); gap: 40px clamp(32px, 5vw, 80px); align-items: end; }
 .back { display: inline-flex; gap: 8px; font-size: 13px; color: var(--muted); text-decoration: none; margin-bottom: 22px; }
 .back:hover { color: var(--fg); }
@@ -20,7 +20,7 @@
 [data-state="reached"] .hud-dot { background: var(--accent); }
 .hud-btn, .vid-toggle { font-size: 11px; color: var(--fg); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; }
 
-.sheet { padding: 24px max(24px, calc(var(--left) * .6)) 96px var(--left); }
+.sheet { margin-inline: auto; padding: 24px 24px 96px; max-width: calc(var(--col) + 48px); }
 .article-grid { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 0 clamp(24px, 4vw, 64px); max-width: 1040px; }
 .toc { position: sticky; top: 96px; align-self: start; font-size: 12px; }
 .toc p { color: var(--muted); margin-bottom: 8px; }
