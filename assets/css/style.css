@@ -115,10 +115,8 @@ html:has(> body.home) { overscroll-behavior: none; }
 .stage { position: fixed; inset: 0; }
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .5s ease; touch-action: manipulation; }
 .stage canvas.is-on { opacity: 1; }
-/* the text on the home and 404 pages sits in the middle, each line centred */
-.caption { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(9vh, 56px); z-index: 2; width: max-content; max-width: min(42em, calc(100vw - 48px)); text-align: center; }
-.caption .caption-foot { justify-content: center; }
-.caption .icons { margin-left: 0; }
+/* the text on the home and 404 pages: the block sits in the middle, its lines start on the left */
+.caption { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(9vh, 56px); z-index: 2; width: max-content; max-width: min(42em, calc(100vw - 48px)); }
 .epigraph { color: var(--muted); margin-bottom: 26px; }
 .caret { display: inline-block; width: .6em; height: 1.05em; margin-left: .45em; vertical-align: -.17em; background: var(--accent); opacity: .85; animation: caret 1.1s steps(1, end) infinite; }
 @keyframes caret { 50% { opacity: 0; } }

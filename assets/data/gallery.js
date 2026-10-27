@@ -27,4 +27,24 @@
      caption: "Place, month",           // optional
      date: "2026-01"                    // optional
    }, */
-window.AH_GALLERY = [];
+window.AH_GALLERY = [
+  {
+    type: "image",
+    src: "/assets/img/gallery/library-run.webp",
+    w: 1280, h: 1440,
+    alt: "Six moments from one simulated walk through a library. Each row shows the same view four ways: the camera image, two colour-coded label maps, and depth.",
+    caption: "One run through a simulated library",
+    date: "2026-10"
+  },
+  {
+    type: "text",
+    text: ["A first test of the gallery.", "Pictures, short notes and clips can all go here, side by side."],
+    caption: "Note",
+    date: "2026-10"
+  },
+  {
+    type: "text",
+    text: "Most of the work happens in simulation first. The real robot comes after.",
+    date: "2026-10"
+  }
+];
