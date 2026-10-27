@@ -98,11 +98,19 @@
     var y = p[0], m = parseInt(p[1], 10), day = p[2] ? parseInt(p[2], 10) : null;
     return (day ? day + ' ' : '') + MONTHS[m - 1] + ' ' + y;
   }
+  // a body: a paragraph, or a list of paragraphs and pictures. a picture is
+  // { img: "/assets/img/...", alt: "...", w: 1600, h: 1067, caption: "..." }
   function paras(body) {
     var b = body;
     if (b == null) return '';
     if (!Array.isArray(b)) b = [b];
-    return b.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('');
+    return b.map(function (p) {
+      if (p && typeof p === 'object' && p.img) {
+        return '<figure><img src="' + esc(p.img) + '" alt="' + esc(p.alt || '') + '"' + (p.w ? ' width="' + p.w + '" height="' + p.h + '"' : '') + ' loading="lazy" decoding="async">' +
+          (p.caption ? '<figcaption>' + esc(p.caption) + '</figcaption>' : '') + '</figure>';
+      }
+      return '<p>' + esc(p) + '</p>';
+    }).join('');
   }
   function isExternal(href) { return /^https?:/.test(href); }
 
@@ -141,10 +149,13 @@
         if (it.webm) srcs += '<source src="' + esc(it.webm) + '" type="video/webm">';
         srcs += '<source src="' + esc(it.src) + '" type="video/' + (/\.webm$/i.test(it.src) ? 'webm' : 'mp4') + '">';
         media = '<video' + size + (it.poster ? ' poster="' + esc(it.poster) + '"' : '') + ' muted playsinline controls preload="none"' + (it.loop ? ' loop' : '') + (it.alt ? ' aria-label="' + esc(it.alt) + '"' : '') + '>' + srcs + '</video>';
+      } else if (it.type === 'text') {
+        // words on their own: a short note, a line, a few paragraphs
+        media = '<div class="note">' + paras(it.text) + '</div>';
       } else {
         media = '<img src="' + esc(it.src) + '" alt="' + esc(it.alt || '') + '"' + size + ' loading="lazy" decoding="async">';
       }
-      return '<figure class="shot' + (it.type === 'video' ? ' is-video' : '') + '">' + media +
+      return '<figure class="shot' + (it.type === 'video' ? ' is-video' : (it.type === 'text' ? ' is-text' : '')) + '">' + media +
         (it.caption || it.date ? '<figcaption><span>' + esc(it.caption || '') + '</span><span>' + (it.type === 'video' ? 'video' + (it.date ? ' · ' : '') : '') + (it.date ? fmtDate(it.date) : '') + '</span></figcaption>' : '') + '</figure>';
     }).join('');
   }
@@ -208,18 +219,6 @@
     box.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
     document.addEventListener('ah:theme', go);
   }
-
-  /* ------------------------------------------------------------ clock */
-  // local time in Fukui, in the footer
-  function tick() {
-    var els = document.querySelectorAll('[data-clock]');
-    if (!els.length) return;
-    var now;
-    try { now = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()); } catch (e) { return; }
-    for (var i = 0; i < els.length; i++) els[i].textContent = 'Fukui ' + now + ' JST';
-  }
-  tick();
-  setInterval(tick, 20000);
 
   /* ------------------------------------------------------------ boot */
   themeLabels();

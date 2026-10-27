@@ -298,6 +298,7 @@
       cx = W * 0.6; cy = H * 0.4;
     }
     cam.dist = 5.4;
+    REACH = clamp(0.9 * W / scale, 2.6, 5.5);
     // follow mode: its patch of screen, in floor units across the view and into it.
     // a little room to the left (the text is there), more to the right
     STAGE = { a0: -W * 0.11 / scale, a1: W * (narrow ? 0.12 : 0.16) / scale, d0: -0.3, d1: 1 };
@@ -368,8 +369,10 @@
     return true;
   }
   function ground(sx, sy) { var g = unproject(sx, sy); return g[3] ? null : [g[0], g[2]]; }
-  // somewhere in reach of the view: on screen, under the text, or a little way off it
-  function randomSpot() { var a = R() * Math.PI * 2, d = 5.5 * Math.sqrt(R()); return [C.x + Math.cos(a) * d, C.z + Math.sin(a) * d]; }
+  // somewhere in reach of the view: on screen, under the text, or a little way off it.
+  // the reach shrinks with a narrow screen, so on a phone it does not keep wandering off
+  var REACH = 5.5;
+  function randomSpot() { var a = R() * Math.PI * 2, d = REACH * Math.sqrt(R()); return [C.x + Math.cos(a) * d, C.z + Math.sin(a) * d]; }
   // the ground directions of the view: across the screen (AX, AZ) and into it (DX, DZ)
   var AX = 1, AZ = 0, DX = 0, DZ = -1, STAGE = { a0: -0.6, a1: 0.8, d0: -0.3, d1: 1 }, ZMIN = 4.3;
   // a spot it is sent to: in follow mode kept inside its patch of screen, so the view
@@ -653,23 +656,29 @@
     if (act && t > act.until) {
       var an = act.name; act = null;
       if (an === 'lie') startAct('stretch', 1.9);
-      else if (an === 'sniff' && R() < 0.3 && !lost && shown) startAct('sit', 4 + R() * 3);
+      else if (an === 'sniff' && R() < 0.2 && !lost && shown) startAct('sit', 3 + R() * 2);
       else { stateName = 'idle'; stateUntil = t + (an === 'wake' ? 1.6 : 0.9); }
     }
-    // a long quiet spell: lie down for a while
-    if (!route && !act && !lost && shown && quiet > 30 && t > restNext) { startAct('lie', 9 + R() * 6); restNext = t + 50; }
+    // a long quiet spell: lie down for a short while
+    if (!route && !act && !lost && shown && quiet > 45 && t > restNext) { startAct('lie', 6 + R() * 4); restNext = t + 75; }
     // nothing to do: pick somewhere new to look at. Mostly in view; now and then
     // off the edge of the screen for a bit, and back again after that
     if (!route && !act && !shown && stateUntil > t + 0.6) stateUntil = t + 0.6;
     if (!route && !act && t > stateUntil) {
-      var away = !followCam && shown && !lost && R() < 0.22, best = null, bs = -1;
-      for (var c = 0; c < 12; c++) {
-        var s = freeSpot(2.2, 11);
-        // follow mode: anywhere, the view keeps up. otherwise a spot in clear view,
-        // or for a trip away one right off the screen, and never close enough to loom
-        if (!s || (!followCam && (near(s[0], s[1]) || (away ? onScreen(s[0], s[1]) : !inView(s[0], s[1]))))) continue;
-        var sc = Math.min(7, Math.hypot(s[0] - bot.x, s[1] - bot.z)) + 6 * fresh(s[0], s[1]) + R() * 2;
-        if (sc > bs) { bs = sc; best = s; }
+      var away = !followCam && shown && !lost && R() < 0.12, best = null, bs = -1;
+      // follow mode: anywhere, the view keeps up. otherwise a spot in clear view (or, for
+      // a trip away, one right off the screen) that is never close enough to loom. a small
+      // or short screen may have no such spot, so then one partly in view, then anywhere
+      for (var tier = 0; tier < 3 && !best; tier++) {
+        for (var c = 0; c < 12; c++) {
+          var s = freeSpot(tier ? 1.2 : 2.2, 11);
+          if (!s) continue;
+          if (!followCam && tier < 2 && near(s[0], s[1])) continue;
+          if (!followCam && tier === 0 && (away ? onScreen(s[0], s[1]) : !inView(s[0], s[1]))) continue;
+          if (!followCam && tier === 1 && !onScreen(s[0], s[1])) continue;
+          var sc = Math.min(7, Math.hypot(s[0] - bot.x, s[1] - bot.z)) + 6 * fresh(s[0], s[1]) + R() * 2;
+          if (sc > bs) { bs = sc; best = s; }
+        }
       }
       if (!best || !goTo(best[0], best[1], 'wander')) { stateName = 'idle'; stateUntil = t + 1.5; }
     }
@@ -717,9 +726,9 @@
             stateName = 'idle'; stateUntil = t + 2.5 + R() * 1.5;
             look = marker ? [marker.x, 0, marker.z] : [g[0] + Math.cos(bot.yaw) * 1.5, 0, g[1] - Math.sin(bot.yaw) * 1.5]; lookUntil = t + 2;
             if (marker) marker.done = t;
-            if (!lost && shown && kind === 'go' && rr < 0.35) { startAct('sit', 5 + R() * 3); stateUntil = 0; }
+            if (!lost && shown && kind === 'go' && rr < 0.25) { startAct('sit', 3 + R() * 2); stateUntil = 0; }
           }
-          else if (!lost && shown && rr < 0.18) startAct('sit', 4 + R() * 4);
+          else if (!lost && shown && rr < 0.12) startAct('sit', 2.5 + R() * 2.5);
           else if (rr < 0.5) { stateName = 'idle'; stateUntil = t + 2.5 + R() * 3; }
         }
       } else {
@@ -727,7 +736,7 @@
         // quick when it is going somewhere you showed it, easier when it explores
         var vmax = (fast ? 1.9 : (route.kind === 'wander' ? 0.85 : 1.1)) * (lost ? 0.8 : 1);
         var ce = Math.max(0, Math.cos(e));
-        wT = fast ? clamp(e * 3.4, -2.8, 2.8) : clamp(e * 2.4, -1.4, 1.4);
+        wT = fast ? clamp(e * 3.4, -2.8, 2.8) : clamp(e * 2.8, -2, 2);
         vT = vmax * ce * ce * ce * (lastPt ? clamp(d / (fast ? 1.2 : 0.9), 0.25, 1) : 1);
       }
       if (route && t - route.since > 25) route = null;
@@ -740,7 +749,7 @@
     var down = Math.max(pose.sit, pose.lie, pose.bow, pose.sniff * 0.6), gate = clamp(1 - down * 1.6, 0, 1);
     if (act) { vT = 0; if (act.name !== 'sniff') wT = 0; }
     vT *= gate * gate; wT *= gate;
-    bot.v += (vT - bot.v) * Math.min(1, dt * (fast ? 4 : 2.2));
+    bot.v += (vT - bot.v) * Math.min(1, dt * (fast ? 4 : 3));
     bot.w += (wT - bot.w) * Math.min(1, dt * (fast ? 8 : 5));
     bot.yaw = wrap(bot.yaw + bot.w * dt);
     var nx = bot.x + Math.cos(bot.yaw) * bot.v * dt, nz = bot.z - Math.sin(bot.yaw) * bot.v * dt;
@@ -772,7 +781,7 @@
     if (Math.abs(bot.v) > 0.12) want.sit = want.lie = want.bow = 0;
     var ws = 0, wy = 0, wp = 0, wo = 0, wff = 0, whf = 0, wfz = 0;
     for (var pk in POSES) {
-      var rate = pk === 'lie' && want.lie < pose.lie ? 1.3 : 2.1;
+      var rate = pk === 'lie' && want.lie < pose.lie ? 1.8 : 2.8;
       pose[pk] += (want[pk] - pose[pk]) * Math.min(1, dt * rate);
       var wk = pose[pk] * pose[pk] * (3 - 2 * pose[pk]), P = POSES[pk];
       ws += wk; wy += wk * P.y; wp += wk * P.pitch; wo += wk * P.ox; wff += wk * P.ff; whf += wk * P.hf; wfz += wk * P.fz;
@@ -831,9 +840,11 @@
     hyV += (sk * (ty - headYaw) - damp * hyV) * dt; headYaw += hyV * dt;
     hpV += (sk * (tp - headPitch) - damp * hpV) * dt; headPitch += hpV * dt;
 
-    // the camera looks on from the side with a slow drift, and leans a touch toward the pointer
-    var px = pointer.active ? (pointer.x / W - 0.5) : 0, py = pointer.active ? (pointer.y / H - 0.5) : 0;
-    var cyT = 0.95 + 0.22 * Math.sin(t * 0.045) + px * 0.08, cpT = 0.24 + 0.04 * Math.sin(t * 0.07) + py * 0.03;
+    // the camera looks on from the side and holds still: the robot walks about away from
+    // the middle of the view, and any turn of the camera would swing it across the screen.
+    // follow mode keeps the old slow drift, since the robot stays near the middle there
+    var cyT = 0.95, cpT = 0.24;
+    if (followCam) { cyT += 0.22 * Math.sin(t * 0.045); cpT += 0.04 * Math.sin(t * 0.07); }
     camYaw += (cyT - camYaw) * Math.min(1, dt * 1.4);
     camPitch += (cpT - camPitch) * Math.min(1, dt * 1.4);
     // while it chases the pointer the view holds still, so the spot under the pointer stays put

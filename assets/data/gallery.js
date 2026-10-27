@@ -20,5 +20,11 @@
      loop: true,                        // optional
      caption: "Place, month",           // optional
      date: "2026-01"                    // optional
+   },
+   {
+     type: "text",
+     text: ["A line or two, on its own.", "A second paragraph if you need one."],
+     caption: "Place, month",           // optional
+     date: "2026-01"                    // optional
    }, */
 window.AH_GALLERY = [];
