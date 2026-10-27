@@ -69,8 +69,6 @@ a:hover { text-decoration-color: currentColor; }
 [data-theme="light"] .theme-btn .sun { display: none; }
 [data-theme="light"] .theme-btn .moon { display: block; }
 .pill { display: none; }
-/* named, so the bar stays put while the page under it changes */
-.nav { view-transition-name: site-nav; }
 
 /* ---- mobile menu ---- */
 .menu { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility 0s linear .2s; }
@@ -206,14 +204,8 @@ html:has(> body.home) { overscroll-behavior: none; }
 /* 404 */
 .lost .back-home { margin-top: 14px; }
 
-/* view transitions: the new page fades in over the old one, which stays put, so the
-   screen never drops to bare background in between (that read as a flash). the fade
-   waits a moment, so lists the page fills in with script are there before it shows */
-@view-transition { navigation: auto; }
-::view-transition-old(root), ::view-transition-new(root) { mix-blend-mode: normal; }
-::view-transition-old(root) { animation: none; }
-::view-transition-new(root) { animation: vt-in .24s ease .07s both; }
-@keyframes vt-in { from { opacity: 0; transform: translateY(6px); } }
+/* no cross-page transition: desktop Chrome flashed a blank page while running one.
+   without it, browsers keep the old page up until the new one is drawn, then swap */
 
 /* ---- narrow screens ---- */
 @media (max-width: 760px) {
@@ -245,7 +237,6 @@ html:has(> body.home) { overscroll-behavior: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
   .cursor { animation: none; }
-  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
   .dots g, .dots rect, .menu-close g, .menu-close rect { transition: none !important; }
 }
 
