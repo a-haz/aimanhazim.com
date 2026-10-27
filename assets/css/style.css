@@ -205,7 +205,12 @@ html:has(> body.home) { overscroll-behavior: none; }
 .lost .back-home { margin-top: 14px; }
 
 /* no cross-page transition: desktop Chrome flashed a blank page while running one.
-   without it, browsers keep the old page up until the new one is drawn, then swap */
+   without it, browsers keep the old page up until the new one is drawn, then swap.
+   on arrival the page's text rises a few pixels into place. it starts mostly visible,
+   never from nothing, so no frame is ever blank. the bar at the top stays still, and
+   the home and 404 pages keep their own entrance (the robot fades in) */
+.inner main, .inner .foot { animation: rise .34s cubic-bezier(.2, .7, .3, 1) backwards; }
+@keyframes rise { from { translate: 0 10px; opacity: .7; } }
 
 /* ---- narrow screens ---- */
 @media (max-width: 760px) {
