@@ -31,7 +31,7 @@ Other words (nav, home, about) are written straight into each page's HTML.
 
 ## A new page
 
-Copy a folder like `about/` (its `index.html`), change the title, the text and the `aria-current` link in the nav, and add the URL to `sitemap.xml`. Keep the icon and theme-color tags in the head as they are.
+Copy a folder like `about/` (its `index.html`), change the title, the text and the `aria-current` link in the nav. Keep the icon and theme-color tags in the head as they are. Leave `sitemap.xml` alone: a GitHub Action (`.github/workflows/sitemap.yml`) rebuilds it from the pages on every push to main, and keeps noindex pages out.
 
 ## Icons
 
