@@ -185,7 +185,10 @@
     }
     if (location.hash && !renderAll.done) {
       renderAll.done = true;
-      var target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      // a malformed link (#%zz) must not throw and stop the rest of this file
+      var id = location.hash.slice(1);
+      try { id = decodeURIComponent(id); } catch (e) {}
+      var target = document.getElementById(id);
       if (target) target.scrollIntoView();
     }
   }
