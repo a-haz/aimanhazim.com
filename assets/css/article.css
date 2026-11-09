@@ -1,7 +1,7 @@
 /* PyroScout write-up. Loaded only on /projects/pyroscout/. */
 .article-band { margin-inline: auto; padding: 132px 24px 72px; max-width: calc(var(--col) + 48px); }
-.article-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, min(460px, 42%)); gap: 40px clamp(32px, 5vw, 80px); align-items: end; }
-.back { display: inline-flex; gap: 8px; font-size: 13px; color: var(--muted); text-decoration: none; margin-bottom: 22px; }
+.article-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, min(460px, 42%)); gap: 40px clamp(32px, 5vw, 80px); align-items: start; }
+.back { display: flex; width: fit-content; gap: 8px; font-size: 13px; color: var(--muted); text-decoration: none; margin-bottom: 22px; }
 .back:hover { color: var(--fg); }
 .eyebrow { font-size: 13px; color: var(--muted); }
 .page-title { margin-top: 2px; font-size: 15px; }
