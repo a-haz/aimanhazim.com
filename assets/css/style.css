@@ -16,7 +16,7 @@
   --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, "Hiragino Sans", "Yu Gothic", monospace;
   --serif: "Instrument Serif", "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
   /* the width of the column on every inner page, so the text starts at the same place everywhere */
-  --col: 1000px;
+  --col: 800px;
   color-scheme: dark;
 }
 [data-theme="light"] {
@@ -146,7 +146,6 @@ html:has(> body.home) { overscroll-behavior: none; }
 .small { font-size: 13px; }
 
 /* entries: writing */
-.entries { max-width: 46em; }
 .entries > li { padding: 26px 0 28px; border-top: 1px solid var(--hair); display: grid; grid-template-columns: 8.5em 1fr; gap: 0 28px; scroll-margin-top: 100px; }
 .entries > li:last-child { border-bottom: 1px solid var(--hair); }
 .entries time { color: var(--muted); font-size: 13px; padding-top: 1px; font-variant-numeric: tabular-nums; }
@@ -161,13 +160,13 @@ html:has(> body.home) { overscroll-behavior: none; }
 .empty { color: var(--muted); }
 
 /* projects */
-.works { list-style: none; max-width: 46em; }
+.works { list-style: none; }
 .work { display: grid; grid-template-columns: 5ch minmax(0, 1fr); padding: 0 0 36px; transition: opacity .15s ease; }
 .works:has(.work:hover) .work:not(:hover) { opacity: .45; }
 .work-n { color: var(--faint); font-size: 12px; padding-top: 2px; font-variant-numeric: tabular-nums; }
 .work h2 { display: flex; gap: 12px; align-items: baseline; }
 .work h2 .yr { color: var(--muted); font-size: 12px; }
-.work p { color: var(--muted); margin-top: 2px; max-width: 40em; }
+.work p { color: var(--muted); margin-top: 2px; }
 .work .links { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px 26px; font-size: 13px; }
 .work .links .arr { color: var(--faint); }
 .more { margin-top: 28px; font-size: 13px; color: var(--muted); }

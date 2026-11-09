@@ -29,7 +29,7 @@
 .toc a span { color: var(--faint); }
 .toc a.is-here span { color: var(--accent); }
 
-.doc { max-width: 42rem; }
+.doc { min-width: 0; }
 .doc > * + * { margin-top: 1.1em; }
 .doc p, .doc li { color: var(--muted); }
 .doc .standfirst { color: var(--fg); }
@@ -43,7 +43,6 @@
 .doc code { font: inherit; font-size: .92em; padding: .1em .35em; background: var(--hair); border-radius: 3px; }
 .doc figure { margin-block: 2.2em; }
 .doc figure img, .doc figure video { width: 100%; height: auto; border-radius: 2px; background: #fff; }
-.doc figure.wide { margin-right: calc(-1 * min(10vw, 160px)); }
 .doc figcaption { margin-top: 10px; font-size: 11px; color: var(--muted); }
 .doc video { aspect-ratio: 1520 / 568; }
 .math { display: block; margin-block: 1.2em; padding: 18px 0; text-align: center; color: var(--fg); border-block: 1px solid var(--hair); }
@@ -80,7 +79,6 @@
 @media (max-width: 960px) {
   .article-head, .article-grid { grid-template-columns: minmax(0, 1fr); }
   .toc { position: static; margin-bottom: 36px; }
-  .doc figure.wide { margin-right: 0; }
 }
 @media (max-width: 760px) {
   .article-band { padding: 108px 24px 48px; }
