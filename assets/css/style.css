@@ -231,7 +231,7 @@ html:has(> body.home) { overscroll-behavior: none; }
   .lead { margin-bottom: 40px; }
   .entries > li { grid-template-columns: 1fr; gap: 4px; }
   .about-grid { grid-template-columns: 1fr; gap: 32px; }
-  .about-grid .portrait { order: -1; width: 168px; }
+  .about-grid .portrait { order: -1; width: 168px; justify-self: center; }
   .gallery { grid-template-columns: 1fr; gap: 44px; }
   .shot:nth-child(n) { grid-column: auto; margin-top: 0; }
   .shot:nth-child(2n) { margin-left: 18%; }
